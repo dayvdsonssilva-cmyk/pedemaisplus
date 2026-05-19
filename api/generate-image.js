@@ -11,42 +11,87 @@ export default async function handler(req, res) {
   if (!prompt) return res.status(400).json({ error: "Prompt é obrigatório" });
   if (!process.env.OPENAI_KEY) return res.status(500).json({ error: "OPENAI_KEY não configurada no Vercel" });
 
-  try {
-    // Step 1: gerar imagem — receber URL
-    const genRes = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: prompt,
-        n: 1,
-        size: "1024x1792",
-        quality: "hd",
-        // SEM style, SEM response_format — usa padrão (url)
-      }),
-    });
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
+  };
 
-    if (!genRes.ok) {
-      const err = await genRes.json();
-      return res.status(500).json({ error: err.error?.message || "Erro ao gerar imagem" });
-    }
+  // Tenta gpt-image-1 (modelo atual), depois dall-e-3, depois dall-e-2
+  const attempts = [
+    {
+      model: "gpt-image-1",
+      body: { model: "gpt-image-1", prompt, n: 1, size: "1024x1536", quality: "high" },
+      getImage: async (data) => {
+        // gpt-image-1 retorna b64_json direto
+        const b64 = data.data?.[0]?.b64_json;
+        if (b64) return b64;
+        // ou URL
+        const url = data.data?.[0]?.url;
+        if (url) return await urlToBase64(url);
+        return null;
+      }
+    },
+    {
+      model: "dall-e-3",
+      body: { model: "dall-e-3", prompt, n: 1, size: "1024x1792", quality: "hd" },
+      getImage: async (data) => {
+        const url = data.data?.[0]?.url;
+        if (url) return await urlToBase64(url);
+        return data.data?.[0]?.b64_json || null;
+      }
+    },
+    {
+      model: "dall-e-2",
+      body: { model: "dall-e-2", prompt: prompt.slice(0, 1000), n: 1, size: "512x512" },
+      getImage: async (data) => {
+        const url = data.data?.[0]?.url;
+        if (url) return await urlToBase64(url);
+        return null;
+      }
+    },
+  ];
 
-    const genData = await genRes.json();
-    const imageUrl = genData.data?.[0]?.url;
-    if (!imageUrl) return res.status(500).json({ error: "URL da imagem não retornada" });
-
-    // Step 2: baixar imagem e converter para base64 no servidor
-    const imgRes = await fetch(imageUrl);
-    if (!imgRes.ok) return res.status(500).json({ error: "Erro ao baixar imagem gerada" });
-
-    const arrayBuffer = await imgRes.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
-
-    return res.status(200).json({ image: base64 });
-  } catch (error) {
-    return res.status(500).json({ error: "Erro interno: " + error.message });
+  async function urlToBase64(url) {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const buf = await r.arrayBuffer();
+    return Buffer.from(buf).toString("base64");
   }
+
+  let lastError = "Nenhum modelo disponível";
+
+  for (const attempt of attempts) {
+    try {
+      console.log(`Tentando modelo: ${attempt.model}`);
+      const r = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(attempt.body),
+      });
+
+      if (!r.ok) {
+        const err = await r.json();
+        lastError = err.error?.message || `Erro no modelo ${attempt.model}`;
+        console.log(`Falhou ${attempt.model}:`, lastError);
+        continue; // tenta o próximo
+      }
+
+      const data = await r.json();
+      const image = await attempt.getImage(data);
+
+      if (!image) {
+        lastError = `Imagem não retornada pelo modelo ${attempt.model}`;
+        continue;
+      }
+
+      console.log(`✅ Sucesso com modelo: ${attempt.model}`);
+      return res.status(200).json({ image, model: attempt.model });
+
+    } catch (e) {
+      lastError = e.message;
+      console.log(`Erro ${attempt.model}:`, e.message);
+    }
+  }
+
+  return res.status(500).json({ error: lastError });
 }
