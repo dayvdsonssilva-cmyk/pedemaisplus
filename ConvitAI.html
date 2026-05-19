@@ -56,15 +56,18 @@ textarea.inp{resize:none;line-height:1.55;}
 .cat-row{display:flex;gap:8px;margin-bottom:20px;}
 .cat-btn{flex:1;padding:10px 4px;border-radius:10px;border:2px solid #EBEBEB;background:#fff;color:#9CA3AF;font-size:12px;font-weight:700;transition:all .2s;}
 .cat-btn.active{border-color:#6C3AE7;background:#6C3AE7;color:#fff;}
-.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
-.tc{background:#fff;border:2px solid #EBEBEB;border-radius:16px;padding:15px;cursor:pointer;transition:border-color .2s,transform .15s;}
-.tc:active{transform:scale(.97);}
-.tc.sel{border-color:var(--tc);}
-.tc-thumb{width:46px;height:68px;border-radius:10px;background:var(--tbg);border:2px solid var(--tc20);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px;}
-.tc-name{font-size:14px;font-weight:800;color:#111;margin-bottom:2px;}
-.tc-cat{font-size:11px;color:#9CA3AF;font-weight:500;margin-bottom:6px;}
-.tc-par{font-size:14px;letter-spacing:2px;}
-.tc-badge{margin-top:8px;display:inline-block;padding:3px 10px;border-radius:99px;background:var(--tc);color:#fff;font-size:11px;font-weight:800;}
+.tgrid{display:flex;flex-direction:column;gap:10px;margin-bottom:8px;}
+.tc{background:#fff;border:2px solid #EBEBEB;border-radius:16px;padding:14px 16px;cursor:pointer;transition:border-color .2s,transform .15s;display:flex;align-items:center;gap:16px;}
+.tc:active{transform:scale(.98);}
+.tc.sel{border-color:var(--tc);background:var(--tbg);}
+.tc-thumb{width:56px;height:56px;border-radius:14px;background:var(--tbg);border:2px solid var(--tc20);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;}
+.tc.sel .tc-thumb{background:rgba(255,255,255,0.6);}
+.tc-info{flex:1;min-width:0;}
+.tc-name{font-size:15px;font-weight:800;color:#111;margin-bottom:2px;}
+.tc-cat{font-size:11px;color:#9CA3AF;font-weight:500;margin-bottom:5px;}
+.tc-par{font-size:20px;letter-spacing:3px;}
+.tc-badge{margin-top:6px;display:inline-block;padding:3px 10px;border-radius:99px;background:var(--tc);color:#fff;font-size:11px;font-weight:800;}
+.tc-check{width:28px;height:28px;border-radius:50%;background:var(--tc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;}
 .scrollx{overflow-x:auto;display:flex;gap:10px;padding-bottom:4px;}
 .tpill{flex-shrink:0;width:78px;background:var(--tbg);border:2px solid var(--tc20);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;}
 .tpill-e{font-size:22px;margin-bottom:4px;}
@@ -317,7 +320,7 @@ function rBB(n){
 function rHS(){const w=document.getElementById("hs");if(!w)return;w.innerHTML=THEMES.map(t=>`<div class="tpill" style="--tc:${t.c};--tbg:${t.bg};--tc20:${t.c}30" onclick="qSel('${t.id}')"><div class="tpill-e">${t.e}</div><div class="tpill-n">${t.n}</div></div>`).join("");}
 function qSel(id){S.tid=id;goTo(1);}
 
-function rTh(){const g=document.getElementById("tgrid"),cat=document.querySelector(".cat-btn.active")?.dataset.cat||"todos",fl=THEMES.filter(t=>cat==="todos"||t.cat===cat);g.innerHTML=fl.map(t=>`<div class="tc ${S.tid===t.id?"sel":""}" style="--tc:${t.c};--tbg:${t.bg};--tc20:${t.c}30" onclick="selT('${t.id}')"><div class="tc-thumb">${t.e}</div><div class="tc-name">${t.n}</div><div class="tc-cat">${t.cat==="infantil"?"Infantil":"Adolescente"}</div><div class="tc-par">${t.p.slice(0,4).join("")}</div>${S.tid===t.id?`<div class="tc-badge">✓ Escolhido</div>`:""}</div>`).join("");}
+function rTh(){const g=document.getElementById("tgrid"),cat=document.querySelector(".cat-btn.active")?.dataset.cat||"todos",fl=THEMES.filter(t=>cat==="todos"||t.cat===cat);g.innerHTML=fl.map(t=>`<div class="tc ${S.tid===t.id?"sel":""}" style="--tc:${t.c};--tbg:${t.bg};--tc20:${t.c}30" onclick="selT('${t.id}')"><div class="tc-thumb">${t.e}</div><div class="tc-info"><div class="tc-name">${t.n}</div><div class="tc-cat">${t.cat==="infantil"?"👶 Infantil":"🎧 Adolescente"}</div><div class="tc-par">${t.p.slice(0,5).join(" ")}</div></div>${S.tid===t.id?`<div class="tc-check">✓</div>`:""}</div>`).join("");}
 function fcat(btn){document.querySelectorAll(".cat-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");rTh();}
 function selT(id){S.tid=id;rTh();const b=document.getElementById("bn1");if(b){b.disabled=false;b.classList.add("pulse");}}
 function n1(){if(S.tid)goTo(2);}
