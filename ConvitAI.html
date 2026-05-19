@@ -90,6 +90,11 @@ textarea.inp{resize:none;line-height:1.55;}
 .btn-ai{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:99px;border:2px solid #DDD6FE;background:#F8F5FF;color:#6C3AE7;font-size:12px;font-weight:700;}
 .btn-ai:disabled{opacity:.5;cursor:not-allowed;}
 .photo-ok{background:#F0FDF4;border:2px solid #86EFAC;border-radius:14px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.mode-card{display:flex;align-items:center;gap:14px;padding:16px;background:#fff;border:2px solid #EBEBEB;border-radius:18px;cursor:pointer;transition:all .2s;}
+.mode-card:active{transform:scale(.98);}
+.mode-card.active{border-color:#6C3AE7;background:#F5F3FF;box-shadow:0 4px 16px rgba(108,58,231,.15);}
+.mode-card.active .mode-check{display:flex;}
+.mode-check{display:none;width:24px;height:24px;border-radius:50%;background:#6C3AE7;color:#fff;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;margin-left:auto;}
 .demo-note{background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:13px 16px;margin-bottom:16px;font-size:13px;color:#92400E;line-height:1.5;}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
 .fcard{background:#fff;border-radius:16px;padding:15px;border:1.5px solid #EBEBEB;}
@@ -271,14 +276,59 @@ textarea.inp{resize:none;line-height:1.55;}
   <!-- S3 FOTO -->
   <div id="screen-3" class="screen">
     <div class="screen-title">📸 Foto do Aniversariante</div>
-    <div class="screen-sub">A foto será integrada com arte profissional no convite</div>
-    <div id="photo-drop" onclick="trigPh()">
-      <div id="ph-e"><div style="font-size:50px;margin-bottom:10px">📸</div><div style="font-size:15px;font-weight:700;color:#444;margin-bottom:4px">Toque para adicionar foto</div><div style="font-size:13px;color:#9CA3AF">JPG ou PNG · A IA vai integrar no design</div></div>
-      <div id="ph-f" style="display:none"><div id="pp-wrap"><img id="pp" src="" alt=""/><button id="pr" onclick="remPh(event)">✕</button></div></div>
+    <div class="screen-sub">Como a foto vai aparecer no convite?</div>
+
+    <!-- MODE SELECTION -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      <div class="mode-card" id="mode-ser" onclick="setMode('ser')">
+        <div style="font-size:36px;flex-shrink:0">🦸</div>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Quero SER o personagem</div>
+          <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Ex: a criança vira o Homem-Aranha com o próprio rosto, sem máscara, com o traje completo</div>
+        </div>
+      </div>
+      <div class="mode-card" id="mode-com" onclick="setMode('com')">
+        <div style="font-size:36px;flex-shrink:0">🤝</div>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Quero estar COM o personagem</div>
+          <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Ex: o Homem-Aranha completo ao lado da criança, numa cena criativa e animada</div>
+        </div>
+      </div>
+      <div class="mode-card" id="mode-normal" onclick="setMode('normal')">
+        <div style="font-size:36px;flex-shrink:0">🖼️</div>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Só minha foto no convite</div>
+          <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Foto em moldura temática elegante, arte exclusiva ao redor</div>
+        </div>
+      </div>
     </div>
-    <input type="file" id="fi" accept="image/*" style="display:none" onchange="hFile(this)"/>
-    <div id="ph-ok" class="photo-ok" style="display:none"><span style="font-size:22px">✅</span><div><div style="font-size:14px;font-weight:700;color:#15803D">Foto adicionada!</div><div style="font-size:12px;color:#9CA3AF;margin-top:1px">Será recortada e integrada no design</div></div></div>
-    <div style="text-align:center;margin-top:8px"><button onclick="goTo(4)" style="background:none;border:none;color:#9CA3AF;font-size:13px;font-family:inherit;font-weight:500;text-decoration:underline;cursor:pointer">Continuar sem foto →</button></div>
+
+    <!-- PHOTO UPLOAD (shown after mode selection) -->
+    <div id="photo-section" style="display:none">
+      <div style="height:1.5px;background:#F0F0F0;margin-bottom:16px"></div>
+      <div id="photo-drop" onclick="trigPh()">
+        <div id="ph-e">
+          <div style="font-size:48px;margin-bottom:10px">📸</div>
+          <div style="font-size:15px;font-weight:700;color:#444;margin-bottom:4px">Toque para adicionar a foto</div>
+          <div style="font-size:13px;color:#9CA3AF">JPG ou PNG · Foto do rosto funciona melhor</div>
+        </div>
+        <div id="ph-f" style="display:none">
+          <div id="pp-wrap"><img id="pp" src="" alt=""/><button id="pr" onclick="remPh(event)">✕</button></div>
+        </div>
+      </div>
+      <input type="file" id="fi" accept="image/*" style="display:none" onchange="hFile(this)"/>
+      <div id="ph-ok" class="photo-ok" style="display:none">
+        <span style="font-size:22px">✅</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#15803D">Foto adicionada!</div>
+          <div style="font-size:12px;color:#9CA3AF;margin-top:1px" id="ph-ok-sub">Pronta para integrar no design</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px">
+      <button onclick="skipPhoto()" style="background:none;border:none;color:#9CA3AF;font-size:13px;font-family:inherit;font-weight:500;text-decoration:underline;cursor:pointer">Continuar sem foto →</button>
+    </div>
   </div>
 
   <!-- S4 GERAR -->
@@ -349,7 +399,7 @@ const THEMES=[
    c1:"#1A000F",c2:"#560027",c3:"#E91E63"},
 ];
 
-const S={step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",msg:"",photo:null,bgUrl:null,paid:false,generating:false};
+const S={step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",tel:"",msg:"",photo:null,photoMode:"normal",photoDesc:"",bgUrl:null,paid:false,generating:false};
 const T=()=>THEMES.find(x=>x.id===S.tid)||THEMES[0];
 
 /* ═════ CANVAS RENDERER ═════ */
@@ -529,8 +579,8 @@ function rCvs(watermarked){
     // Stars
     [[60,82,8],[CW-60,75,7],[135,46,5],[CW-120,138,5]].forEach(([x,y,r])=>{ctx.save();ctx.globalAlpha=.65;ctx.shadowColor="#FFF9C4";ctx.shadowBlur=10;star(ctx,x,y,r,"#FFF9C4");ctx.restore();});
 
-    // Photo frame
-    if(photoImg){drawPhotoFrame(ctx,CW/2,CH*.3,115,photoImg,t);}
+    // Photo frame — skip in "ser" mode (child is already the character in the generated image)
+    if(photoImg && S.photoMode !== "ser"){drawPhotoFrame(ctx,CW/2,CH*.3,115,photoImg,t);}
 
     // Text
     drawTextLayer(ctx,{nome:S.nome,idade:S.idade,data:S.data,hora:S.hora,local:S.local,msg:S.msg},t,!!photoImg);
@@ -555,7 +605,27 @@ function rCvs(watermarked){
 }
 
 /* ═════ NAVIGATION ═════ */
-function goHome(){Object.assign(S,{step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",tel:"",msg:"",photo:null,bgUrl:null,paid:false,generating:false});["i-nome","i-idade","i-data","i-hora","i-local","i-email","i-tel","i-msg"].forEach(id=>{const el=document.getElementById(id);if(el){el.value="";el.classList.remove("filled","inp-err");}});rScr(0);}
+function goHome(){
+  Object.assign(S,{step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",tel:"",msg:"",photo:null,photoMode:"normal",photoDesc:"",bgUrl:null,paid:false,generating:false});
+  ["i-nome","i-idade","i-data","i-hora","i-local","i-email","i-tel","i-msg"].forEach(id=>{const el=document.getElementById(id);if(el){el.value="";el.classList.remove("filled","inp-err");}});
+  ["ser","com","normal"].forEach(m=>{const el=document.getElementById("mode-"+m);if(el)el.className="mode-card";});
+  const ps=document.getElementById("photo-section");if(ps)ps.style.display="none";
+  rScr(0);
+}
+
+/* ═════ PHOTO ANALYSIS ═════ */
+async function analyzePhoto(base64, mime){
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:180,messages:[{role:"user",content:[
+        {type:"image",source:{type:"base64",media_type:mime||"image/jpeg",data:base64}},
+        {type:"text",text:"Describe this child's appearance for an AI image generation prompt. Include: hair color, hair length/style, approximate skin tone, gender. One concise sentence in English only. Example: 'A girl with long curly brown hair, light skin tone.'"}
+      ]}]})
+    });
+    const d=await r.json();
+    return d.content?.find(b=>b.type==="text")?.text||"";
+  }catch{return "";}
+}
 function goTo(n){S.step=n;rScr(n);}
 function rScr(n){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -573,7 +643,7 @@ function rBB(n){
   if(n===0){bb.style.display="none";return;}
   if(n===1){bb.innerHTML=`<button class="btn-primary pulse" id="bn1" onclick="n1()" ${!S.tid?"disabled":""}>Próximo →</button>`;return;}
   if(n===2){bb.innerHTML=`<button class="btn-primary" id="bn2" onclick="n2()" disabled>Próximo →</button><button class="btn-secondary" onclick="goTo(1)">← Voltar</button>`;uDB();return;}
-  if(n===3){bb.innerHTML=`<button class="btn-primary pulse" onclick="goTo(4)">Gerar Convite →</button><button class="btn-secondary" onclick="goTo(2)">← Voltar</button>`;return;}
+  if(n===3){bb.innerHTML=`<button class="btn-primary pulse" id="bn3" onclick="goTo(4)" ${!S.photoMode?"disabled":""}>Próximo →</button><button class="btn-secondary" onclick="goTo(2)">← Voltar</button>`;return;}
   if(n===4){
     if(!S.generating)bb.innerHTML=`<button class="btn-primary pulse" onclick="genInvite()">🎨 Gerar Convite</button><button class="btn-secondary" onclick="goTo(3)">← Voltar</button>`;
     else bb.innerHTML=`<button class="btn-primary" disabled><span class="spin">⏳</span> Gerando...</button>`;return;}
@@ -698,11 +768,52 @@ async function genMsg(){
   if(btn)btn.disabled=false;if(ic)ic.textContent="✨";if(lb)lb.textContent="Gerar com IA";
 }
 
-/* ═════ PHOTO ═════ */
+/* ═════ PHOTO & MODE ═════ */
+function setMode(mode){
+  S.photoMode=mode;
+  ["ser","com","normal"].forEach(m=>{
+    const el=document.getElementById("mode-"+m);
+    if(el)el.className="mode-card"+(m===mode?" active":"");
+  });
+  document.getElementById("photo-section").style.display="block";
+  // Update bottom bar to enable Próximo if mode selected
+  const bb3=document.getElementById("bottom-bar");
+  if(bb3&&S.step===3){
+    const btn=bb3.querySelector(".btn-primary");
+    if(btn)btn.disabled=false;
+  }
+  // Update hint text
+  const subs={
+    ser:"IA vai analisar seu rosto e criar você como o personagem",
+    com:"Sua foto aparece ao lado do personagem",
+    normal:"Foto em moldura temática elegante"
+  };
+  const okSub=document.getElementById("ph-ok-sub");
+  if(okSub)okSub.textContent=subs[mode]||"";
+}
+function skipPhoto(){S.photo=null;S.photoMode="normal";S.photoDesc="";goTo(4);}
 function trigPh(){if(!S.photo)document.getElementById("fi").click();}
-function hFile(el){const f=el.files[0];if(!f||!f.type.startsWith("image/"))return;const r=new FileReader();r.onload=e=>{S.photo=e.target.result;shPh();};r.readAsDataURL(f);}
-function shPh(){document.getElementById("photo-drop").classList.add("hp");document.getElementById("ph-e").style.display="none";document.getElementById("ph-f").style.display="block";document.getElementById("pp").src=S.photo;document.getElementById("ph-ok").style.display="flex";}
-function remPh(e){e.stopPropagation();S.photo=null;document.getElementById("photo-drop").classList.remove("hp");document.getElementById("ph-e").style.display="block";document.getElementById("ph-f").style.display="none";document.getElementById("ph-ok").style.display="none";document.getElementById("fi").value="";}
+function hFile(el){
+  const f=el.files[0];if(!f||!f.type.startsWith("image/"))return;
+  const r=new FileReader();
+  r.onload=e=>{S.photo=e.target.result;shPh();};
+  r.readAsDataURL(f);
+}
+function shPh(){
+  document.getElementById("photo-drop").classList.add("hp");
+  document.getElementById("ph-e").style.display="none";
+  document.getElementById("ph-f").style.display="block";
+  document.getElementById("pp").src=S.photo;
+  document.getElementById("ph-ok").style.display="flex";
+}
+function remPh(e){
+  e.stopPropagation();S.photo=null;S.photoDesc="";
+  document.getElementById("photo-drop").classList.remove("hp");
+  document.getElementById("ph-e").style.display="block";
+  document.getElementById("ph-f").style.display="none";
+  document.getElementById("ph-ok").style.display="none";
+  document.getElementById("fi").value="";
+}
 
 /* ═════ STEP 4 ═════ */
 function rS4(){
@@ -725,19 +836,41 @@ async function genInvite(){
   S.generating=true;rBB(4);document.getElementById("log").innerHTML="";S.bgUrl=null;
   const t=T();
   try{
-    if(false){// legacy - chave agora no servidor via /api/generate-image
-    aLog("🤖 Claude criando prompt criativo...","info");
-    const pr=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:`Create a DALL-E 3 prompt for a PROFESSIONAL birthday party invitation BACKGROUND. Theme: ${t.n}. Child: ${S.nome}, ${S.idade} years, ${S.gen==="menino"?"boy":"girl"}. Style: dark luxury, rich colors ${t.c1} to ${t.c2}. Ultra vibrant festive professional illustration. Portrait 9:16. Leave center area slightly lighter for photo. Bottom 40% darker for text. Include sparkles confetti balloons themed elements. ABSOLUTELY NO TEXT NO WORDS NO LETTERS NO NUMBERS anywhere. Return ONLY the prompt text.`}]})});
+    // Analyze photo appearance for "ser" and "com" modes
+    if(S.photo&&(S.photoMode==="ser"||S.photoMode==="com")){
+      aLog("👁️ Analisando aparência da foto...","info");
+      const b64parts=S.photo.split(",");
+      const mime=S.photo.split(";")[0].split(":")[1]||"image/jpeg";
+      S.photoDesc=await analyzePhoto(b64parts[1],mime);
+      rDots();
+      if(S.photoDesc)aLog('✅ Aparência identificada',"ok");
+    }
+    // Build mode-specific instructions
+    const genero=S.gen==="menino"?"boy":"girl";
+    const nome=S.nome||"the child";
+    const idade=S.idade||"?";
+    let modeInstruction="";
+    if(S.photoMode==="ser"&&S.photoDesc){
+      modeInstruction=`MAIN SUBJECT: ${S.photoDesc}. This child is TRANSFORMED into ${t.n}. They wear the COMPLETE character costume. Their OWN FACE is CLEARLY VISIBLE — absolutely NO mask, NO face covering. The child's real facial features, hair and skin tone are preserved. Heroic joyful full-body pose. Professional character transformation illustration.`;
+    } else if(S.photoMode==="com"){
+      modeInstruction=`Show the iconic ${t.n} character(s) in FULL costume, standing or posing next to a prominent CIRCULAR GLOWING FRAME (decorative ring) where the birthday child photo will go. Character looks/gestures toward that frame. Dynamic celebratory composition.`;
+    } else {
+      modeInstruction=`Rich atmospheric birthday background with strong ${t.n} theme elements, characters and decorative details. Leave center-upper area slightly lighter for photo overlay.`;
+    }
+    // Claude builds optimized DALL-E prompt
+    aLog("🤖 Claude criando prompt personalizado...","info");
+    const pr=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:"Create a DALL-E 3 prompt for a PROFESSIONAL birthday party invitation illustration.\nTheme: "+t.n+". Birthday: "+nome+", "+idade+" years old "+genero+".\nColors: rich "+t.c1+" to "+t.c2+" palette.\n"+modeInstruction+"\nRequirements: Ultra vibrant festive professional. Portrait 9:16. Bottom 40% slightly darker for text overlay. Include confetti sparkles balloons. ABSOLUTELY NO TEXT NO WORDS NO LETTERS NO NUMBERS.\nReturn ONLY the prompt text."}]})});
     const pd=await pr.json();
-    const dp=(pd.content?.find(b=>b.type==="text")?.text||"Professional birthday party dark luxury background, vibrant colors, confetti, sparkles")+" NO text NO words NO letters. Portrait 9:16.";
-    rDots();aLog(`✅ Prompt criado`,"ok");
+    const dp=(pd.content?.find(b=>b.type==="text")?.text||"Professional "+t.n+" birthday party illustration, vibrant, festive")+" Absolutely NO text NO words NO letters NO numbers. Portrait 9:16.";
+    rDots();aLog("✅ Prompt criado","ok");
+    // Generate via secure backend
     aLog("🎨 DALL-E 3 gerando arte exclusiva... (~30s)","info");
     const ir=await fetch("/api/generate-image",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:dp})});
     if(!ir.ok){const e=await ir.json();throw new Error(e.error||"Erro ao gerar imagem");}
     const id=await ir.json();const b64=id.image;
     if(!b64)throw new Error("Imagem não retornada");
     S.bgUrl="data:image/png;base64,"+b64;
-    rDots();aLog("✅ Arte DALL-E 3 gerada!","ok");
+    rDots();aLog("✅ Arte gerada com sucesso!","ok");
     aLog("🖼️ Compondo convite final...","info");await slp(200);rDots();aLog("✅ Pronto!","ok");
     S.generating=false;rBB(4);goTo(5);
   }catch(e){rDots();aLog("❌ "+e.message,"err");S.generating=false;rBB(4);}
