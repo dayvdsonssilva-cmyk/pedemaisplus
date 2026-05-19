@@ -307,7 +307,6 @@ textarea.inp{resize:none;line-height:1.55;}
     <div style="width:240px;background:#1A1A2E;border-radius:99px;height:6px;overflow:hidden;margin-bottom:12px">
       <div id="ov-bar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#6C3AE7,#EC4899);width:0%;transition:width .8s ease"></div>
     </div>
-    <div style="font-size:12px;color:#333" id="ov-pct">0%</div>
   </div>
 
   <!-- S3: MODO (fase 1) -->
@@ -647,7 +646,7 @@ function rCvs(watermarked){
 
 /* ═════ NAVIGATION ═════ */
 function goHome(){
-  Object.assign(S,{step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",tel:"",msg:"",photo:null,photoMode:"normal",photoDesc:"",bgUrl:null,paid:false,generating:false});
+  Object.assign(S,{step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",tel:"",msg:"",photo:null,photoMode:"normal",photoDesc:"",_s3InPhotoPhase:false,bgUrl:null,paid:false,generating:false});
   ["i-nome","i-idade","i-data","i-hora","i-local","i-email","i-tel","i-msg"].forEach(id=>{const el=document.getElementById(id);if(el){el.value="";el.classList.remove("filled","inp-err");}});
   ["ser","com","normal"].forEach(m=>{const el=document.getElementById("mode-"+m);if(el)el.className="mode-card";});
   const ps=document.getElementById("photo-section");if(ps)ps.style.display="none";
@@ -677,11 +676,17 @@ function rScr(n){
   rBB(n);
   if(n===1)rTh();if(n===2)rS2();
   if(n===3){
-    // Reset to mode selection phase
+    // Always start at mode selection when entering screen 3
     const sm=document.getElementById("s3-mode"),sp=document.getElementById("s3-photo");
-    if(sm)sm.style.display=S.photoMode?"none":"block";
-    if(sp)sp.style.display=S.photoMode?"block":"none";
-    if(S.photoMode){const bb=document.getElementById("bottom-bar");if(bb)bb.innerHTML=`<button class="btn-primary pulse" onclick="goTo(4)">Próximo →</button><button class="btn-secondary" onclick="backToMode()">← Escolher modo</button>`;}
+    if(sm)sm.style.display="block";
+    if(sp)sp.style.display="none";
+    // Only show photo phase if mode was JUST selected (not from back navigation)
+    if(S._s3InPhotoPhase){
+      if(sm)sm.style.display="none";
+      if(sp)sp.style.display="block";
+      const bb=document.getElementById("bottom-bar");
+      if(bb)bb.innerHTML=`<button class="btn-primary pulse" onclick="goTo(4)">Próximo →</button><button class="btn-secondary" onclick="backToMode()">← Escolher modo</button>`;
+    }
   }
   if(n===4)rS4();if(n===5)setTimeout(()=>rCvs(true),120);
   window.scrollTo(0,0);
@@ -832,6 +837,7 @@ async function genMsg(){
 /* ═════ PHOTO & MODE ═════ */
 function setMode(mode){
   S.photoMode=mode;
+  S._s3InPhotoPhase=true;
   // Phase 2: show photo upload
   document.getElementById("s3-mode").style.display="none";
   document.getElementById("s3-photo").style.display="block";
@@ -847,7 +853,7 @@ function setMode(mode){
   window.scrollTo(0,0);
 }
 function backToMode(){
-  S.photoMode="";S.photo=null;S.photoDesc="";
+  S.photoMode="";S.photo=null;S.photoDesc="";S._s3InPhotoPhase=false;
   document.getElementById("s3-mode").style.display="block";
   document.getElementById("s3-photo").style.display="none";
   document.getElementById("photo-drop").classList.remove("hp");
@@ -900,19 +906,32 @@ const OV_STEPS={
   "👁️ Analisando aparência da foto...":10,
   "🤖 Claude criando prompt personalizado...":25,
   "✅ Prompt criado":40,
-  "🎨 DALL-E 3 gerando arte exclusiva... (~30s)":55,
+  "🎨 DALL-E 3 gerando arte exclusiva...":55,
   "✅ Arte gerada com sucesso!":85,
   "🖼️ Compondo convite final...":92,
   "✅ Pronto!":100,
 };
+let ovAnimInterval=null;
 function showOverlay(){document.getElementById("ai-overlay").style.display="flex";}
-function hideOverlay(){document.getElementById("ai-overlay").style.display="none";}
+function hideOverlay(){document.getElementById("ai-overlay").style.display="none";if(ovAnimInterval){clearInterval(ovAnimInterval);ovAnimInterval=null;}}
 function setOverlayStep(msg,pct){
-  const step=document.getElementById("ov-step"),bar=document.getElementById("ov-bar"),p=document.getElementById("ov-pct");
-  if(step)step.textContent=msg;
-  const progress=pct!=null?pct:(OV_STEPS[msg]||50);
+  const step=document.getElementById("ov-step"),bar=document.getElementById("ov-bar");
+  // Clean up (~30s) text
+  const cleanMsg=msg.replace(/\(~\d+s\)/g,"").trim();
+  if(step)step.textContent=cleanMsg;
+  const progress=pct!=null?pct:(OV_STEPS[msg]||OV_STEPS[cleanMsg]||50);
   if(bar)bar.style.width=progress+"%";
-  if(p)p.textContent=progress+"%";
+  // If image generation step, animate bar slowly from 55 to 82
+  if(cleanMsg.includes("DALL-E")||cleanMsg.includes("gerando arte")){
+    if(ovAnimInterval)clearInterval(ovAnimInterval);
+    let cur=55;
+    ovAnimInterval=setInterval(()=>{
+      cur=Math.min(cur+0.3,82);
+      if(bar)bar.style.width=cur+"%";
+    },800);
+  } else if(ovAnimInterval){
+    clearInterval(ovAnimInterval);ovAnimInterval=null;
+  }
 }
 function aLog(msg,type="info"){
   setOverlayStep(msg);
@@ -957,7 +976,7 @@ async function genInvite(){
     const dp=(pd.content?.find(b=>b.type==="text")?.text||"Professional "+t.n+" birthday party illustration, vibrant, festive")+" Absolutely NO text NO words NO letters NO numbers. Portrait 9:16.";
     rDots();aLog("✅ Prompt criado","ok");
     // Generate via secure backend
-    aLog("🎨 DALL-E 3 gerando arte exclusiva... (~30s)","info");
+    aLog("🎨 DALL-E 3 gerando arte exclusiva...","info");
     const ir=await fetch("/api/generate-image",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:dp})});
     if(!ir.ok){const e=await ir.json();throw new Error(e.error||"Erro ao gerar imagem");}
     const id=await ir.json();const b64=id.image;
