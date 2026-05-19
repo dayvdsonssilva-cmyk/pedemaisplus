@@ -1,6 +1,6 @@
 // api/create-pix.js
 // Env vars necessárias no Vercel:
-//   MP_ACCESS_TOKEN → seu token de produção do Mercado Pago
+//   MP_ACCESS_TOKEN → APP_USR-4777052863369746-032911-853dbfb492ca23eaf3357154fe70c820-453129079
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
