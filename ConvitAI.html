@@ -93,7 +93,8 @@ textarea.inp{resize:none;line-height:1.55;}
 .ai-bar:nth-child(6){height:12px;animation-delay:.5s;}
 .ai-bar:nth-child(7){height:18px;animation-delay:.6s;}
 .ai-bar:nth-child(8){height:10px;animation-delay:.7s;}
-@keyframes orbPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(108,58,231,.5)}50%{transform:scale(1.1);box-shadow:0 0 0 8px rgba(108,58,231,0)}}
+@keyframes orbSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes starPulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.2);opacity:1}}
 @keyframes aiBar{0%,100%{transform:scaleY(.4);opacity:.5}50%{transform:scaleY(1);opacity:1}}
 /* Price card */
 .price-card{background:#F0FDF9;border:2px solid #99F6E4;border-radius:16px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
@@ -294,61 +295,80 @@ textarea.inp{resize:none;line-height:1.55;}
     <textarea class="inp" id="i-msg" rows="3" placeholder="Digite ou use IA para criar uma mensagem personalizada..." oninput="cf(this)" onblur="cf(this)"></textarea>
   </div>
 
-  <!-- S3 FOTO -->
-  <div id="screen-3" class="screen">
-    <div class="screen-title">📸 Foto do Aniversariante</div>
-    <div class="screen-sub">Como a foto vai aparecer no convite?</div>
+  <!-- AI LOADING OVERLAY -->
+  <div id="ai-overlay" style="display:none;position:fixed;inset:0;background:rgba(8,8,16,0.97);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
+    <div style="position:relative;width:80px;height:80px;margin-bottom:28px">
+      <div style="position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,#6C3AE7,#EC4899);animation:orbSpin 2s linear infinite;opacity:.25"></div>
+      <div style="position:absolute;inset:4px;border-radius:50%;background:linear-gradient(135deg,#6C3AE7,#EC4899);animation:orbSpin 1.5s linear infinite reverse;opacity:.4"></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;animation:starPulse 1.8s ease-in-out infinite">✦</div>
+    </div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:8px">Criando seu convite</div>
+    <div style="font-size:14px;color:#666;margin-bottom:28px" id="ov-step">Iniciando...</div>
+    <div style="width:240px;background:#1A1A2E;border-radius:99px;height:6px;overflow:hidden;margin-bottom:12px">
+      <div id="ov-bar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#6C3AE7,#EC4899);width:0%;transition:width .8s ease"></div>
+    </div>
+    <div style="font-size:12px;color:#333" id="ov-pct">0%</div>
+  </div>
 
-    <!-- MODE SELECTION -->
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
-      <div class="mode-card" id="mode-ser" onclick="setMode('ser')">
-        <div style="font-size:36px;flex-shrink:0">🦸</div>
-        <div>
-          <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Quero SER o personagem</div>
-          <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Ex: a criança vira o Homem-Aranha com o próprio rosto, sem máscara, com o traje completo</div>
+  <!-- S3: MODO (fase 1) -->
+  <div id="screen-3" class="screen">
+    <div id="s3-mode">
+      <div class="screen-title">📸 Foto no Convite</div>
+      <div class="screen-sub">Como quer que a foto apareça?</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="mode-card" id="mode-ser" onclick="setMode('ser')">
+          <div style="font-size:34px;flex-shrink:0">🦸</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Quero SER o personagem</div>
+            <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Ex: a criança vira o Homem-Aranha com o próprio rosto, sem máscara</div>
+          </div>
+          <div style="font-size:18px;color:#9CA3AF">›</div>
         </div>
-      </div>
-      <div class="mode-card" id="mode-com" onclick="setMode('com')">
-        <div style="font-size:36px;flex-shrink:0">🤝</div>
-        <div>
-          <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Quero estar COM o personagem</div>
-          <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Ex: o Homem-Aranha completo ao lado da criança, numa cena criativa e animada</div>
+        <div class="mode-card" id="mode-com" onclick="setMode('com')">
+          <div style="font-size:34px;flex-shrink:0">🤝</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Quero estar COM o personagem</div>
+            <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Ex: o Homem-Aranha do lado da criança numa cena única</div>
+          </div>
+          <div style="font-size:18px;color:#9CA3AF">›</div>
         </div>
-      </div>
-      <div class="mode-card" id="mode-normal" onclick="setMode('normal')">
-        <div style="font-size:36px;flex-shrink:0">🖼️</div>
-        <div>
-          <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Só minha foto no convite</div>
-          <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Foto em moldura temática elegante, arte exclusiva ao redor</div>
+        <div class="mode-card" id="mode-normal" onclick="setMode('normal')">
+          <div style="font-size:34px;flex-shrink:0">🖼️</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:3px">Só minha foto no convite</div>
+            <div style="font-size:12px;color:#9CA3AF;line-height:1.45">Foto em moldura temática elegante</div>
+          </div>
+          <div style="font-size:18px;color:#9CA3AF">›</div>
+        </div>
+        <div style="text-align:center;margin-top:4px">
+          <button onclick="skipPhoto()" style="background:none;border:none;color:#C4C4C4;font-size:13px;font-family:inherit;font-weight:500;text-decoration:underline;cursor:pointer">Continuar sem foto →</button>
         </div>
       </div>
     </div>
 
-    <!-- PHOTO UPLOAD (shown after mode selection) -->
-    <div id="photo-section" style="display:none">
-      <div style="height:1.5px;background:#F0F0F0;margin-bottom:16px"></div>
+    <!-- FASE 2: UPLOAD DA FOTO (aparece após escolher o modo) -->
+    <div id="s3-photo" style="display:none;animation:slideUp .3s ease">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <button onclick="backToMode()" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #EBEBEB;background:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">←</button>
+        <div>
+          <div style="font-size:18px;font-weight:900;color:#111" id="s3-photo-title">Adicione a foto</div>
+          <div style="font-size:13px;color:#9CA3AF" id="s3-photo-sub">Foto do rosto funciona melhor</div>
+        </div>
+        <div id="s3-mode-badge" style="margin-left:auto;padding:5px 12px;border-radius:99px;background:#F5F3FF;border:1.5px solid #DDD6FE;font-size:11px;font-weight:700;color:#6C3AE7"></div>
+      </div>
       <div id="photo-drop" onclick="trigPh()">
         <div id="ph-e">
           <div style="font-size:48px;margin-bottom:10px">📸</div>
-          <div style="font-size:15px;font-weight:700;color:#444;margin-bottom:4px">Toque para adicionar a foto</div>
-          <div style="font-size:13px;color:#9CA3AF">JPG ou PNG · Foto do rosto funciona melhor</div>
+          <div style="font-size:15px;font-weight:700;color:#444;margin-bottom:4px">Toque para adicionar</div>
+          <div style="font-size:13px;color:#9CA3AF">JPG ou PNG · Foto do rosto</div>
         </div>
-        <div id="ph-f" style="display:none">
-          <div id="pp-wrap"><img id="pp" src="" alt=""/><button id="pr" onclick="remPh(event)">✕</button></div>
-        </div>
+        <div id="ph-f" style="display:none"><div id="pp-wrap"><img id="pp" src="" alt=""/><button id="pr" onclick="remPh(event)">✕</button></div></div>
       </div>
       <input type="file" id="fi" accept="image/*" style="display:none" onchange="hFile(this)"/>
       <div id="ph-ok" class="photo-ok" style="display:none">
         <span style="font-size:22px">✅</span>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#15803D">Foto adicionada!</div>
-          <div style="font-size:12px;color:#9CA3AF;margin-top:1px" id="ph-ok-sub">Pronta para integrar no design</div>
-        </div>
+        <div><div style="font-size:14px;font-weight:700;color:#15803D">Foto adicionada!</div><div style="font-size:12px;color:#9CA3AF;margin-top:1px" id="ph-ok-sub">Pronta para o convite</div></div>
       </div>
-    </div>
-
-    <div style="text-align:center;margin-top:8px">
-      <button onclick="skipPhoto()" style="background:none;border:none;color:#9CA3AF;font-size:13px;font-family:inherit;font-weight:500;text-decoration:underline;cursor:pointer">Continuar sem foto →</button>
     </div>
   </div>
 
@@ -655,7 +675,15 @@ function rScr(n){
   if(n===0)dots.classList.remove("show");
   else{dots.classList.add("show");for(let i=0;i<4;i++){const d=document.getElementById("dot-"+i),l=document.getElementById("line-"+i),si=n-1;d.className="dot"+(i<si?" done":i===si?" active":"");d.textContent=i<si?"✓":(i+1);if(l)l.className="dot-line"+(i<si?" done":"");}}
   rBB(n);
-  if(n===1)rTh();if(n===2)rS2();if(n===4)rS4();if(n===5)setTimeout(()=>rCvs(true),120);
+  if(n===1)rTh();if(n===2)rS2();
+  if(n===3){
+    // Reset to mode selection phase
+    const sm=document.getElementById("s3-mode"),sp=document.getElementById("s3-photo");
+    if(sm)sm.style.display=S.photoMode?"none":"block";
+    if(sp)sp.style.display=S.photoMode?"block":"none";
+    if(S.photoMode){const bb=document.getElementById("bottom-bar");if(bb)bb.innerHTML=`<button class="btn-primary pulse" onclick="goTo(4)">Próximo →</button><button class="btn-secondary" onclick="backToMode()">← Escolher modo</button>`;}
+  }
+  if(n===4)rS4();if(n===5)setTimeout(()=>rCvs(true),120);
   window.scrollTo(0,0);
 }
 
@@ -664,7 +692,7 @@ function rBB(n){
   if(n===0){bb.style.display="none";return;}
   if(n===1){bb.innerHTML=`<button class="btn-primary pulse" id="bn1" onclick="n1()" ${!S.tid?"disabled":""}>Próximo →</button>`;return;}
   if(n===2){bb.innerHTML=`<button class="btn-primary" id="bn2" onclick="n2()" disabled>Próximo →</button><button class="btn-secondary" onclick="goTo(1)">← Voltar</button>`;uDB();return;}
-  if(n===3){bb.innerHTML=`<button class="btn-primary pulse" id="bn3" onclick="goTo(4)" ${!S.photoMode?"disabled":""}>Próximo →</button><button class="btn-secondary" onclick="goTo(2)">← Voltar</button>`;return;}
+  if(n===3){bb.innerHTML=`<button class="btn-secondary" onclick="goTo(2)">← Voltar</button>`;return;}
   if(n===4){
     if(!S.generating)bb.innerHTML=`<button class="btn-primary pulse" onclick="genInvite()">🎨 Gerar Convite</button><button class="btn-secondary" onclick="goTo(3)">← Voltar</button>`;
     else bb.innerHTML=`<button class="btn-primary" disabled><span class="spin">⏳</span> Gerando...</button>`;return;}
@@ -772,45 +800,63 @@ function n2(){
 /* ═════ AI MESSAGE ═════ */
 async function genMsg(){
   const nome=document.getElementById("i-nome").value.trim();
+  const idade=document.getElementById("i-idade").value||"?";
   if(!nome){toast("✏️ Preencha o nome primeiro!");return;}
   const btn=document.getElementById("btn-ai"),ic=document.getElementById("ai-ic"),lb=document.getElementById("ai-lb");
-  if(btn)btn.disabled=true;if(ic)ic.innerHTML='<span class="spin" style="font-size:12px">✨</span>';if(lb)lb.textContent="Gerando...";
+  if(btn)btn.disabled=true;
+  if(ic)ic.innerHTML='<span class="spin" style="font-size:12px">✦</span>';
+  if(lb)lb.textContent="Gerando...";
   try{
-    const t=T(),idade=document.getElementById("i-idade").value||"?";
-    const r=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:160,messages:[{role:"user",content:`Crie uma mensagem curta e muito animada para um convite de aniversário em português do Brasil. Nome: ${nome}. Idade: ${idade} anos. Tema: ${t.n}. Gênero: ${S.gen}. Máximo 2 frases, festiva e calorosa. APENAS o texto da mensagem, sem aspas ou explicações.`}]})});
-    const d=await r.json();const txt=d.content?.find(b=>b.type==="text")?.text||"";
-    const el=document.getElementById("i-msg");if(el){el.value=txt.trim();el.classList.add("filled");}
-    toast("✅ Mensagem gerada com sucesso!");
-  }catch{
+    const t=T();
+    const r=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:180,
+        messages:[{role:"user",content:"Crie uma mensagem EXCLUSIVA e animada para um convite de aniversário em português do Brasil.\nO nome do aniversariante é "+nome+" e ele(a) faz "+idade+" anos.\nO tema da festa é "+t.n+".\nGênero: "+S.gen+".\nOBRIGATÓRIO: a mensagem deve conter o nome \""+nome+"\".\nMáximo 2 frases curtas, festivas e calorosas.\nRetorne APENAS o texto da mensagem, sem aspas ou explicações."}]})
+    });
+    if(!r.ok){const e=await r.json();throw new Error(e.error||"Erro na API");}
+    const d=await r.json();
+    const txt=d.content?.find(b=>b.type==="text")?.text||"";
     const el=document.getElementById("i-msg");
-    if(el){el.value=`Venha celebrar comigo neste dia tão especial! Sua presença vai tornar tudo ainda mais mágico! 🎉`;el.classList.add("filled");}
+    if(el){el.value=txt.trim();el.classList.add("filled");}
+    toast("✅ Mensagem gerada!");
+  }catch(e){
+    const fallback=nome+", que este dia especial seja repleto de alegria e magia! Venha celebrar comigo! 🎉";
+    const el=document.getElementById("i-msg");
+    if(el){el.value=fallback;el.classList.add("filled");}
     toast("✅ Mensagem adicionada!");
   }
-  if(btn)btn.disabled=false;if(ic)ic.textContent="✨";if(lb)lb.textContent="Gerar com IA";
+  if(btn)btn.disabled=false;
+  if(ic)ic.textContent="✨";
+  if(lb)lb.textContent="Gerar com IA";
 }
 
 /* ═════ PHOTO & MODE ═════ */
 function setMode(mode){
   S.photoMode=mode;
-  ["ser","com","normal"].forEach(m=>{
-    const el=document.getElementById("mode-"+m);
-    if(el)el.className="mode-card"+(m===mode?" active":"");
-  });
-  document.getElementById("photo-section").style.display="block";
-  // Update bottom bar to enable Próximo if mode selected
-  const bb3=document.getElementById("bottom-bar");
-  if(bb3&&S.step===3){
-    const btn=bb3.querySelector(".btn-primary");
-    if(btn)btn.disabled=false;
-  }
-  // Update hint text
-  const subs={
-    ser:"IA vai analisar seu rosto e criar você como o personagem",
-    com:"Sua foto aparece ao lado do personagem",
-    normal:"Foto em moldura temática elegante"
-  };
-  const okSub=document.getElementById("ph-ok-sub");
-  if(okSub)okSub.textContent=subs[mode]||"";
+  // Phase 2: show photo upload
+  document.getElementById("s3-mode").style.display="none";
+  document.getElementById("s3-photo").style.display="block";
+  // Update badge and titles per mode
+  const labels={ser:"🦸 SER o personagem",com:"🤝 COM o personagem",normal:"🖼️ Só a foto"};
+  const subs={ser:"A IA vai criar você como o personagem",com:"O personagem ficará ao seu lado",normal:"Em moldura temática elegante"};
+  const badge=document.getElementById("s3-mode-badge");if(badge)badge.textContent=labels[mode]||"";
+  const okSub=document.getElementById("ph-ok-sub");if(okSub)okSub.textContent=subs[mode]||"";
+  const sub=document.getElementById("s3-photo-sub");if(sub)sub.textContent=subs[mode]||"Foto do rosto funciona melhor";
+  // Update bottom bar
+  const bb=document.getElementById("bottom-bar");
+  if(bb){bb.innerHTML=`<button class="btn-primary pulse" onclick="goTo(4)">Próximo →</button><button class="btn-secondary" onclick="backToMode()">← Escolher modo</button>`;}
+  window.scrollTo(0,0);
+}
+function backToMode(){
+  S.photoMode="";S.photo=null;S.photoDesc="";
+  document.getElementById("s3-mode").style.display="block";
+  document.getElementById("s3-photo").style.display="none";
+  document.getElementById("photo-drop").classList.remove("hp");
+  document.getElementById("ph-e").style.display="block";
+  document.getElementById("ph-f").style.display="none";
+  document.getElementById("ph-ok").style.display="none";
+  if(document.getElementById("fi"))document.getElementById("fi").value="";
+  ["ser","com","normal"].forEach(m=>{const el=document.getElementById("mode-"+m);if(el)el.className="mode-card";});
+  rBB(3);
 }
 function skipPhoto(){S.photo=null;S.photoMode="normal";S.photoDesc="";goTo(4);}
 function trigPh(){if(!S.photo)document.getElementById("fi").click();}
@@ -849,26 +895,38 @@ function rS4(){
   document.getElementById("demo-note").style.display="none";
   document.getElementById("log").className="";document.getElementById("log").innerHTML="";
 }
-function aLog(msg,type="info"){
-  const log=document.getElementById("log");log.classList.add("show");
-  // Remove existing AI loading widget
-  const existing=log.querySelector(".ai-loading");if(existing)existing.remove();
-  // Add log line
-  const cls={ok:"lok",err:"lerr",warn:"lwarn",info:"linfo"}[type]||"linfo";
-  const line=document.createElement("div");line.className="lline "+cls;line.textContent=msg;log.appendChild(line);
-  // Add AI loading widget if not error/ok
-  if(type==="info"){
-    const widget=document.createElement("div");widget.className="ai-loading";
-    widget.innerHTML=`<div class="ai-orb">✦</div><div class="ai-loading-text"><div class="ai-loading-title">IA processando...</div><div class="ai-loading-sub">${msg}</div><div class="ai-bars">${Array(8).fill('<div class="ai-bar"></div>').join("")}</div></div>`;
-    log.appendChild(widget);
-  }
-  log.scrollTop=log.scrollHeight;
+/* ═════ AI OVERLAY LOADING ═════ */
+const OV_STEPS={
+  "👁️ Analisando aparência da foto...":10,
+  "🤖 Claude criando prompt personalizado...":25,
+  "✅ Prompt criado":40,
+  "🎨 DALL-E 3 gerando arte exclusiva... (~30s)":55,
+  "✅ Arte gerada com sucesso!":85,
+  "🖼️ Compondo convite final...":92,
+  "✅ Pronto!":100,
+};
+function showOverlay(){document.getElementById("ai-overlay").style.display="flex";}
+function hideOverlay(){document.getElementById("ai-overlay").style.display="none";}
+function setOverlayStep(msg,pct){
+  const step=document.getElementById("ov-step"),bar=document.getElementById("ov-bar"),p=document.getElementById("ov-pct");
+  if(step)step.textContent=msg;
+  const progress=pct!=null?pct:(OV_STEPS[msg]||50);
+  if(bar)bar.style.width=progress+"%";
+  if(p)p.textContent=progress+"%";
 }
-function rDots(){const w=document.getElementById("log")?.querySelector(".ai-loading");if(w)w.remove();}
+function aLog(msg,type="info"){
+  setOverlayStep(msg);
+  // Also keep hidden log for debugging
+  const log=document.getElementById("log");if(!log)return;
+  log.classList.add("show");
+  const line=document.createElement("div");line.className="lline "+(type==="ok"?"lok":type==="err"?"lerr":type==="warn"?"lwarn":"linfo");line.textContent=msg;log.appendChild(line);
+}
+function rDots(){/* no-op with overlay */}
 const slp=ms=>new Promise(r=>setTimeout(r,ms));
 
 async function genInvite(){
   S.generating=true;rBB(4);document.getElementById("log").innerHTML="";S.bgUrl=null;
+  showOverlay();setOverlayStep("Iniciando...",5);
   const t=T();
   try{
     // Analyze photo appearance for "ser" and "com" modes
@@ -906,9 +964,13 @@ async function genInvite(){
     if(!b64)throw new Error("Imagem não retornada");
     S.bgUrl="data:image/png;base64,"+b64;
     rDots();aLog("✅ Arte gerada com sucesso!","ok");
-    aLog("🖼️ Compondo convite final...","info");await slp(200);rDots();aLog("✅ Pronto!","ok");
-    S.generating=false;rBB(4);goTo(5);
-  }catch(e){rDots();aLog("❌ "+e.message,"err");S.generating=false;rBB(4);}
+    aLog("🖼️ Compondo convite final...","info");await slp(300);
+    aLog("✅ Pronto!","ok");setOverlayStep("✅ Convite pronto!",100);
+    await slp(700);hideOverlay();S.generating=false;rBB(4);goTo(5);
+  }catch(e){
+    setOverlayStep("❌ "+e.message,0);await slp(2000);hideOverlay();
+    aLog("❌ "+e.message,"err");S.generating=false;rBB(4);toast("❌ "+e.message,5000);
+  }
 }
 
 /* ═════ PIX PAYMENT ═════ */
