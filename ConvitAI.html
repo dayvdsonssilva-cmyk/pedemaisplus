@@ -39,7 +39,7 @@ input,textarea,button{font-family:inherit;}button{cursor:pointer;}
 .label{font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px;display:block;}
 .card{background:#fff;border-radius:18px;padding:18px;border:1.5px solid #EBEBEB;}
 .inp{width:100%;padding:14px;border:2px solid #EBEBEB;border-radius:12px;font-size:15px;font-weight:500;color:#111;background:#FAFAFA;transition:border-color .2s;-webkit-appearance:none;}
-.inp:focus{border-color:#6C3AE7;background:#fff;outline:none;}.inp.filled{border-color:#6C3AE7;}
+.inp:focus{border-color:#6C3AE7;background:#fff;outline:none;}.inp.filled{border-color:#6C3AE7;}.inp.inp-err{border-color:#EF4444!important;background:#FFF5F5;}
 textarea.inp{resize:none;line-height:1.55;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px;}.span2{grid-column:1/-1;}
 .gbtn{flex:1;padding:14px 10px;border:2px solid #EBEBEB;border-radius:14px;background:#FAFAFA;color:#888;font-size:15px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;}
@@ -208,20 +208,59 @@ textarea.inp{resize:none;line-height:1.55;}
   <!-- S2 DADOS -->
   <div id="screen-2" class="screen">
     <div id="s2hd" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"></div>
-    <div class="grid2">
-      <div class="span2"><label class="label">NOME DO ANIVERSARIANTE *</label><input class="inp" id="i-nome" type="text" placeholder="Ex: Laura" oninput="cf(this)" onblur="cf(this)"/></div>
-      <div><label class="label">IDADE *</label><input class="inp" id="i-idade" type="number" min="1" max="17" placeholder="Ex: 7" oninput="cf(this)" onblur="cf(this)"/></div>
-      <div><label class="label">GÊNERO</label>
-        <div style="display:flex;gap:8px;height:56px">
-          <button class="gbtn active" id="g-menina" onclick="sg('menina')" style="height:100%"><span style="font-size:26px">👧</span><span style="font-size:11px;font-weight:700">Menina</span></button>
-          <button class="gbtn" id="g-menino" onclick="sg('menino')" style="height:100%"><span style="font-size:26px">👦</span><span style="font-size:11px;font-weight:700">Menino</span></button>
+    <!-- Nome -->
+    <div style="margin-bottom:14px">
+      <label class="label">NOME DO ANIVERSARIANTE *</label>
+      <input class="inp" id="i-nome" type="text" placeholder="Ex: Laura" oninput="cf(this)" onblur="cf(this)"/>
+    </div>
+    <!-- Idade + Gênero -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label class="label">IDADE *</label>
+        <input class="inp" id="i-idade" type="number" min="1" max="17" placeholder="Ex: 7" oninput="cf(this)" onblur="validateAge(this)"/>
+      </div>
+      <div>
+        <label class="label">GÊNERO</label>
+        <div style="display:flex;gap:8px;height:50px">
+          <button class="gbtn active" id="g-menina" onclick="sg('menina')" style="height:100%;flex:1">
+            <span style="font-size:22px;line-height:1">👧</span>
+            <span style="font-size:11px;font-weight:700;margin-top:2px">Menina</span>
+          </button>
+          <button class="gbtn" id="g-menino" onclick="sg('menino')" style="height:100%;flex:1">
+            <span style="font-size:22px;line-height:1">👦</span>
+            <span style="font-size:11px;font-weight:700;margin-top:2px">Menino</span>
+          </button>
         </div>
       </div>
-      <div><label class="label">DATA *</label><input class="inp" id="i-data" type="date" oninput="cf(this)" onblur="cf(this)"/></div>
-      <div><label class="label">HORÁRIO *</label><input class="inp" id="i-hora" type="time" oninput="cf(this)" onblur="cf(this)"/></div>
-      <div class="span2"><label class="label">LOCAL *</label><input class="inp" id="i-local" type="text" placeholder="Salão das Flores, Rua das Acácias..." oninput="cf(this)" onblur="cf(this)"/></div>
-      <div class="span2"><label class="label">E-MAIL (para receber o convite)</label><input class="inp" id="i-email" type="email" placeholder="seu@email.com" oninput="cf(this)" onblur="cf(this)"/></div>
     </div>
+    <!-- Data + Horário -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label class="label">DATA DA FESTA *</label>
+        <input class="inp" id="i-data" type="date" oninput="cf(this)" onblur="validateDate(this)"/>
+      </div>
+      <div>
+        <label class="label">HORÁRIO *</label>
+        <input class="inp" id="i-hora" type="time" oninput="cf(this)" onblur="cf(this)"/>
+      </div>
+    </div>
+    <!-- Local -->
+    <div style="margin-bottom:14px">
+      <label class="label">LOCAL *</label>
+      <input class="inp" id="i-local" type="text" placeholder="Salão das Flores, Rua das Acácias..." oninput="cf(this)" onblur="cf(this)"/>
+    </div>
+    <!-- Email + Telefone -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label class="label">E-MAIL *</label>
+        <input class="inp" id="i-email" type="email" placeholder="seu@email.com" oninput="cf(this)" onblur="validateEmail(this)"/>
+      </div>
+      <div>
+        <label class="label">TELEFONE *</label>
+        <input class="inp" id="i-tel" type="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)" onblur="validatePhone(this)" maxlength="15"/>
+      </div>
+    </div>
+    <div id="form-errors" style="display:none;background:#FFF5F5;border:1.5px solid #FECACA;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#DC2626;line-height:1.6"></div>
     <div class="msg-hd">
       <label class="label" style="margin-bottom:0">MENSAGEM AOS CONVIDADOS</label>
       <button class="btn-ai" id="btn-ai" onclick="genMsg()"><span id="ai-ic">✨</span> <span id="ai-lb">Gerar com IA</span></button>
@@ -516,7 +555,7 @@ function rCvs(watermarked){
 }
 
 /* ═════ NAVIGATION ═════ */
-function goHome(){Object.assign(S,{step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",msg:"",photo:null,bgUrl:null,paid:false,generating:false});["i-nome","i-idade","i-data","i-hora","i-local","i-email","i-msg"].forEach(id=>{const el=document.getElementById(id);if(el){el.value="";el.classList.remove("filled");}});rScr(0);}
+function goHome(){Object.assign(S,{step:0,tid:"",gen:"menina",nome:"",idade:"",data:"",hora:"",local:"",email:"",tel:"",msg:"",photo:null,bgUrl:null,paid:false,generating:false});["i-nome","i-idade","i-data","i-hora","i-local","i-email","i-tel","i-msg"].forEach(id=>{const el=document.getElementById(id);if(el){el.value="";el.classList.remove("filled","inp-err");}});rScr(0);}
 function goTo(n){S.step=n;rScr(n);}
 function rScr(n){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -554,14 +593,90 @@ function selT(id){S.tid=id;rTh();const b=document.getElementById("bn1");if(b){b.
 function n1(){if(S.tid)goTo(2);}
 
 /* ═════ FORM ═════ */
-function rS2(){const t=T();document.getElementById("s2hd").innerHTML=`<div style="width:44px;height:62px;border-radius:10px;background:${t.bg};border:2px solid ${t.c}40;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${t.e}</div><div><div style="font-size:20px;font-weight:900;color:#111">${t.n}</div><div style="font-size:13px;color:#9CA3AF">Preencha os dados da festa</div></div>`;
-  [["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["email","i-email"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el){el.value=S[k]||"";if(S[k])el.classList.add("filled");}});
+function rS2(){
+  const t=T();
+  document.getElementById("s2hd").innerHTML=`<div style="width:44px;height:62px;border-radius:10px;background:${t.bg};border:2px solid ${t.c}40;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${t.e}</div><div><div style="font-size:20px;font-weight:900;color:#111">${t.n}</div><div style="font-size:13px;color:#9CA3AF">Preencha os dados da festa</div></div>`;
+  // Set today as min date
+  const today=new Date().toISOString().split("T")[0];
+  const dataEl=document.getElementById("i-data");
+  if(dataEl)dataEl.min=today;
+  [["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["email","i-email"],["tel","i-tel"],["msg","i-msg"]].forEach(([k,id])=>{
+    const el=document.getElementById(id);if(el){el.value=S[k]||"";if(S[k])el.classList.add("filled");}
+  });
   ["menina","menino"].forEach(g=>{const b=document.getElementById("g-"+g);if(b)b.className="gbtn"+(S.gen===g?" active":"");});
+  document.getElementById("form-errors").style.display="none";
+  uDB();
 }
 function cf(el){el.value?el.classList.add("filled"):el.classList.remove("filled");uDB();}
-function uDB(){const ok=["i-nome","i-idade","i-data","i-hora","i-local"].every(id=>document.getElementById(id)?.value?.trim());const b=document.getElementById("bn2");if(b)b.disabled=!ok;}
+function uDB(){
+  const ok=["i-nome","i-idade","i-data","i-hora","i-local","i-email","i-tel"].every(id=>document.getElementById(id)?.value?.trim());
+  const b=document.getElementById("bn2");if(b)b.disabled=!ok;
+}
 function sg(g){S.gen=g;["menina","menino"].forEach(x=>{const b=document.getElementById("g-"+x);if(b)b.className="gbtn"+(x===g?" active":"");});}
-function n2(){[["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["email","i-email"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el)S[k]=el.value.trim();});goTo(3);}
+
+/* Masks & Validators */
+function maskPhone(el){
+  let v=el.value.replace(/\D/g,"").slice(0,11);
+  if(v.length>10)v=v.replace(/^(\d{2})(\d{5})(\d{0,4}).*/,"($1) $2-$3");
+  else if(v.length>6)v=v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/,"($1) $2-$3");
+  else if(v.length>2)v=v.replace(/^(\d{2})(\d{0,5}).*/,"($1) $2");
+  else if(v.length>0)v="("+v;
+  el.value=v;el.classList.toggle("filled",!!v);uDB();
+}
+function validateDate(el){
+  if(!el.value)return;
+  const today=new Date().toISOString().split("T")[0];
+  if(el.value<today){
+    el.classList.add("inp-err");
+    showErr("📅 A data da festa não pode ser no passado. Escolha uma data futura.");
+    el.value="";el.classList.remove("filled");uDB();
+  } else {el.classList.remove("inp-err");hideErr();}
+}
+function validateEmail(el){
+  if(!el.value)return;
+  const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+  el.classList.toggle("inp-err",!ok);
+  if(!ok)showErr("📧 E-mail inválido. Verifique e tente novamente.");
+  else hideErr();
+  uDB();
+}
+function validatePhone(el){
+  if(!el.value)return;
+  const digits=el.value.replace(/\D/g,"");
+  const ok=digits.length>=10;
+  el.classList.toggle("inp-err",!ok);
+  if(!ok)showErr("📱 Telefone inválido. Informe DDD + número.");
+  else hideErr();
+  uDB();
+}
+function validateAge(el){
+  const v=parseInt(el.value);
+  if(el.value&&(v<1||v>17)){
+    el.classList.add("inp-err");
+    showErr("🎂 Idade inválida. O ConvitAI atende de 1 a 17 anos.");
+    el.value="";el.classList.remove("filled");uDB();
+  } else el.classList.remove("inp-err");
+}
+function showErr(msg){const el=document.getElementById("form-errors");if(el){el.textContent=msg;el.style.display="block";}}
+function hideErr(){const el=document.getElementById("form-errors");if(el)el.style.display="none";}
+
+function n2(){
+  // Final validation before proceeding
+  const errs=[];
+  const today=new Date().toISOString().split("T")[0];
+  const dataVal=document.getElementById("i-data")?.value;
+  if(dataVal&&dataVal<today){errs.push("📅 Data da festa no passado.");}
+  const emailVal=document.getElementById("i-email")?.value;
+  if(emailVal&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)){errs.push("📧 E-mail inválido.");}
+  const telVal=document.getElementById("i-tel")?.value?.replace(/\D/g,"");
+  if(telVal&&telVal.length<10){errs.push("📱 Telefone inválido.");}
+  if(errs.length){showErr(errs.join(" · "));return;}
+  hideErr();
+  [["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["email","i-email"],["tel","i-tel"],["msg","i-msg"]].forEach(([k,id])=>{
+    const el=document.getElementById(id);if(el)S[k]=el.value.trim();
+  });
+  goTo(3);
+}
 
 /* ═════ AI MESSAGE ═════ */
 async function genMsg(){
@@ -592,7 +707,7 @@ function remPh(e){e.stopPropagation();S.photo=null;document.getElementById("phot
 /* ═════ STEP 4 ═════ */
 function rS4(){
   const t=T();
-  [["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["email","i-email"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el&&el.value)S[k]=el.value.trim();});
+  [["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["email","i-email"],["tel","i-tel"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el&&el.value)S[k]=el.value.trim();});
   const th=document.getElementById("sth");if(th){th.textContent=t.e;th.style.cssText+=`;background:${t.bg};border-color:${t.c}40;`;}
   document.getElementById("stn").textContent=t.n;
   document.getElementById("sts").textContent=(t.cat==="infantil"?"Infantil":"Adolescente")+(S.photo?" · 📸 Com foto":"");
