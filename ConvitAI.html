@@ -136,6 +136,7 @@ textarea.inp{resize:none;line-height:1.55;}
     <div class="pspin"></div>
   </div>
 </div>
+<div id="toast" style="position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#111;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center"></div>
 
 <div id="app">
   <header id="header">
@@ -279,13 +280,33 @@ const T=()=>THEMES.find(x=>x.id===S.tid)||THEMES[0];
 
 /* PAYMENT RETURN */
 (function(){
-  const p=new URLSearchParams(window.location.search),st=p.get("status"),ss=sessionStorage.getItem("cs"),sc=sessionStorage.getItem("cc");
-  if(st==="approved"&&ss&&sc){
-    try{const sv=JSON.parse(ss);Object.assign(S,sv,{paid:true,step:5});window.history.replaceState({},"","/");sessionStorage.removeItem("cs");
-      window.addEventListener("DOMContentLoaded",()=>{goTo(5);setTimeout(()=>{cvs=document.getElementById("cvs");if(!cvs)return;cvs.width=CW;cvs.height=CH;const img=new Image();img.onload=()=>{cvs.getContext("2d").drawImage(img,0,0,CW,CH);rBB(5);};img.src=sc;sessionStorage.removeItem("cc");},300);});}catch(e){}
+  const p=new URLSearchParams(window.location.search),st=p.get("status");
+  const ss=sessionStorage.getItem("cs"),sc=sessionStorage.getItem("cc");
+  const cb=sessionStorage.getItem("cb"),cp=sessionStorage.getItem("cp");
+  function cleanup(){["cs","cc","cb","cp"].forEach(k=>sessionStorage.removeItem(k));}
+  if(st==="approved"&&ss){
+    try{
+      const sv=JSON.parse(ss);
+      Object.assign(S,sv,{paid:true,step:5,bgUrl:cb||null,photo:cp||null});
+      window.history.replaceState({},"","/");cleanup();
+      window.addEventListener("DOMContentLoaded",()=>{
+        goTo(5);
+        setTimeout(()=>{
+          cvs=document.getElementById("cvs");if(!cvs)return;
+          if(sc){cvs.width=CW;cvs.height=CH;const img=new Image();img.onload=()=>cvs.getContext("2d").drawImage(img,0,0,CW,CH);img.src=sc;}
+          else rCvs(false);
+          rBB(5);
+        },300);
+      });
+    }catch(e){console.error(e);}
   } else if((st==="failure"||st==="pending")&&ss){
-    window.history.replaceState({},"","/");try{Object.assign(S,JSON.parse(ss));}catch(e){}
-    window.addEventListener("DOMContentLoaded",()=>{goTo(5);setTimeout(()=>rCvs(true),300);alert(st==="failure"?"❌ Pagamento não aprovado. Tente novamente.":"⏳ Pagamento pendente.");});
+    window.history.replaceState({},"","/");
+    try{const sv=JSON.parse(ss);Object.assign(S,sv,{bgUrl:cb||null,photo:cp||null});}catch(e){}
+    cleanup();
+    window.addEventListener("DOMContentLoaded",()=>{
+      goTo(5);setTimeout(()=>rCvs(true),300);
+      setTimeout(()=>toast(st==="failure"?"❌ Pagamento não aprovado. Tente novamente.":"⏳ Pagamento pendente. Aguarde.",4000),600);
+    });
   }
 })();
 
@@ -307,7 +328,7 @@ function rBB(n){
   const bb=document.getElementById("bottom-bar");bb.style.display="flex";bb.innerHTML="";
   if(n===0){bb.style.display="none";return;}
   if(n===1){bb.innerHTML=`<button class="btn-primary pulse" id="bn1" onclick="n1()" ${!S.tid?"disabled":""}>Próximo →</button>`;return;}
-  if(n===2){bb.innerHTML=`<button class="btn-primary" id="bn2" onclick="n2()" disabled>Próximo: Foto →</button><button class="btn-secondary" onclick="goTo(1)">← Voltar</button>`;uDB();return;}
+  if(n===2){bb.innerHTML=`<button class="btn-primary" id="bn2" onclick="n2()" disabled>Próximo →</button><button class="btn-secondary" onclick="goTo(1)">← Voltar</button>`;uDB();return;}
   if(n===3){bb.innerHTML=`<button class="btn-primary pulse" onclick="goTo(4)">Gerar Convite →</button><button class="btn-secondary" onclick="goTo(2)">← Voltar</button>`;return;}
   if(n===4){
     if(!S.generating)bb.innerHTML=`<button class="btn-primary pulse" onclick="genInvite()">🎨 Gerar com DALL-E 3</button><button class="btn-secondary" onclick="goTo(3)">← Voltar</button>`;
@@ -336,15 +357,20 @@ function uDB(){const ok=["i-nome","i-idade","i-data","i-hora","i-local"].every(i
 function sg(g){S.gen=g;["menina","menino"].forEach(x=>{const b=document.getElementById("g-"+x);if(b){b.className="gbtn"+(x===g?" active":"");}});}
 function n2(){[["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el)S[k]=el.value.trim();});goTo(3);}
 
+/* TOAST */
+function toast(msg,dur=2800){const t=document.getElementById("toast");t.textContent=msg;t.style.opacity="1";t.style.transform="translateX(-50%) translateY(0)";clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity="0";t.style.transform="translateX(-50%) translateY(20px)";},dur);}
+
 async function genMsg(){
-  const nome=document.getElementById("i-nome").value.trim();if(!nome)return;
+  const nome=document.getElementById("i-nome").value.trim();
+  if(!nome){toast("✏️ Preencha o nome primeiro!");return;}
   const btn=document.getElementById("btn-ai"),ic=document.getElementById("ai-ic"),lb=document.getElementById("ai-lb");
   if(btn)btn.disabled=true;if(ic)ic.innerHTML='<span class="spin" style="font-size:12px">✨</span>';if(lb)lb.textContent="Gerando...";
   try{const t=T(),idade=document.getElementById("i-idade").value||"?";
     const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:160,messages:[{role:"user",content:`Crie mensagem curta animada para convite de aniversário em português. Nome: ${nome}. Idade: ${idade} anos. Tema: ${t.n}. Gênero: ${S.gen}. Máximo 2 frases festivas. SÓ o texto, sem aspas.`}]})});
     const d=await r.json();const txt=d.content?.find(b=>b.type==="text")?.text||"";
     const el=document.getElementById("i-msg");if(el){el.value=txt.trim();el.classList.add("filled");}
-  }catch{const el=document.getElementById("i-msg");if(el){el.value="Venha celebrar comigo neste dia mágico! Sua presença é o melhor presente! 🎉";el.classList.add("filled");}}
+    toast("✅ Mensagem gerada!");
+  }catch{const el=document.getElementById("i-msg");if(el){el.value="Venha celebrar comigo neste dia mágico! Sua presença é o melhor presente! 🎉";el.classList.add("filled");}toast("✅ Mensagem gerada!");}
   if(btn)btn.disabled=false;if(ic)ic.textContent="✨";if(lb)lb.textContent="Gerar com IA";
 }
 
@@ -424,25 +450,42 @@ function star(ctx,cx,cy,r,c="#FFF9C4"){ctx.fillStyle=c;ctx.beginPath();for(let i
 function wtxt(ctx,text,x,y,mw,lh){const words=(text||"").split(" ");let line="";const lines=[];for(const w of words){const t=line+w+" ";if(ctx.measureText(t).width>mw&&line){lines.push(line.trim());line=w+" ";}else line=t;}if(line.trim())lines.push(line.trim());ctx.textAlign="center";lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));}
 
 /* MERCADO PAGO */
+/* MERCADO PAGO */
 async function doPay(){
   const btn=document.getElementById("bp");if(btn)btn.disabled=true;
   document.getElementById("pmo-e").textContent="💳";document.getElementById("pmo-t").textContent="Preparando pagamento...";document.getElementById("pmo-s").textContent="Aguarde um momento";
   document.getElementById("pay-overlay").classList.add("show");
   try{
-    if(cvs)sessionStorage.setItem("cc",cvs.toDataURL("image/png"));
-    sessionStorage.setItem("cs",JSON.stringify({tid:S.tid,gen:S.gen,nome:S.nome,idade:S.idade,data:S.data,hora:S.hora,local:S.local,msg:S.msg,photo:S.photo,bgUrl:S.bgUrl}));
+    // Salva estado mínimo (sem foto e sem bgUrl para evitar overflow)
+    const state={tid:S.tid,gen:S.gen,nome:S.nome,idade:S.idade,data:S.data,hora:S.hora,local:S.local,msg:S.msg};
+    sessionStorage.setItem("cs",JSON.stringify(state));
+    // Salva canvas como JPEG comprimido (muito menor que PNG)
+    if(cvs){try{sessionStorage.setItem("cc",cvs.toDataURL("image/jpeg",0.82));}catch(e){console.warn("sessionStorage cheio, sem preview");}}
+    // Salva bgUrl separado (pode ser grande)
+    if(S.bgUrl){try{sessionStorage.setItem("cb",S.bgUrl);}catch(e){console.warn("bgUrl muito grande p/ sessionStorage");}}
+    if(S.photo){try{sessionStorage.setItem("cp",S.photo);}catch(e){console.warn("Photo muito grande p/ sessionStorage");}}
     const r=await fetch("/api/create-preference",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome:S.nome,tema:T().n})});
     if(!r.ok)throw new Error("Erro ao criar pagamento");
-    const data=await r.json();if(!data.init_point)throw new Error("Link não retornado");
+    const data=await r.json();if(!data.init_point)throw new Error("Link de pagamento não retornado");
     document.getElementById("pmo-e").textContent="🔒";document.getElementById("pmo-t").textContent="Redirecionando...";document.getElementById("pmo-s").textContent="Você será levado ao Mercado Pago";
     setTimeout(()=>{window.location.href=data.init_point;},700);
-  }catch(e){document.getElementById("pay-overlay").classList.remove("show");alert("❌ Erro ao iniciar pagamento: "+e.message);if(btn)btn.disabled=false;}
+  }catch(e){document.getElementById("pay-overlay").classList.remove("show");toast("❌ "+e.message,3500);if(btn)btn.disabled=false;}
 }
 
 function dlCvs(){
-  if(!cvs)return;S.paid=true;
-  rCvs(false);
-  setTimeout(()=>{const a=document.createElement("a");a.download="convite-"+(S.nome||"festa")+".png";a.href=cvs.toDataURL("image/png");a.click();},500);
+  if(!cvs)return;
+  toast("⏳ Preparando download...",2000);
+  if(S.bgUrl){
+    // Re-renderiza limpo com a arte original
+    rCvs(false);
+    setTimeout(()=>{const a=document.createElement("a");a.download="convite-"+(S.nome||"festa")+".png";a.href=cvs.toDataURL("image/png");a.click();toast("✅ Download iniciado!");},600);
+  } else {
+    // Remove watermark do canvas atual desenhando branco por cima do overlay
+    const ctx=cvs.getContext("2d");
+    // Copia canvas atual, re-renderiza sem wm
+    rCvs(false);
+    setTimeout(()=>{const a=document.createElement("a");a.download="convite-"+(S.nome||"festa")+".png";a.href=cvs.toDataURL("image/png");a.click();toast("✅ Download iniciado!");},600);
+  }
 }
 
 rHS();
