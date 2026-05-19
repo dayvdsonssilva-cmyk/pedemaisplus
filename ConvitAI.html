@@ -51,8 +51,10 @@ textarea.inp{resize:none;line-height:1.55;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px;}
 .span2{grid-column:1/-1;}
 .grow{display:flex;gap:10px;margin-bottom:14px;}
-.gbtn{flex:1;padding:13px;border:2px solid #EBEBEB;border-radius:12px;background:#FAFAFA;color:#888;font-size:14px;font-weight:700;transition:all .2s;}
+.gbtn{flex:1;padding:14px 10px;border:2px solid #EBEBEB;border-radius:14px;background:#FAFAFA;color:#888;font-size:24px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;}
 .gbtn.active{border-color:#6C3AE7;background:#F0EBFF;color:#6C3AE7;}
+#g-menina.active{border-color:#EC4899 !important;background:#FDF2F8 !important;color:#EC4899 !important;}
+#g-menino.active{border-color:#3B82F6 !important;background:#EFF6FF !important;color:#3B82F6 !important;}
 .cat-row{display:flex;gap:8px;margin-bottom:20px;}
 .cat-btn{flex:1;padding:10px 4px;border-radius:10px;border:2px solid #EBEBEB;background:#fff;color:#9CA3AF;font-size:12px;font-weight:700;transition:all .2s;}
 .cat-btn.active{border-color:#6C3AE7;background:#6C3AE7;color:#fff;}
@@ -186,9 +188,9 @@ textarea.inp{resize:none;line-height:1.55;}
       <div class="span2"><label class="label">NOME DO ANIVERSARIANTE *</label><input class="inp" id="i-nome" type="text" placeholder="Ex: Laura" oninput="cf(this)" onblur="cf(this)"/></div>
       <div><label class="label">IDADE *</label><input class="inp" id="i-idade" type="number" min="1" max="17" placeholder="Ex: 7" oninput="cf(this)" onblur="cf(this)"/></div>
       <div><label class="label">GÊNERO</label>
-        <div style="display:flex;gap:8px;height:50px">
-          <button class="gbtn active" id="g-menina" onclick="sg('menina')" style="height:100%">👧 Menina</button>
-          <button class="gbtn" id="g-menino" onclick="sg('menino')" style="height:100%">👦 Menino</button>
+        <div style="display:flex;gap:10px;margin-bottom:14px">
+          <button class="gbtn active" id="g-menina" onclick="sg('menina')"><span style="font-size:28px">👧</span><span style="font-size:12px;font-weight:700">Menina</span></button>
+          <button class="gbtn" id="g-menino" onclick="sg('menino')"><span style="font-size:28px">👦</span><span style="font-size:12px;font-weight:700">Menino</span></button>
         </div>
       </div>
       <div><label class="label">DATA *</label><input class="inp" id="i-data" type="date" oninput="cf(this)" onblur="cf(this)"/></div>
@@ -327,11 +329,11 @@ function n1(){if(S.tid)goTo(2);}
 
 function rS2(){const t=T();document.getElementById("s2hd").innerHTML=`<div style="width:44px;height:62px;border-radius:10px;background:${t.bg};border:2px solid ${t.c}40;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${t.e}</div><div><div style="font-size:20px;font-weight:900;color:#111">${t.n}</div><div style="font-size:13px;color:#9CA3AF">Preencha os dados da festa</div></div>`;
   [["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el){el.value=S[k]||"";if(S[k])el.classList.add("filled");}});
-  ["menina","menino"].forEach(g=>{const b=document.getElementById("g-"+g);if(b)b.className="gbtn"+(S.gen===g?" active":"");});
+  ["menina","menino"].forEach(g=>{const b=document.getElementById("g-"+g);if(b){b.className="gbtn"+(S.gen===g?" active":"");}});
 }
 function cf(el){el.value?el.classList.add("filled"):el.classList.remove("filled");uDB();}
 function uDB(){const ok=["i-nome","i-idade","i-data","i-hora","i-local"].every(id=>document.getElementById(id)?.value?.trim());const b=document.getElementById("bn2");if(b)b.disabled=!ok;}
-function sg(g){S.gen=g;["menina","menino"].forEach(x=>{const b=document.getElementById("g-"+x);if(b)b.className="gbtn"+(x===g?" active":"");});}
+function sg(g){S.gen=g;["menina","menino"].forEach(x=>{const b=document.getElementById("g-"+x);if(b){b.className="gbtn"+(x===g?" active":"");}});}
 function n2(){[["nome","i-nome"],["idade","i-idade"],["data","i-data"],["hora","i-hora"],["local","i-local"],["msg","i-msg"]].forEach(([k,id])=>{const el=document.getElementById(id);if(el)S[k]=el.value.trim();});goTo(3);}
 
 async function genMsg(){
