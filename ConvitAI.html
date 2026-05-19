@@ -714,7 +714,7 @@ function rS4(){
   const ds=S.data?new Date(S.data+"T12:00").toLocaleDateString("pt-BR"):"--";
   document.getElementById("sgrid").innerHTML=[["👤",S.nome||"--"],["🎂",(S.idade||"--")+" anos"],["📅",ds],["⏰",S.hora||"--"],["📍",S.local||"--"]].map(([ic,v])=>`<div class="sum-it"><span>${ic}</span><strong>${v}</strong></div>`).join("");
   const me=document.getElementById("smsg");if(me){me.style.display=S.msg?"block":"none";if(S.msg)me.textContent=`💬 "${S.msg.slice(0,65)}${S.msg.length>65?"...":""}"` ;}
-  document.getElementById("demo-note").style.display=OPENAI_KEY?"none":"block";
+  document.getElementById("demo-note").style.display="none";
   document.getElementById("log").className="";document.getElementById("log").innerHTML="";
 }
 function aLog(msg,type="info"){const log=document.getElementById("log");log.classList.add("show");const cls={ok:"lok",err:"lerr",warn:"lwarn",info:"linfo"}[type]||"linfo";const s=document.createElement("span");s.className="lline "+cls;s.textContent=msg;const d=log.querySelector(".ldots");if(d)d.remove();log.appendChild(s);if(type!=="err"){const dd=document.createElement("div");dd.className="ldots";for(let i=0;i<5;i++){const di=document.createElement("div");di.className="ldot";di.style.animationDelay=(i*.12)+"s";dd.appendChild(di);}log.appendChild(dd);}}
@@ -725,20 +725,16 @@ async function genInvite(){
   S.generating=true;rBB(4);document.getElementById("log").innerHTML="";S.bgUrl=null;
   const t=T();
   try{
-    if(!OPENAI_KEY){
-      aLog("🎨 Gerando arte com templates profissionais...","info");await slp(800);rDots();
-      aLog("✅ Arte gerada!","ok");rDots();
-      S.generating=false;rBB(4);goTo(5);return;
-    }
+    if(false){// legacy - chave agora no servidor via /api/generate-image
     aLog("🤖 Claude criando prompt criativo...","info");
     const pr=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:`Create a DALL-E 3 prompt for a PROFESSIONAL birthday party invitation BACKGROUND. Theme: ${t.n}. Child: ${S.nome}, ${S.idade} years, ${S.gen==="menino"?"boy":"girl"}. Style: dark luxury, rich colors ${t.c1} to ${t.c2}. Ultra vibrant festive professional illustration. Portrait 9:16. Leave center area slightly lighter for photo. Bottom 40% darker for text. Include sparkles confetti balloons themed elements. ABSOLUTELY NO TEXT NO WORDS NO LETTERS NO NUMBERS anywhere. Return ONLY the prompt text.`}]})});
     const pd=await pr.json();
     const dp=(pd.content?.find(b=>b.type==="text")?.text||"Professional birthday party dark luxury background, vibrant colors, confetti, sparkles")+" NO text NO words NO letters. Portrait 9:16.";
     rDots();aLog(`✅ Prompt criado`,"ok");
     aLog("🎨 DALL-E 3 gerando arte exclusiva... (~30s)","info");
-    const ir=await fetch("https://api.openai.com/v1/images/generations",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OPENAI_KEY},body:JSON.stringify({model:"dall-e-3",prompt:dp,n:1,size:"1024x1792",quality:"hd",style:"vivid",response_format:"b64_json"})});
-    if(!ir.ok){const e=await ir.json();throw new Error(e.error?.message||"Erro OpenAI");}
-    const id=await ir.json();const b64=id.data?.[0]?.b64_json;
+    const ir=await fetch("/api/generate-image",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:dp})});
+    if(!ir.ok){const e=await ir.json();throw new Error(e.error||"Erro ao gerar imagem");}
+    const id=await ir.json();const b64=id.image;
     if(!b64)throw new Error("Imagem não retornada");
     S.bgUrl="data:image/png;base64,"+b64;
     rDots();aLog("✅ Arte DALL-E 3 gerada!","ok");
