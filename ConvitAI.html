@@ -69,11 +69,32 @@ textarea.inp{resize:none;line-height:1.55;}
 .sum-it{display:flex;align-items:center;gap:5px;font-size:13px;color:#374151;font-weight:500;}
 .sum-it strong{font-weight:700;}
 .sum-msg{margin-top:12px;padding:10px 12px;background:#F8F5FF;border-radius:10px;font-size:12px;color:#6C3AE7;font-style:italic;}
-#log{background:#0F0F0F;border-radius:14px;padding:14px 16px;margin-bottom:16px;font-family:'Courier New',monospace;font-size:12px;line-height:1.8;display:none;}
+#log{background:#0F0F0F;border-radius:16px;padding:16px;margin-bottom:16px;font-family:'Courier New',monospace;font-size:12px;line-height:1.9;display:none;border:1px solid #1A1A2E;}
 #log.show{display:block;}
-.lline{display:block;}.lok{color:#4ADE80;}.lerr{color:#F87171;}.lwarn{color:#FBBF24;}.linfo{color:#94A3B8;}
-.ldots{display:flex;gap:4px;margin-top:8px;}
-.ldot{width:4px;height:14px;background:#4ADE80;border-radius:2px;opacity:.7;animation:wave .8s ease-in-out infinite;}
+.lline{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.lok{color:#4ADE80;}.lerr{color:#F87171;}.lwarn{color:#FBBF24;}.linfo{color:#94A3B8;}
+.lok::before{content:"✓";color:#4ADE80;font-weight:900;}
+.lerr::before{content:"✗";color:#F87171;font-weight:900;}
+.lwarn::before{content:"◆";color:#FBBF24;}
+.linfo::before{content:"›";color:#6C3AE7;font-weight:900;}
+/* AI Loading indicator */
+.ai-loading{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#0A0A1A;border-radius:12px;margin-top:10px;border:1px solid #1A1A2E;}
+.ai-orb{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6C3AE7,#EC4899);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;animation:orbPulse 1.5s ease-in-out infinite;}
+.ai-loading-text{flex:1;}
+.ai-loading-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:4px;}
+.ai-loading-sub{font-size:11px;color:#555;}
+.ai-bars{display:flex;gap:3px;align-items:center;margin-top:5px;}
+.ai-bar{width:3px;border-radius:99px;background:linear-gradient(to top,#6C3AE7,#EC4899);animation:aiBar 1s ease-in-out infinite;}
+.ai-bar:nth-child(1){height:8px;animation-delay:0s;}
+.ai-bar:nth-child(2){height:14px;animation-delay:.1s;}
+.ai-bar:nth-child(3){height:20px;animation-delay:.2s;}
+.ai-bar:nth-child(4){height:14px;animation-delay:.3s;}
+.ai-bar:nth-child(5){height:8px;animation-delay:.4s;}
+.ai-bar:nth-child(6){height:12px;animation-delay:.5s;}
+.ai-bar:nth-child(7){height:18px;animation-delay:.6s;}
+.ai-bar:nth-child(8){height:10px;animation-delay:.7s;}
+@keyframes orbPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(108,58,231,.5)}50%{transform:scale(1.1);box-shadow:0 0 0 8px rgba(108,58,231,0)}}
+@keyframes aiBar{0%,100%{transform:scaleY(.4);opacity:.5}50%{transform:scaleY(1);opacity:1}}
 /* Price card */
 .price-card{background:#F0FDF9;border:2px solid #99F6E4;border-radius:16px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
 .price-info{flex:1;}.price-title{font-size:14px;font-weight:800;color:#0F766E;}
@@ -616,7 +637,7 @@ function goHome(){
 /* ═════ PHOTO ANALYSIS ═════ */
 async function analyzePhoto(base64, mime){
   try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+    const r=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:180,messages:[{role:"user",content:[
         {type:"image",source:{type:"base64",media_type:mime||"image/jpeg",data:base64}},
         {type:"text",text:"Describe this child's appearance for an AI image generation prompt. Include: hair color, hair length/style, approximate skin tone, gender. One concise sentence in English only. Example: 'A girl with long curly brown hair, light skin tone.'"}
@@ -756,7 +777,7 @@ async function genMsg(){
   if(btn)btn.disabled=true;if(ic)ic.innerHTML='<span class="spin" style="font-size:12px">✨</span>';if(lb)lb.textContent="Gerando...";
   try{
     const t=T(),idade=document.getElementById("i-idade").value||"?";
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:160,messages:[{role:"user",content:`Crie uma mensagem curta e muito animada para um convite de aniversário em português do Brasil. Nome: ${nome}. Idade: ${idade} anos. Tema: ${t.n}. Gênero: ${S.gen}. Máximo 2 frases, festiva e calorosa. APENAS o texto da mensagem, sem aspas ou explicações.`}]})});
+    const r=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:160,messages:[{role:"user",content:`Crie uma mensagem curta e muito animada para um convite de aniversário em português do Brasil. Nome: ${nome}. Idade: ${idade} anos. Tema: ${t.n}. Gênero: ${S.gen}. Máximo 2 frases, festiva e calorosa. APENAS o texto da mensagem, sem aspas ou explicações.`}]})});
     const d=await r.json();const txt=d.content?.find(b=>b.type==="text")?.text||"";
     const el=document.getElementById("i-msg");if(el){el.value=txt.trim();el.classList.add("filled");}
     toast("✅ Mensagem gerada com sucesso!");
@@ -828,8 +849,22 @@ function rS4(){
   document.getElementById("demo-note").style.display="none";
   document.getElementById("log").className="";document.getElementById("log").innerHTML="";
 }
-function aLog(msg,type="info"){const log=document.getElementById("log");log.classList.add("show");const cls={ok:"lok",err:"lerr",warn:"lwarn",info:"linfo"}[type]||"linfo";const s=document.createElement("span");s.className="lline "+cls;s.textContent=msg;const d=log.querySelector(".ldots");if(d)d.remove();log.appendChild(s);if(type!=="err"){const dd=document.createElement("div");dd.className="ldots";for(let i=0;i<5;i++){const di=document.createElement("div");di.className="ldot";di.style.animationDelay=(i*.12)+"s";dd.appendChild(di);}log.appendChild(dd);}}
-function rDots(){const d=document.getElementById("log")?.querySelector(".ldots");if(d)d.remove();}
+function aLog(msg,type="info"){
+  const log=document.getElementById("log");log.classList.add("show");
+  // Remove existing AI loading widget
+  const existing=log.querySelector(".ai-loading");if(existing)existing.remove();
+  // Add log line
+  const cls={ok:"lok",err:"lerr",warn:"lwarn",info:"linfo"}[type]||"linfo";
+  const line=document.createElement("div");line.className="lline "+cls;line.textContent=msg;log.appendChild(line);
+  // Add AI loading widget if not error/ok
+  if(type==="info"){
+    const widget=document.createElement("div");widget.className="ai-loading";
+    widget.innerHTML=`<div class="ai-orb">✦</div><div class="ai-loading-text"><div class="ai-loading-title">IA processando...</div><div class="ai-loading-sub">${msg}</div><div class="ai-bars">${Array(8).fill('<div class="ai-bar"></div>').join("")}</div></div>`;
+    log.appendChild(widget);
+  }
+  log.scrollTop=log.scrollHeight;
+}
+function rDots(){const w=document.getElementById("log")?.querySelector(".ai-loading");if(w)w.remove();}
 const slp=ms=>new Promise(r=>setTimeout(r,ms));
 
 async function genInvite(){
@@ -859,7 +894,7 @@ async function genInvite(){
     }
     // Claude builds optimized DALL-E prompt
     aLog("🤖 Claude criando prompt personalizado...","info");
-    const pr=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:"Create a DALL-E 3 prompt for a PROFESSIONAL birthday party invitation illustration.\nTheme: "+t.n+". Birthday: "+nome+", "+idade+" years old "+genero+".\nColors: rich "+t.c1+" to "+t.c2+" palette.\n"+modeInstruction+"\nRequirements: Ultra vibrant festive professional. Portrait 9:16. Bottom 40% slightly darker for text overlay. Include confetti sparkles balloons. ABSOLUTELY NO TEXT NO WORDS NO LETTERS NO NUMBERS.\nReturn ONLY the prompt text."}]})});
+    const pr=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,messages:[{role:"user",content:"Create a DALL-E 3 prompt for a PROFESSIONAL birthday party invitation illustration.\nTheme: "+t.n+". Birthday: "+nome+", "+idade+" years old "+genero+".\nColors: rich "+t.c1+" to "+t.c2+" palette.\n"+modeInstruction+"\nRequirements: Ultra vibrant festive professional. Portrait 9:16. Bottom 40% slightly darker for text overlay. Include confetti sparkles balloons. ABSOLUTELY NO TEXT NO WORDS NO LETTERS NO NUMBERS.\nReturn ONLY the prompt text."}]})});
     const pd=await pr.json();
     const dp=(pd.content?.find(b=>b.type==="text")?.text||"Professional "+t.n+" birthday party illustration, vibrant, festive")+" Absolutely NO text NO words NO letters NO numbers. Portrait 9:16.";
     rDots();aLog("✅ Prompt criado","ok");
