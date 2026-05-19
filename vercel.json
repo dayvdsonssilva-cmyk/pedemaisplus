@@ -3,6 +3,20 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
+  "functions": {
+    "api/generate-image.js": {
+      "maxDuration": 60
+    },
+    "api/claude.js": {
+      "maxDuration": 30
+    },
+    "api/create-pix.js": {
+      "maxDuration": 15
+    },
+    "api/check-payment.js": {
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
