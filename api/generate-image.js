@@ -1,7 +1,4 @@
 // api/generate-image.js
-// Env vars no Vercel:
-//   OPENAI_KEY → sua chave da OpenAI
-
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -11,6 +8,10 @@ export default async function handler(req, res) {
 
   const { prompt } = req.body || {};
   if (!prompt) return res.status(400).json({ error: "Prompt é obrigatório" });
+
+  if (!process.env.OPENAI_KEY) {
+    return res.status(500).json({ error: "OPENAI_KEY não configurada no Vercel" });
+  }
 
   try {
     const response = await fetch("https://api.openai.com/v1/images/generations", {
@@ -25,14 +26,13 @@ export default async function handler(req, res) {
         n: 1,
         size: "1024x1792",
         quality: "hd",
-        style: "vivid",
         response_format: "b64_json",
+        // style removido — causa erro no dall-e-3
       }),
     });
 
     if (!response.ok) {
       const err = await response.json();
-      console.error("OpenAI Error:", err);
       return res.status(500).json({ error: err.error?.message || "Erro ao gerar imagem" });
     }
 
@@ -42,7 +42,6 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ image: b64 });
   } catch (error) {
-    console.error("Server error:", error);
-    return res.status(500).json({ error: "Erro interno do servidor" });
+    return res.status(500).json({ error: "Erro interno: " + error.message });
   }
 }
