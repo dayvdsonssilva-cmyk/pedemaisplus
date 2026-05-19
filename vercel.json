@@ -3,11 +3,6 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
-  "functions": {
-    "api/*.js": {
-      "runtime": "edge"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -22,4 +17,4 @@
       "destination": "/ConvitAI.html"
     }
   ]
-}
+} 
