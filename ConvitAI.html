@@ -662,7 +662,7 @@ async function analyzePhoto(base64, mime){
         {type:"text",text:"Describe this child's appearance for an AI image generation prompt. Include: hair color, hair length/style, approximate skin tone, gender. One concise sentence in English only. Example: 'A girl with long curly brown hair, light skin tone.'"}
       ]}]})
     });
-    const d=await r.json();
+    const d=await safeJson(r);
     return d.content?.find(b=>b.type==="text")?.text||"";
   }catch{return "";}
 }
@@ -817,8 +817,8 @@ async function genMsg(){
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:180,
         messages:[{role:"user",content:"Crie uma mensagem EXCLUSIVA e animada para um convite de aniversário em português do Brasil.\nO nome do aniversariante é "+nome+" e ele(a) faz "+idade+" anos.\nO tema da festa é "+t.n+".\nGênero: "+S.gen+".\nOBRIGATÓRIO: a mensagem deve conter o nome \""+nome+"\".\nMáximo 2 frases curtas, festivas e calorosas.\nRetorne APENAS o texto da mensagem, sem aspas ou explicações."}]})
     });
-    if(!r.ok){const e=await r.json();throw new Error(e.error||"Erro na API");}
-    const d=await r.json();
+    if(!r.ok){const e=await safeJson(r);throw new Error(e.error||"Erro na API");}
+    const d=await safeJson(r);
     const txt=d.content?.find(b=>b.type==="text")?.text||"";
     const el=document.getElementById("i-msg");
     if(el){el.value=txt.trim();el.classList.add("filled");}
@@ -942,6 +942,15 @@ function aLog(msg,type="info"){
 }
 function rDots(){/* no-op with overlay */}
 const slp=ms=>new Promise(r=>setTimeout(r,ms));
+async function safeJson(response){
+  const text=await response.text();
+  try{return JSON.parse(text);}
+  catch{
+    // Vercel ou servidor retornou texto puro (ex: timeout)
+    const msg=text.slice(0,120).replace(/<[^>]+>/g,"").trim();
+    return {error:msg||"Erro desconhecido no servidor"};
+  }
+}
 
 async function genInvite(){
   S.generating=true;rBB(4);document.getElementById("log").innerHTML="";S.bgUrl=null;
@@ -978,8 +987,9 @@ async function genInvite(){
     // Generate via secure backend
     aLog("🎨 DALL-E 3 gerando arte exclusiva...","info");
     const ir=await fetch("/api/generate-image",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:dp})});
-    if(!ir.ok){const e=await ir.json();throw new Error(e.error||"Erro ao gerar imagem");}
-    const id=await ir.json();const b64=id.image;
+    const id=await safeJson(ir);
+    if(!ir.ok||!id.image){throw new Error(id.error||"Erro ao gerar imagem");}
+    const b64=id.image;
     if(!b64)throw new Error("Imagem não retornada");
     S.bgUrl="data:image/png;base64,"+b64;
     rDots();aLog("✅ Arte gerada com sucesso!","ok");
@@ -1038,8 +1048,8 @@ async function doPay(){
   document.getElementById("pix-code-text").textContent="Gerando código...";
   try{
     const r=await fetch("/api/create-pix",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome:S.nome,tema:T().n,email:S.email||"cliente@convitai.com.br"})});
-    if(!r.ok){const e=await r.json();throw new Error(e.error||"Erro ao criar PIX");}
-    const data=await r.json();
+    if(!r.ok){const e=await safeJson(r);throw new Error(e.error||"Erro ao criar PIX");}
+    const data=await safeJson(r);
     pixPaymentId=data.id;
     currentPixCode=data.qr_code||"";
     // Show QR code
