@@ -3,8 +3,14 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
+  "functions": {
+    "api/*.js": {
+      "runtime": "edge"
+    }
+  },
   "rewrites": [
-    { "source": "/", "destination": "/ConvitAI.html" },
-    { "source": "/(.*)", "destination": "/ConvitAI.html" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/",         "destination": "/ConvitAI.html" },
+    { "source": "/(.*)",     "destination": "/ConvitAI.html" }
   ]
 }
