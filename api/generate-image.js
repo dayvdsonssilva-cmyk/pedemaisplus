@@ -1,4 +1,4 @@
-// api/generate-image.js — usa gpt-image-2 como prioridade
+// api/generate-image.js
 export const maxDuration = 60;
 
 export default async function handler(req, res) {
@@ -10,66 +10,66 @@ export default async function handler(req, res) {
 
   const { prompt } = req.body || {};
   if (!prompt) return res.status(400).json({ error: "Prompt obrigatório" });
-  if (!process.env.OPENAI_KEY) return res.status(500).json({ error: "OPENAI_KEY não configurada no Vercel" });
+  if (!process.env.OPENAI_KEY) return res.status(500).json({ error: "OPENAI_KEY não configurada" });
 
-  const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
-  };
-
-  // gpt-image-2 como prioridade, fallbacks em sequência
-  const models = [
+  // Tenta cada modelo disponível na conta
+  const attempts = [
     { model: "gpt-image-2",      size: "1024x1536", quality: "high"   },
     { model: "gpt-image-1",      size: "1024x1536", quality: "high"   },
     { model: "gpt-image-1-mini", size: "1024x1536", quality: "medium" },
     { model: "gpt-image-1.5",    size: "1024x1536", quality: "high"   },
   ];
 
-  async function toBase64(url) {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error("Erro ao baixar imagem");
-    return Buffer.from(await r.arrayBuffer()).toString("base64");
-  }
-
-  let lastError = "Nenhum modelo disponível";
-
-  for (const m of models) {
+  for (const m of attempts) {
     try {
-      console.log(`Tentando ${m.model}...`);
+      console.log("Tentando:", m.model);
+
       const r = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
+        },
         body: JSON.stringify({
           model:   m.model,
-          prompt:  prompt,
+          prompt:  prompt.slice(0, 4000), // limit prompt size
           n:       1,
           size:    m.size,
           quality: m.quality,
         }),
       });
 
-      const text = await r.text();
+      const raw = await r.text();
       let data;
-      try { data = JSON.parse(text); }
-      catch { lastError = `Resposta inválida de ${m.model}`; continue; }
+      try { data = JSON.parse(raw); }
+      catch { console.log("Parse error:", raw.slice(0,200)); continue; }
 
       if (!r.ok) {
-        lastError = data.error?.message || `Erro ${r.status} em ${m.model}`;
-        console.log(`Falhou ${m.model}:`, lastError);
+        console.log(`${m.model} falhou:`, data.error?.message);
         continue;
       }
 
+      // Pode vir como b64_json ou url
       let image = data.data?.[0]?.b64_json;
-      if (!image && data.data?.[0]?.url) image = await toBase64(data.data[0].url);
-      if (!image) { lastError = `Imagem vazia em ${m.model}`; continue; }
 
-      console.log(`✅ ${m.model}`);
+      if (!image && data.data?.[0]?.url) {
+        const imgR = await fetch(data.data[0].url);
+        if (imgR.ok) {
+          image = Buffer.from(await imgR.arrayBuffer()).toString("base64");
+        }
+      }
+
+      if (!image) { console.log(`${m.model}: sem imagem`); continue; }
+
+      console.log("✅ Sucesso:", m.model);
       return res.status(200).json({ image, model: m.model });
+
     } catch (e) {
-      lastError = e.message;
       console.log(`Erro ${m.model}:`, e.message);
     }
   }
 
-  return res.status(500).json({ error: lastError });
+  return res.status(500).json({
+    error: "Não foi possível gerar a imagem. Verifique sua conta OpenAI em platform.openai.com"
+  });
 }
