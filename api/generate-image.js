@@ -14,8 +14,12 @@ export default async function handler(req, res) {
 
   // Tenta cada modelo disponível na conta
   const attempts = [
-    { model: "gpt-image-2",      size: "1920x1080", quality: "high"   },
-    ];
+  {
+    model: "gpt-image-2",
+    size: "1920x1080",
+    quality: "high"
+  }
+];
 
   for (const m of attempts) {
     try {
