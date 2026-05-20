@@ -427,7 +427,7 @@ function resetRec(){
 
 async function sendAudio(){
   if(!recBlob){toast("❌ Grave um áudio primeiro");return;}
-  showOv("Processando seu áudio..","IA transcrevendo o que você falou",15);
+  showOv("Processando seu áudio..","Transcrevendo o que você falou",15);
   try{
     // Convert blob to base64
     const base64=await new Promise((res,rej)=>{
@@ -436,22 +436,26 @@ async function sendAudio(){
       r.onerror=rej;
       r.readAsDataURL(recBlob);
     });
-    stepOv("Extraindo dados do convite..",40);
+    stepOv("Extraindo dados do convite..",50);
     const resp=await fetch("/api/transcribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({audio:base64,mime:recBlob.type||"audio/webm"})});
     const data=await safeJson(resp);
     if(!resp.ok)throw new Error(data.error||"Erro na transcrição");
-    // Apply extracted data
-    Object.assign(S,{
-      nome:data.nome||"",idade:data.idade||"",data:data.data||"",
-      hora:data.hora||"",local:data.local||"",tema:data.tema||"stitch",
-      genero:data.genero==="menino"?"menino":"menina",
-      msg:data.mensagem||"",
-      photoMode:data.photoMode||"normal"
-    });
+    if(!data.nome&&!data.tema&&!data.transcricao)throw new Error("Não consegui entender o áudio. Tente falar mais claro e devagar.");
+    // Apply extracted data to state
+    if(data.nome)S.nome=data.nome;
+    if(data.idade)S.idade=data.idade;
+    if(data.data)S.data=data.data;
+    if(data.hora)S.hora=data.hora;
+    if(data.local)S.local=data.local;
+    if(data.tema&&THEMES.find(t=>t.id===data.tema))S.tema=data.tema;
+    else if(!S.tema)S.tema=THEMES[0].id;
+    if(data.genero==="menino")S.genero="menino"; else S.genero="menina";
+    if(data.mensagem)S.msg=data.mensagem;
+    if(data.photoMode)S.photoMode=data.photoMode;
     stepOv("Tudo pronto!",100);
-    await slp(600);hideOv();
+    await slp(500);hideOv();
     showReview();
-  }catch(e){hideOv();toast("❌ "+e.message,5000);}
+  }catch(e){hideOv();toast("❌ "+e.message,6000);}
 }
 
 /* ═══ REVIEW ═══ */
