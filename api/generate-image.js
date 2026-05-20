@@ -1,4 +1,4 @@
-// api/generate-image.js
+// api/generate-image.js — usa gpt-image-2 como prioridade
 export const maxDuration = 60;
 
 export default async function handler(req, res) {
@@ -17,17 +17,17 @@ export default async function handler(req, res) {
     "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
   };
 
-  // Modelos confirmados na conta, em ordem de preferência
+  // gpt-image-2 como prioridade, fallbacks em sequência
   const models = [
+    { model: "gpt-image-2",      size: "1024x1536", quality: "high"   },
     { model: "gpt-image-1",      size: "1024x1536", quality: "high"   },
     { model: "gpt-image-1-mini", size: "1024x1536", quality: "medium" },
     { model: "gpt-image-1.5",    size: "1024x1536", quality: "high"   },
-    { model: "gpt-image-2",      size: "1024x1536", quality: "medium" },
   ];
 
   async function toBase64(url) {
     const r = await fetch(url);
-    if (!r.ok) throw new Error("Erro ao baixar imagem da URL");
+    if (!r.ok) throw new Error("Erro ao baixar imagem");
     return Buffer.from(await r.arrayBuffer()).toString("base64");
   }
 
@@ -36,7 +36,6 @@ export default async function handler(req, res) {
   for (const m of models) {
     try {
       console.log(`Tentando ${m.model}...`);
-
       const r = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers,
@@ -49,40 +48,28 @@ export default async function handler(req, res) {
         }),
       });
 
-      // Lê como texto primeiro para evitar parse error
       const text = await r.text();
       let data;
       try { data = JSON.parse(text); }
-      catch { lastError = `Resposta inválida do modelo ${m.model}`; continue; }
+      catch { lastError = `Resposta inválida de ${m.model}`; continue; }
 
       if (!r.ok) {
-        lastError = data.error?.message || `Erro ${r.status} no modelo ${m.model}`;
+        lastError = data.error?.message || `Erro ${r.status} em ${m.model}`;
         console.log(`Falhou ${m.model}:`, lastError);
         continue;
       }
 
-      // Tenta b64_json direto
       let image = data.data?.[0]?.b64_json;
+      if (!image && data.data?.[0]?.url) image = await toBase64(data.data[0].url);
+      if (!image) { lastError = `Imagem vazia em ${m.model}`; continue; }
 
-      // Se vier URL, baixa e converte
-      if (!image && data.data?.[0]?.url) {
-        image = await toBase64(data.data[0].url);
-      }
-
-      if (!image) {
-        lastError = `Imagem não retornada pelo modelo ${m.model}`;
-        continue;
-      }
-
-      console.log(`✅ Sucesso com ${m.model}`);
+      console.log(`✅ ${m.model}`);
       return res.status(200).json({ image, model: m.model });
-
     } catch (e) {
       lastError = e.message;
       console.log(`Erro ${m.model}:`, e.message);
     }
   }
 
-  // Todos falharam
   return res.status(500).json({ error: lastError });
 }
