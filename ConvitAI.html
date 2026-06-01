@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FFFFFF">
-<title>Tora Aventureira.</title>
+<title>Agente X</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -397,21 +397,24 @@ select{cursor:pointer;
 
 .r4-hero{
   width:100%;background:var(--S);
-  padding:36px 22px 32px;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:32px 24px 28px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
   position:relative;overflow:hidden;
 }
 .r4-hero::before{
   content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse 130% 90% at 50% 130%,rgba(230,57,70,.2) 0%,transparent 60%);
 }
-.r-crown{font-size:50px;position:relative;z-index:1;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
+.r-crown{font-size:44px;position:relative;z-index:1;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes crDrop{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
 .r-eye{font-size:10px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.4);text-transform:uppercase;position:relative;z-index:1}
 .r-title{
-  font-size:clamp(42px,12vw,62px);font-weight:900;
-  letter-spacing:-.035em;line-height:.92;text-align:center;
+  width:100%;
+  font-size:clamp(26px,7.5vw,38px);font-weight:900;
+  letter-spacing:-.02em;line-height:1.05;text-align:center;
   color:var(--W);position:relative;z-index:1;
+  word-break:break-word;overflow-wrap:break-word;
+  padding:0 4px;
 }
 .r-title span{color:var(--PL)}
 
@@ -760,7 +763,10 @@ select{cursor:pointer;
   <div class="r4-hero">
     <div class="r-crown" id="rCrown">🎯</div>
     <p class="r-eye">Arquétipo identificado</p>
-    <h2 class="r-title">A <span id="rTitle">CAÇADORA</span></h2>
+    <h2 class="r-title">
+      <span style="font-size:clamp(13px,3.5vw,17px);font-weight:600;letter-spacing:.18em;color:rgba(255,255,255,.55);display:block;margin-bottom:6px">A</span>
+      <span id="rTitle">CAÇADORA</span>
+    </h2>
   </div>
   <div class="r4-body">
     <div class="gauge">
