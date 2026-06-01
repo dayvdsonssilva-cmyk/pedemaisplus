@@ -3,768 +3,1226 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0A0A0B">
-<title>Agente X — As 12 Leis da Conquista</title>
+<meta name="theme-color" content="#FFFFFF">
+<title>Agente X</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#09090B;
-  --s1:#111115;
-  --s2:#17171D;
-  --s3:#1E1E26;
-  --bd:#2A2A36;
-  --bd2:#3A3A4A;
-  --red:#E8001C;
-  --red2:#FF2038;
-  --redg:rgba(232,0,28,.15);
-  --gold:#C8933A;
-  --gold2:#F0B84A;
-  --goldf:rgba(201,151,58,.12);
-  --txt:#F0F0F5;
-  --txt2:#A0A0B8;
-  --txt3:#606075;
-  --green:#22C55E;
-  --greenf:rgba(34,197,94,.1);
-  --r:14px;
+  --P:#E63946;
+  --PD:#C1121F;
+  --PL:#FF6B74;
+  --PU:#FFF0F1;
+  --PM:#FCCDD0;
+  --S:#1D3557;
+  --SM:#2D4E7A;
+  --SL:#457B9D;
+  --SU:#EBF3F8;
+  --SP:#D0E8F2;
+  --N:#F8F9FA;
+  --N2:#EDEEF0;
+  --N3:#D4D6DA;
+  --N4:#9FA3AB;
+  --N5:#5C6270;
+  --N6:#2C2F38;
+  --W:#FFFFFF;
+  --sh1:0 1px 3px rgba(29,53,87,.08),0 1px 2px rgba(29,53,87,.05);
+  --sh2:0 4px 14px rgba(29,53,87,.10),0 2px 6px rgba(29,53,87,.06);
+  --sh3:0 12px 36px rgba(29,53,87,.13),0 4px 12px rgba(29,53,87,.07);
 }
-html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+html,body{
+  background:var(--W);color:var(--N6);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.scr{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:430px;margin:0 auto;min-height:100svh;
+}
+.scr.off{display:none!important}
 
-/* NOISE */
-body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
-  background-size:256px;opacity:.7}
+/* ══════════════════════════════
+   P1 — HOME
+══════════════════════════════ */
+#p1{background:var(--W);overflow:hidden}
 
-/* SCREENS */
-.screen{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;align-items:center;padding:0 20px 48px;width:100%}
-.screen.hidden{display:none!important}
-
-/* ━━━━━━━━━━━━ PAGE 1 — HOME ━━━━━━━━━━━━ */
-#p1{
-  background:radial-gradient(ellipse 90% 45% at 50% 0%,rgba(232,0,28,.12) 0%,transparent 70%),var(--bg);
-  padding-top:0;justify-content:flex-start;
+/* HERO: imagem editorial full width */
+.hero{
+  width:100%;position:relative;
+  background:#111;
+  overflow:hidden;
 }
 
-.top-bar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:24px 0 0}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.18em;color:var(--red2);
-  border:1px solid var(--red);padding:5px 12px;border-radius:6px}
-.top-tag{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.1em}
+/* SVG container — proporção 4:5 editorial */
+.hero-visual{
+  width:100%;
+  aspect-ratio:4/5;
+  position:relative;
+  overflow:hidden;
+}
+.hero-visual svg{
+  width:100%;height:100%;display:block;
+}
 
-.eyebrow{margin-top:36px;font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--red2);
-  text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.eyebrow::before,.eyebrow::after{content:'';flex:1;height:1px;background:var(--red);opacity:.3}
-.eyebrow::before{max-width:30px}.eyebrow::after{display:none}
+/* Overlay gradiente para texto */
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(0,0,0,.05) 0%,
+    rgba(0,0,0,0) 25%,
+    rgba(0,0,0,.0) 45%,
+    rgba(0,0,0,.72) 75%,
+    rgba(0,0,0,.92) 100%
+  );
+}
 
-.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,15vw,76px);line-height:.9;
-  text-align:left;margin-top:12px;letter-spacing:.02em;align-self:flex-start}
-.h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--red2)}
+/* Badge topo esquerdo */
+.h-badge{
+  position:absolute;top:20px;left:20px;z-index:10;
+  display:flex;align-items:center;gap:8px;
+}
+.logo-txt{
+  font-size:12px;font-weight:900;letter-spacing:.22em;
+  color:var(--W);text-transform:uppercase;
+  text-shadow:0 1px 4px rgba(0,0,0,.5);
+}
+.logo-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--P);flex-shrink:0;
+}
 
-.hero-sub{margin-top:16px;font-size:15px;line-height:1.65;color:var(--txt2);align-self:flex-start}
-.hero-sub b{color:var(--txt)}
+/* Texto sobre hero — posicionado no rodapé da imagem */
+.hero-copy{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  padding:0 22px 28px;
+}
 
-/* CARD LEIS */
-.leis-card{margin-top:28px;width:100%;background:var(--s1);border:1px solid var(--bd);
-  border-radius:20px;padding:0;overflow:hidden;position:relative}
-.leis-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent 0%,var(--red) 40%,var(--gold) 70%,transparent 100%)}
-.lei-row{display:flex;align-items:center;gap:14px;padding:16px 18px}
-.lei-row+.lei-row{border-top:1px solid var(--bd)}
-.lei-n{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;
-  color:var(--red);min-width:42px;opacity:.9}
-.lei-txt p{font-size:14px;font-weight:700;color:var(--txt);line-height:1.2}
-.lei-txt span{font-size:12px;color:var(--txt3);margin-top:2px;display:block}
-.lei-lock{margin-left:auto;font-size:16px;opacity:.4;flex-shrink:0}
+/* "CHEGA DE C# DOCE" — texto principal ENORME */
+.hero-main{
+  font-size:clamp(48px,14.5vw,72px);
+  font-weight:900;
+  line-height:.88;
+  letter-spacing:-.03em;
+  color:var(--W);
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+.hero-main .red-word{
+  color:var(--P);
+  display:block;
+}
 
-/* STATS */
-.stats{margin-top:20px;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:var(--s1);border:1px solid var(--bd);border-radius:14px;
-  padding:14px 8px;text-align:center}
-.stat .n{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;color:var(--gold2)}
-.stat .l{font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.08em;
-  text-transform:uppercase;margin-top:3px}
+/* Tag pill sobre o headline */
+.hero-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--P);
+  border-radius:4px;
+  padding:4px 10px;
+  font-size:10px;font-weight:800;letter-spacing:.16em;
+  color:var(--W);text-transform:uppercase;
+  margin-bottom:12px;
+}
 
-/* URGENCY */
-.urgency{margin-top:16px;width:100%;background:var(--goldf);
-  border:1px solid rgba(201,151,58,.2);border-radius:12px;
-  padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
-.urgency-dot{width:8px;height:8px;border-radius:50%;background:var(--gold2);
-  flex-shrink:0;margin-top:4px;animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
-.urgency p{font-size:12px;color:var(--gold);font-weight:500;line-height:1.5}
+/* Linha divisora vermelha */
+.red-rule{
+  width:36px;height:2px;
+  background:var(--P);
+  margin-bottom:12px;
+}
 
-/* CTA */
-.cta-wrap{margin-top:28px;width:100%;display:flex;flex-direction:column;gap:8px}
-.btn-cta{width:100%;padding:19px;background:var(--red);color:#fff;
-  font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;
-  border:none;border-radius:16px;cursor:pointer;letter-spacing:.01em;
-  transition:transform .1s;box-shadow:0 8px 32px rgba(232,0,28,.3);
-  animation:ctaPulse 2.8s ease-in-out infinite}
-@keyframes ctaPulse{0%,100%{box-shadow:0 8px 32px rgba(232,0,28,.3)}
-  50%{box-shadow:0 8px 48px rgba(232,0,28,.55)}}
-.btn-cta:active{transform:scale(.97);animation:none}
-.cta-note{text-align:center;font-size:11px;color:var(--txt3)}
+/* Sub headline breve */
+.hero-sub-txt{
+  font-size:13px;font-weight:500;line-height:1.6;
+  color:rgba(255,255,255,.75);
+  max-width:280px;
+}
+.hero-sub-txt strong{color:var(--W)}
 
-/* ━━━━━━━━━━━━ SHARED QUIZ HEADER ━━━━━━━━━━━━ */
-.quiz-nav{width:100%;display:flex;align-items:center;gap:12px;padding:24px 0 0}
-.back-btn{width:40px;height:40px;border-radius:12px;background:var(--s2);border:1px solid var(--bd);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  font-size:18px;color:var(--txt2);flex-shrink:0;transition:background .15s}
-.back-btn:active{background:var(--s3)}
+/* ── CORPO ABAIXO DA IMAGEM ── */
+.home-body{
+  width:100%;background:var(--W);
+  padding:28px 22px 64px;
+  display:flex;flex-direction:column;gap:18px;
+}
+
+/* CTA button */
+.btn-cta{
+  width:100%;padding:19px 20px;
+  background:var(--P);color:var(--W);
+  font-family:'Inter',sans-serif;
+  font-size:15px;font-weight:800;
+  border:none;border-radius:12px;cursor:pointer;
+  letter-spacing:.005em;
+  box-shadow:0 6px 24px rgba(230,57,70,.38),var(--sh1);
+  transition:transform .12s,box-shadow .18s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn-cta:active{transform:scale(.97);box-shadow:0 2px 10px rgba(230,57,70,.3)}
+
+/* Nota abaixo do CTA */
+.cta-note{
+  text-align:center;font-size:11px;color:var(--N4);
+  margin-top:-10px;letter-spacing:.01em;
+}
+
+/* Social proof */
+.proof{
+  display:flex;align-items:center;gap:10px;
+  background:var(--SU);border:1px solid var(--SP);
+  border-radius:10px;padding:12px 14px;
+}
+.proof-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--P);flex-shrink:0;
+  animation:blk 1.8s ease-in-out infinite;
+}
+@keyframes blk{0%,100%{opacity:1}50%{opacity:.15}}
+.proof p{font-size:13px;color:var(--S);font-weight:500;line-height:1.4}
+.proof p strong{font-weight:800}
+
+/* ══════════════════════════════
+   SHARED NAV / PROGRESS
+══════════════════════════════ */
+.pg-nav{
+  width:100%;padding:18px 22px 0;
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.back-btn{
+  width:38px;height:38px;border-radius:9px;
+  background:var(--N2);border:1.5px solid var(--N3);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;color:var(--N5);
+  flex-shrink:0;transition:background .14s;
+}
+.back-btn:active{background:var(--N3)}
 .prog-wrap{flex:1}
-.prog-lbl{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.08em;
-  text-transform:uppercase;margin-bottom:7px;display:flex;justify-content:space-between}
-.prog-lbl span{color:var(--red2)}
-.prog-track{height:3px;border-radius:99px;background:var(--s3);overflow:hidden}
-.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--red2));
-  transition:width .45s cubic-bezier(.4,0,.2,1)}
+.prog-row{
+  display:flex;justify-content:space-between;
+  font-size:10px;font-weight:700;color:var(--N4);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px;
+}
+.prog-row em{font-style:normal;color:var(--P)}
+.prog-track{height:2.5px;background:var(--N3);border-radius:99px;overflow:hidden}
+.prog-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--PD),var(--P));
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
 
-/* STEP PILL */
-.step-pill{margin-top:28px;align-self:flex-start;
-  background:var(--redg);border:1px solid rgba(232,0,28,.25);
-  border-radius:8px;padding:5px 12px;
-  font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--red2);
-  text-transform:uppercase}
+/* ══════════════════════════════
+   QUIZ BODY
+══════════════════════════════ */
+.qbody{
+  width:100%;padding:26px 22px 64px;
+  display:flex;flex-direction:column;flex:1;
+}
+.q-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--PU);border:1px solid var(--PM);
+  border-radius:99px;padding:4px 11px;
+  font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--P);
+  text-transform:uppercase;margin-bottom:14px;align-self:flex-start;
+}
+.q-title{
+  font-size:clamp(30px,8.5vw,42px);font-weight:900;
+  line-height:1.02;letter-spacing:-.025em;
+  color:var(--S);margin-bottom:6px;
+}
+.q-sub{font-size:13px;color:var(--N4);line-height:1.55;margin-bottom:22px}
 
-/* QUESTION */
-.q-title{margin-top:10px;font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(30px,8.5vw,44px);line-height:1.05;align-self:flex-start}
-.q-desc{margin-top:8px;font-size:13px;color:var(--txt3);align-self:flex-start;line-height:1.5}
-
-/* OPTIONS */
-.opts{width:100%;display:flex;flex-direction:column;gap:10px;margin-top:24px}
-.opt{width:100%;background:var(--s1);border:1.5px solid var(--bd);border-radius:16px;
-  padding:16px 18px;display:flex;align-items:center;gap:14px;
-  cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;color:var(--txt);
-  transition:border-color .15s,background .15s,transform .1s;
-  animation:fadeUp .3s both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.opt:active{transform:scale(.985)}
-.opt.sel{border-color:var(--red);background:rgba(232,0,28,.06)}
-.opt-ico{width:44px;height:44px;border-radius:12px;background:var(--s2);
-  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.opt.sel .opt-ico{background:rgba(232,0,28,.12)}
+/* Opções */
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  width:100%;background:var(--W);
+  border:1.5px solid var(--N3);border-radius:14px;
+  padding:14px 15px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;text-align:left;
+  font-family:'Inter',sans-serif;color:var(--N6);
+  transition:border-color .15s,background .15s,box-shadow .15s,transform .1s;
+  box-shadow:var(--sh1);
+  animation:fadeUp .26s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.opt:active{transform:scale(.988)}
+.opt.sel{
+  border-color:var(--P);
+  background:var(--PU);
+  box-shadow:0 0 0 3px var(--PM),var(--sh1);
+}
+.opt-ico{
+  width:42px;height:42px;border-radius:10px;
+  background:var(--N2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:21px;flex-shrink:0;transition:background .15s;
+}
+.opt.sel .opt-ico{background:var(--PM)}
 .opt-body{flex:1}
-.opt-body p{font-size:15px;font-weight:700;line-height:1.25}
-.opt-body span{font-size:12px;color:var(--txt3);margin-top:3px;display:block;line-height:1.4}
-.opt-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd2);
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  transition:all .15s}
-.opt.sel .opt-check{background:var(--red);border-color:var(--red);color:#fff;font-size:12px}
+.opt-body p{font-size:14px;font-weight:700;line-height:1.2;color:var(--S)}
+.opt-body span{font-size:12px;color:var(--N4);margin-top:3px;display:block}
+.opt.sel .opt-body p{color:var(--PD)}
+.chk{
+  width:22px;height:22px;border-radius:50%;
+  border:1.5px solid var(--N3);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;transition:all .15s;
+}
+.opt.sel .chk{background:var(--P);border-color:var(--P);color:var(--W)}
 
-/* NEXT BTN */
-.btn-next{margin-top:24px;width:100%;padding:18px;background:var(--red);color:#fff;
-  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;
-  border:none;border-radius:16px;cursor:pointer;
-  opacity:.25;transition:opacity .25s,transform .1s;pointer-events:none}
+.btn-next{
+  width:100%;padding:17px;
+  background:var(--P);color:var(--W);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:800;
+  border:none;border-radius:12px;cursor:pointer;
+  margin-top:22px;
+  opacity:.18;pointer-events:none;
+  box-shadow:0 4px 16px rgba(230,57,70,.25);
+  transition:opacity .25s,transform .12s;
+}
 .btn-next.on{opacity:1;pointer-events:all}
 .btn-next:active{transform:scale(.97)}
 
-/* ━━━━━━━━━━━━ PAGE 3 — UPLOAD ━━━━━━━━━━━━ */
-#p3{background:var(--bg);justify-content:flex-start;padding-top:0}
+/* ══════════════════════════════
+   P3 — UPLOAD + FORM
+══════════════════════════════ */
+.p3body{
+  width:100%;padding:22px 22px 64px;
+  display:flex;flex-direction:column;gap:15px;
+}
+.sec-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--SU);border:1px solid var(--SP);
+  border-radius:99px;padding:4px 11px;
+  font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--S);
+  text-transform:uppercase;align-self:flex-start;
+}
+.p3-title{
+  font-size:clamp(26px,7.5vw,34px);font-weight:900;
+  letter-spacing:-.025em;color:var(--S);line-height:1.02;
+}
+.p3-sub{font-size:13px;color:var(--N4);line-height:1.55}
 
-.upload-zone{margin-top:24px;width:100%;background:var(--s1);
-  border:1.5px dashed var(--bd2);border-radius:20px;
-  padding:36px 20px;display:flex;flex-direction:column;
-  align-items:center;gap:12px;cursor:pointer;transition:border-color .2s,background .2s;
-  position:relative;overflow:hidden}
-.upload-zone.hover{border-color:var(--red);background:var(--redg)}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
-.upload-ico{font-size:44px;line-height:1}
-.upload-title{font-family:'Bebas Neue',sans-serif;font-size:22px;text-align:center}
-.upload-sub{font-size:13px;color:var(--txt3);text-align:center;line-height:1.5}
-.upload-formats{display:flex;gap:6px;margin-top:4px}
-.fmt-tag{background:var(--s2);border:1px solid var(--bd);border-radius:6px;
-  padding:3px 8px;font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.05em}
-
-.upload-preview{display:none;margin-top:16px;width:100%;
-  background:var(--s2);border:1px solid var(--green);border-radius:14px;
-  padding:14px 16px;flex-direction:column;gap:10px}
-.upload-preview.show{display:flex}
-.preview-file{display:flex;align-items:center;gap:10px}
-.preview-ico{width:40px;height:40px;border-radius:10px;background:var(--greenf);
-  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.preview-info p{font-size:14px;font-weight:700;color:var(--txt)}
-.preview-info span{font-size:12px;color:var(--green);font-weight:600}
-.preview-remove{margin-left:auto;background:transparent;border:none;
-  font-size:18px;color:var(--txt3);cursor:pointer;padding:4px}
-
-/* PRIVACY NOTE */
-.privacy-box{margin-top:16px;width:100%;background:var(--s1);
-  border:1px solid var(--bd);border-radius:14px;
-  padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
-.privacy-ico{font-size:20px;flex-shrink:0;margin-top:1px}
-.privacy-txt p{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:3px}
-.privacy-txt span{font-size:12px;color:var(--txt3);line-height:1.5}
-
-.skip-link{margin-top:14px;background:transparent;border:none;
-  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--txt3);
-  cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-
-/* ━━━━━━━━━━━━ PAGE 4 — RESULTADO ━━━━━━━━━━━━ */
-#p4{
-  background:radial-gradient(ellipse 100% 55% at 50% 0%,rgba(232,0,28,.1) 0%,transparent 65%),var(--bg);
-  padding-top:0;justify-content:flex-start;
+.upload-zone{
+  width:100%;background:var(--W);
+  border:1.5px dashed var(--N3);border-radius:18px;
+  padding:28px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+  box-shadow:var(--sh1);
+}
+.upload-zone.hover{
+  border-color:var(--P);background:var(--PU);
+  box-shadow:0 0 0 3px var(--PM);
+}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.u-ico-wrap{
+  width:52px;height:52px;border-radius:12px;
+  background:var(--N2);
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+}
+.u-title{font-size:14px;font-weight:700;color:var(--S)}
+.u-sub{font-size:12px;color:var(--N4);text-align:center;line-height:1.5}
+.fmt-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.fmt{
+  background:var(--N2);border:1px solid var(--N3);
+  border-radius:4px;padding:2px 7px;
+  font-size:10px;font-weight:700;color:var(--N4);letter-spacing:.04em;
 }
 
-.result-header{width:100%;padding:28px 0 0;display:flex;flex-direction:column;align-items:center;gap:8px}
-.result-crown{font-size:56px;animation:crownDrop .6s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes crownDrop{from{opacity:0;transform:scale(.5) translateY(-20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.result-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--txt3);text-transform:uppercase}
-.result-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,12vw,64px);
-  line-height:1;text-align:center}
-.result-big span{color:var(--red)}
+.prev-box{
+  display:none;width:100%;
+  background:var(--W);border:1.5px solid #22C55E;
+  border-radius:12px;padding:12px 14px;
+  align-items:center;gap:10px;
+  box-shadow:0 0 0 3px rgba(34,197,94,.1);
+}
+.prev-box.show{display:flex}
+.prev-ico-w{
+  width:36px;height:36px;border-radius:8px;
+  background:rgba(34,197,94,.1);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.prev-name{font-size:13px;font-weight:700;color:var(--S);flex:1}
+.prev-ok{font-size:11px;color:#22C55E;font-weight:700;display:block;margin-top:1px}
+.prev-rm{background:transparent;border:none;font-size:17px;color:var(--N4);cursor:pointer}
 
-/* GAUGE — chances */
-.gauge-card{margin-top:20px;width:100%;background:var(--s1);
-  border:1px solid var(--bd);border-radius:20px;padding:20px;
-  position:relative;overflow:hidden}
-.gauge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.gauge-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--txt3);
-  text-transform:uppercase;margin-bottom:12px}
-.gauge-track{height:10px;border-radius:99px;background:var(--s3);overflow:hidden;margin-bottom:8px}
-.gauge-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--gold2));
-  width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-.gauge-row{display:flex;justify-content:space-between;align-items:baseline}
-.gauge-pct{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--gold2);line-height:1}
-.gauge-sub{font-size:12px;color:var(--txt3);max-width:180px;text-align:right;line-height:1.4}
+.priv-box{
+  width:100%;background:var(--SU);border:1px solid var(--SP);
+  border-radius:12px;padding:13px 14px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.priv-ico{font-size:17px;flex-shrink:0;margin-top:1px}
+.priv-txt p{font-size:13px;color:var(--S);font-weight:700;margin-bottom:2px}
+.priv-txt span{font-size:12px;color:var(--N4);line-height:1.5}
 
-/* ARQUETIPO */
-.arq-card{margin-top:14px;width:100%;background:var(--s1);
-  border:1px solid var(--bd);border-radius:20px;padding:20px;
-  display:flex;flex-direction:column;gap:10px}
-.arq-badge{display:inline-flex;align-items:center;gap:6px;
-  background:var(--goldf);border:1px solid rgba(201,151,58,.2);
-  border-radius:8px;padding:5px 10px;
-  font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--gold2);
-  text-transform:uppercase;align-self:flex-start}
-.arq-name{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1}
-.arq-desc{font-size:13px;color:var(--txt2);line-height:1.6}
+.or-div{display:flex;align-items:center;gap:10px}
+.or-line{flex:1;height:1px;background:var(--N3)}
+.or-txt{font-size:10px;font-weight:700;color:var(--N4);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 
-/* RADAR TRAITS */
-.traits{margin-top:14px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.trait{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:14px}
-.trait-label{font-size:11px;font-weight:700;color:var(--txt3);letter-spacing:.07em;
-  text-transform:uppercase;margin-bottom:8px}
-.trait-bar{height:5px;border-radius:99px;background:var(--s3);overflow:hidden}
-.trait-fill{height:100%;border-radius:99px;transition:width 1s .3s both}
-.trait-fill.red{background:var(--red)}
-.trait-fill.gold{background:var(--gold2)}
-.trait-fill.green{background:var(--green)}
-.trait-val{font-family:'Bebas Neue',sans-serif;font-size:20px;margin-top:6px;line-height:1}
+.f-group{display:flex;flex-direction:column;gap:6px}
+.f-lbl{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--N5);text-transform:uppercase}
+textarea,select{
+  width:100%;background:var(--W);
+  border:1.5px solid var(--N3);border-radius:12px;
+  color:var(--N6);font-family:'Inter',sans-serif;
+  font-size:15px;padding:12px 13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;box-shadow:var(--sh1);
+}
+textarea{resize:none;line-height:1.55}
+textarea::placeholder{color:var(--N4)}
+textarea:focus,select:focus{border-color:var(--P);box-shadow:0 0 0 3px var(--PM)}
+select{cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239FA3AB' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;
+}
+.btn-ghost{
+  width:100%;padding:14px;background:transparent;
+  border:1.5px solid var(--N3);border-radius:12px;
+  color:var(--N4);font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:border-color .15s,color .15s;
+}
+.btn-ghost:active{background:var(--N2)}
 
-/* TÁTICA */
-.tatica-card{margin-top:14px;width:100%;background:var(--s1);
-  border:1px solid var(--bd);border-radius:20px;padding:20px;
-  display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
-.tatica-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--red),transparent)}
-.tatica-title{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--txt3);
-  text-transform:uppercase}
-.tatica-step{display:flex;align-items:flex-start;gap:12px}
-.step-num{width:28px;height:28px;border-radius:8px;background:var(--red);
+/* ══════════════════════════════
+   P4 — RESULTADO
+══════════════════════════════ */
+#p4{background:var(--N)}
+
+.r4-hero{
+  width:100%;background:var(--S);
+  padding:36px 22px 32px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  position:relative;overflow:hidden;
+}
+.r4-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 130% 90% at 50% 130%,rgba(230,57,70,.2) 0%,transparent 60%);
+}
+.r-crown{font-size:50px;position:relative;z-index:1;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes crDrop{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
+.r-eye{font-size:10px;font-weight:700;letter-spacing:.2em;color:rgba(255,255,255,.4);text-transform:uppercase;position:relative;z-index:1}
+.r-title{
+  font-size:clamp(42px,12vw,62px);font-weight:900;
+  letter-spacing:-.035em;line-height:.92;text-align:center;
+  color:var(--W);position:relative;z-index:1;
+}
+.r-title span{color:var(--PL)}
+
+.r4-body{width:100%;padding:20px 22px 64px;display:flex;flex-direction:column;gap:12px}
+
+.gauge{
+  background:var(--W);border:1px solid var(--N3);border-radius:18px;
+  padding:20px;box-shadow:var(--sh2);position:relative;overflow:hidden;
+}
+.gauge::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--PD),var(--P),var(--PL));
+}
+.g-lbl{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--N4);
+  text-transform:uppercase;margin-bottom:14px}
+.g-track{height:8px;border-radius:99px;background:var(--N2);overflow:hidden;margin-bottom:10px}
+.g-fill{height:100%;border-radius:99px;width:0;
+  background:linear-gradient(90deg,var(--PD),var(--P),var(--PL));
+  transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+.g-row{display:flex;align-items:flex-end;justify-content:space-between}
+.g-pct{font-size:50px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--P)}
+.g-sub{font-size:12px;color:var(--N4);text-align:right;max-width:140px;line-height:1.5}
+
+.arq-card{
+  background:var(--W);border:1px solid var(--N3);border-radius:18px;
+  padding:18px;box-shadow:var(--sh1);
+}
+.arq-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--SU);border:1px solid var(--SP);
+  border-radius:99px;padding:3px 10px;
+  font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--S);
+  text-transform:uppercase;margin-bottom:10px;
+}
+.arq-name{font-size:24px;font-weight:900;letter-spacing:-.025em;color:var(--S);margin-bottom:6px}
+.arq-desc{font-size:13px;color:var(--N5);line-height:1.65}
+
+.traits{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trait{background:var(--W);border:1px solid var(--N3);border-radius:14px;padding:14px;box-shadow:var(--sh1)}
+.tr-lbl{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--N4);text-transform:uppercase;margin-bottom:8px}
+.tr-track{height:4px;border-radius:99px;background:var(--N2);overflow:hidden}
+.tr-fill{height:100%;border-radius:99px;width:0;transition:width 1s .4s}
+.tr-r{background:linear-gradient(90deg,var(--PD),var(--P))}
+.tr-b{background:linear-gradient(90deg,var(--S),var(--SL))}
+.tr-t{background:linear-gradient(90deg,var(--SL),#74A9C4)}
+.tr-val{font-size:22px;font-weight:900;letter-spacing:-.02em;margin-top:7px;line-height:1}
+
+.tatica{
+  background:var(--W);border:1px solid var(--N3);border-radius:18px;
+  padding:18px;box-shadow:var(--sh1);
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;overflow:hidden;
+}
+.tatica::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--P),var(--PL));
+}
+.tc-head{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--N4);text-transform:uppercase;padding-left:12px}
+.tc-step{display:flex;gap:12px;align-items:flex-start}
+.tc-num{
+  width:30px;height:30px;border-radius:8px;background:var(--S);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;flex-shrink:0}
-.step-body p{font-size:14px;font-weight:700;line-height:1.25}
-.step-body span{font-size:12px;color:var(--txt3);margin-top:2px;display:block;line-height:1.4}
+  font-size:13px;font-weight:800;color:var(--W);flex-shrink:0;
+}
+.tc-b p{font-size:14px;font-weight:700;color:var(--S);line-height:1.25}
+.tc-b span{font-size:12px;color:var(--N4);margin-top:3px;display:block;line-height:1.45}
 
-/* BTN RESTART */
-.btn-restart{margin-top:20px;width:100%;padding:16px;
-  background:transparent;border:1px solid var(--bd);border-radius:14px;
-  color:var(--txt3);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
-  cursor:pointer;transition:border-color .15s,color .15s}
-.btn-restart:hover{border-color:var(--bd2);color:var(--txt)}
+/* ══════════════════════════════
+   P5 — CHECKOUT
+══════════════════════════════ */
+#p5{background:var(--N)}
+.ck-hero{
+  width:100%;background:var(--S);
+  padding:32px 22px 36px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  position:relative;overflow:hidden;
+}
+.ck-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 70% at 50% 120%,rgba(69,123,157,.3) 0%,transparent 60%);
+}
+.ck-ico{font-size:48px;position:relative;z-index:1;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
+.ck-title{
+  font-size:clamp(36px,10vw,52px);font-weight:900;
+  letter-spacing:-.035em;line-height:.92;text-align:center;
+  color:var(--W);position:relative;z-index:1;
+}
+.ck-sub{font-size:13px;color:rgba(255,255,255,.55);text-align:center;line-height:1.6;max-width:260px;position:relative;z-index:1}
 
-/* ANIMATIONS DELAY */
-.del1{animation-delay:.05s}.del2{animation-delay:.12s}
-.del3{animation-delay:.19s}.del4{animation-delay:.26s}
+.ck-body{width:100%;padding:20px 22px 64px;display:flex;flex-direction:column;gap:12px}
+
+.price-card{
+  background:var(--W);border:1px solid var(--N3);border-radius:18px;
+  padding:20px;box-shadow:var(--sh2);position:relative;overflow:hidden;
+}
+.price-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--PD),var(--P),var(--PL));
+}
+.pc-lbl{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--N4);text-transform:uppercase;margin-bottom:12px}
+.pc-main{display:flex;align-items:flex-end;justify-content:space-between}
+.pc-price{font-size:54px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--S)}
+.pc-right{text-align:right}
+.pc-period{font-size:11px;color:var(--N4);margin-bottom:4px;font-weight:500}
+.pc-old{font-size:13px;color:var(--N4);text-decoration:line-through}
+.pc-save{
+  display:inline-block;margin-top:10px;
+  background:var(--PU);border:1px solid var(--PM);
+  border-radius:6px;padding:4px 10px;
+  font-size:11px;font-weight:800;color:var(--P);letter-spacing:.05em;
+}
+
+.incl-list{display:flex;flex-direction:column;gap:9px}
+.incl-row{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--W);border:1px solid var(--N3);
+  border-radius:12px;padding:12px 13px;box-shadow:var(--sh1);
+}
+.incl-ico{
+  width:34px;height:34px;border-radius:8px;background:var(--SU);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+}
+.incl-txt p{font-size:13px;font-weight:700;color:var(--S);line-height:1.2}
+.incl-txt span{font-size:12px;color:var(--N4);margin-top:2px;display:block}
+
+.trust-row{display:flex;gap:6px}
+.tr-chip{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
+  background:var(--W);border:1px solid var(--N3);border-radius:10px;
+  padding:10px;font-size:11px;font-weight:600;color:var(--N5);
+  box-shadow:var(--sh1);
+}
+.urgency-bar{
+  background:var(--SU);border:1px solid var(--SP);
+  border-radius:12px;padding:12px 14px;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.u-dot{width:7px;height:7px;border-radius:50%;background:var(--P);
+  flex-shrink:0;margin-top:5px;animation:blk 1.6s ease-in-out infinite}
+.urgency-bar p{font-size:12px;color:var(--S);font-weight:500;line-height:1.55}
+.urgency-bar strong{color:var(--P)}
 </style>
 </head>
 <body>
 
-<!-- ══════════════ PAGE 1 — HOME ══════════════ -->
-<section class="screen" id="p1">
+<!-- ══════════════ P1 HOME ══════════════ -->
+<section class="scr" id="p1">
 
-  <div class="top-bar">
-    <div class="logo">AGENTE X</div>
-    <div class="top-tag">FREE · 2 MIN</div>
-  </div>
+  <div class="hero">
+    <div class="hero-visual">
 
-  <p class="eyebrow">⚡ Chega de c# doce</p>
+      <!-- SVG EDITORIAL: casal dramático, preto e branco, estilo fine art -->
+      <svg viewBox="0 0 430 538" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <!-- Pele masculina — tom quente escuro -->
+          <linearGradient id="skinM" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8C6248"/>
+            <stop offset="60%" stop-color="#6E4A30"/>
+            <stop offset="100%" stop-color="#4A2E18"/>
+          </linearGradient>
+          <!-- Pele feminina — tom claro -->
+          <linearGradient id="skinF" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#D4A882"/>
+            <stop offset="50%" stop-color="#BC8E68"/>
+            <stop offset="100%" stop-color="#9C6E48"/>
+          </linearGradient>
+          <!-- Músculos costas -->
+          <linearGradient id="backM" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2A1A0C"/>
+            <stop offset="25%" stop-color="#6E4A30"/>
+            <stop offset="50%" stop-color="#8C6248"/>
+            <stop offset="75%" stop-color="#6E4A30"/>
+            <stop offset="100%" stop-color="#2A1A0C"/>
+          </linearGradient>
+          <!-- Cabelo feminino escuro -->
+          <linearGradient id="hairF" x1="0%" y1="0%" x2="30%" y2="100%">
+            <stop offset="0%" stop-color="#1A0D05"/>
+            <stop offset="100%" stop-color="#0A0500"/>
+          </linearGradient>
+          <!-- Fundo texturizado tipo concreto/parede -->
+          <linearGradient id="wallBg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E8E0D4"/>
+            <stop offset="40%" stop-color="#D4C8B8"/>
+            <stop offset="100%" stop-color="#B8A898"/>
+          </linearGradient>
+          <!-- Sombra dramática -->
+          <radialGradient id="shadowDrama" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.55)"/>
+          </radialGradient>
+          <!-- Vinheta nas bordas -->
+          <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+            <stop offset="70%" stop-color="rgba(0,0,0,.15)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,.65)"/>
+          </radialGradient>
+          <!-- Gloss pele -->
+          <linearGradient id="glossM" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,.18)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+          <!-- Roupa preta masculina -->
+          <linearGradient id="clothM" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1A1A1A"/>
+            <stop offset="100%" stop-color="#0A0A0A"/>
+          </linearGradient>
+          <!-- Renda lingerie -->
+          <linearGradient id="laceTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1A1008"/>
+            <stop offset="100%" stop-color="#0A0804"/>
+          </linearGradient>
+          <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+          <filter id="blur4"><feGaussianBlur stdDeviation="4"/></filter>
+          <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+        </defs>
 
-  <h1 class="h1">A HORA<br>DO <em>ABATE</em><br>CHEGOU.</h1>
+        <!-- ── FUNDO: parede texturizada estilo concreto ── -->
+        <rect width="430" height="538" fill="url(#wallBg)"/>
+        <!-- Textura sutil na parede -->
+        <rect width="430" height="538" fill="rgba(180,160,140,.12)"/>
+        <!-- Manchas de textura -->
+        <ellipse cx="80" cy="120" rx="60" ry="80" fill="rgba(150,130,110,.08)" filter="url(#blur4)"/>
+        <ellipse cx="370" cy="200" rx="50" ry="100" fill="rgba(120,100,80,.07)" filter="url(#blur4)"/>
+        <ellipse cx="200" cy="480" rx="120" ry="60" fill="rgba(100,80,60,.09)" filter="url(#blur4)"/>
+        <!-- Riscos na parede -->
+        <line x1="320" y1="50" x2="340" y2="90" stroke="rgba(140,120,100,.15)" stroke-width="1"/>
+        <line x1="360" y1="140" x2="380" y2="170" stroke="rgba(140,120,100,.12)" stroke-width=".8"/>
+        <line x1="60" y1="300" x2="75" y2="330" stroke="rgba(140,120,100,.1)" stroke-width=".8"/>
 
-  <p class="hero-sub">
-    O agente com as <b>12 Leis da Conquista</b> que vai fazer ela <b>ser sua</b> — sem enrolação, sem suplicar.
-  </p>
+        <!-- Sombra global na cena -->
+        <rect width="430" height="538" fill="url(#shadowDrama)" opacity=".35"/>
 
-  <div class="leis-card">
-    <div class="lei-row">
-      <div class="lei-n">01</div>
-      <div class="lei-txt">
-        <p>Silêncio é poder</p>
-        <span>Quem fala mais, perde mais</span>
+        <!-- ── HOMEM — de costas, musculoso, shirtless ── -->
+
+        <!-- CALÇA/ROUPA PARTE INFERIOR — começa em ~420 e sobe -->
+        <path d="M60 480 Q80 460 110 445 Q140 435 175 432 Q210 430 215 430 Q220 430 255 432 Q290 435 320 445 Q350 460 370 480 L380 538 L50 538Z" fill="url(#clothM)"/>
+        <!-- Cinto/fivela sutil -->
+        <rect x="175" y="428" width="80" height="8" rx="3" fill="#0A0A0A"/>
+        <rect x="203" y="424" width="24" height="12" rx="2" fill="#1A1A1A"/>
+        <rect x="208" y="427" width="14" height="6" rx="1" fill="#2A2A2A"/>
+
+        <!-- COSTAS — grande, musculoso, central -->
+        <!-- Torso principal -->
+        <path d="M115 170 Q100 200 95 270 Q90 330 92 400 Q94 440 110 445 Q175 432 215 430 Q255 432 320 445 Q336 440 338 400 Q340 330 335 270 Q330 200 315 170 Q290 155 215 148 Q140 155 115 170Z" fill="url(#backM)"/>
+
+        <!-- Definição muscular das costas — coluna vertebral -->
+        <path d="M215 160 Q212 220 214 300 Q215 370 215 420" stroke="rgba(0,0,0,.35)" stroke-width="2.5" fill="none"/>
+        <!-- Músculo esquerdo (latíssimo) -->
+        <path d="M115 175 Q108 220 112 290 Q116 340 130 380 Q170 400 215 410" stroke="rgba(0,0,0,.2)" stroke-width="1.5" fill="none" filter="url(#blur1)"/>
+        <!-- Músculo direito (latíssimo) -->
+        <path d="M315 175 Q322 220 318 290 Q314 340 300 380 Q260 400 215 410" stroke="rgba(0,0,0,.2)" stroke-width="1.5" fill="none" filter="url(#blur1)"/>
+        <!-- Omoplata esquerda -->
+        <ellipse cx="158" cy="220" rx="32" ry="28" fill="rgba(0,0,0,.08)" transform="rotate(-8,158,220)"/>
+        <path d="M130 205 Q155 195 182 210 Q175 235 150 242 Q130 235 130 205Z" fill="rgba(255,255,255,.06)"/>
+        <!-- Omoplata direita -->
+        <ellipse cx="272" cy="220" rx="32" ry="28" fill="rgba(0,0,0,.08)" transform="rotate(8,272,220)"/>
+        <path d="M300 205 Q275 195 248 210 Q255 235 280 242 Q300 235 300 205Z" fill="rgba(255,255,255,.06)"/>
+        <!-- Destaque muscular -->
+        <path d="M140 190 Q160 175 215 170 Q270 175 290 190" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
+        <!-- Gloss muscular -->
+        <ellipse cx="180" cy="240" rx="25" ry="35" fill="url(#glossM)" opacity=".5"/>
+        <ellipse cx="250" cy="240" rx="25" ry="35" fill="url(#glossM)" opacity=".4"/>
+
+        <!-- OMBROS largos -->
+        <ellipse cx="115" cy="170" rx="32" ry="20" fill="url(#skinM)" transform="rotate(-15,115,170)"/>
+        <ellipse cx="315" cy="170" rx="32" ry="20" fill="url(#skinM)" transform="rotate(15,315,170)"/>
+        <!-- Deltóide esq -->
+        <path d="M83 155 Q95 148 130 155 Q120 185 95 195 Q75 185 83 155Z" fill="url(#skinM)"/>
+        <!-- Deltóide dir -->
+        <path d="M347 155 Q335 148 300 155 Q310 185 335 195 Q355 185 347 155Z" fill="url(#skinM)"/>
+
+        <!-- BRAÇO ESQUERDO do cara — levantado, mão na parede -->
+        <path d="M83 155 Q65 135 52 110 Q44 90 48 65" stroke="url(#skinM)" stroke-width="28" fill="none" stroke-linecap="round"/>
+        <!-- Antebraço esq -->
+        <path d="M48 65 Q46 45 50 30" stroke="url(#skinM)" stroke-width="22" fill="none" stroke-linecap="round"/>
+        <!-- Punho/mão esq na parede -->
+        <ellipse cx="51" cy="25" rx="16" ry="14" fill="url(#skinM)" transform="rotate(-20,51,25)"/>
+        <!-- Dedos espalmados na parede -->
+        <path d="M38 15 Q35 8 40 5" stroke="url(#skinM)" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M46 10 Q44 3 50 1" stroke="url(#skinM)" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M55 9 Q55 2 61 1" stroke="url(#skinM)" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M63 14 Q66 7 70 8" stroke="url(#skinM)" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- Manga roupa esq -->
+        <path d="M83 165 Q75 155 70 142 Q80 138 92 148 Z" fill="url(#clothM)"/>
+
+        <!-- BRAÇO DIREITO do cara — abraçando ela pela cintura -->
+        <path d="M347 155 Q368 170 385 200 Q395 225 390 258" stroke="url(#clothM)" stroke-width="30" fill="none" stroke-linecap="round"/>
+        <!-- Parte da mão dir abraçando cintura dela -->
+        <path d="M390 258 Q392 278 386 295" stroke="url(#skinM)" stroke-width="26" fill="none" stroke-linecap="round"/>
+        <ellipse cx="382" cy="302" rx="18" ry="13" fill="url(#skinM)" transform="rotate(20,382,302)"/>
+
+        <!-- PESCOÇO masculino -->
+        <path d="M195 148 Q215 142 235 148 L238 112 Q215 106 192 112Z" fill="url(#skinM)"/>
+
+        <!-- CABEÇA masculina de costas — inclinada para baixo/frente -->
+        <ellipse cx="215" cy="95" rx="42" ry="48" fill="url(#skinM)" transform="rotate(5,215,95)"/>
+        <!-- Cabelo curto masculino -->
+        <path d="M173 80 Q175 42 215 36 Q255 42 257 80 Q248 58 215 54 Q182 58 173 80Z" fill="#0D0705"/>
+        <!-- Textura cabelo -->
+        <path d="M178 68 Q195 55 215 54 Q235 55 252 68" stroke="#1A0F08" stroke-width="1.5" fill="none" opacity=".6"/>
+        <!-- Nuca -->
+        <path d="M178 88 Q195 82 215 80 Q235 82 252 88" stroke="rgba(0,0,0,.2)" stroke-width="1.5" fill="none"/>
+        <!-- Orelha esq visível levemente -->
+        <ellipse cx="174" cy="100" rx="8" ry="12" fill="url(#skinM)" transform="rotate(-5,174,100)"/>
+
+        <!-- ── MULHER — de frente para ele, encostada na parede ── -->
+
+        <!-- CABELO FEMININO — cacheado, volumoso, escuro -->
+        <!-- Volume cabelo lado dir -->
+        <path d="M285 30 Q340 20 370 50 Q395 80 392 130 Q388 180 380 240 Q370 190 375 140 Q372 90 350 65 Q330 42 295 38Z" fill="url(#hairF)"/>
+        <!-- Volume cabelo lado esq -->
+        <path d="M262 38 Q238 42 228 75 Q220 108 222 160 Q218 110 224 78 Q232 50 255 40Z" fill="url(#hairF)" opacity=".9"/>
+        <!-- Cachos frontais -->
+        <path d="M270 42 Q265 52 268 62 Q272 55 278 52 Q282 62 280 72 Q285 65 290 60 Q295 70 292 80" stroke="url(#hairF)" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/>
+        <path d="M255 50 Q248 62 252 74 Q257 67 262 64" stroke="url(#hairF)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+        <!-- Mechas caindo -->
+        <path d="M340 120 Q345 160 338 200 Q332 240 328 280" stroke="#120A04" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+        <path d="M355 100 Q362 150 358 200 Q354 240 348 280" stroke="#0A0502" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
+
+        <!-- CORPO feminino -->
+        <!-- Torso / cintura -->
+        <path d="M252 185 Q240 200 237 265 Q234 310 236 380 Q238 420 245 445 L310 445 Q318 420 316 380 Q318 310 315 265 Q312 200 300 185 Z" fill="url(#skinF)"/>
+        <!-- Sombra lateral corpo dela -->
+        <path d="M252 185 Q244 220 242 280 Q240 340 242 400" stroke="rgba(0,0,0,.18)" stroke-width="8" fill="none" filter="url(#blur1)"/>
+        <path d="M300 185 Q308 220 310 280 Q312 340 310 400" stroke="rgba(0,0,0,.18)" stroke-width="8" fill="none" filter="url(#blur1)"/>
+
+        <!-- LINGERIE / SUTIÃ com renda -->
+        <!-- Corpo do sutiã -->
+        <path d="M248 168 Q260 158 276 155 Q292 158 304 168 Q308 182 305 198 Q292 205 276 208 Q260 205 247 198 Q244 182 248 168Z" fill="url(#laceTop)"/>
+        <!-- Alças -->
+        <path d="M258 158 Q262 130 268 110" stroke="#0A0804" stroke-width="3.5" fill="none"/>
+        <path d="M294 158 Q290 130 284 110" stroke="#0A0804" stroke-width="3.5" fill="none"/>
+        <!-- Renda — padrão decorativo -->
+        <path d="M250 170 Q258 165 265 172 Q272 165 280 172 Q287 165 295 172 Q302 165 305 170" stroke="rgba(255,255,255,.15)" stroke-width="1" fill="none"/>
+        <path d="M248 178 Q256 173 263 180 Q270 173 278 180 Q285 173 293 180 Q300 173 306 178" stroke="rgba(255,255,255,.12)" stroke-width="1" fill="none"/>
+        <path d="M250 186 Q258 181 265 188 Q272 181 280 188 Q287 181 295 188 Q302 181 305 186" stroke="rgba(255,255,255,.1)" stroke-width="1" fill="none"/>
+        <!-- Contorno sutiã -->
+        <path d="M248 168 Q260 158 276 155 Q292 158 304 168" stroke="rgba(255,255,255,.1)" stroke-width="1" fill="none"/>
+        <!-- Bojo formato -->
+        <ellipse cx="262" cy="183" rx="13" ry="14" fill="rgba(255,255,255,.04)"/>
+        <ellipse cx="290" cy="183" rx="13" ry="14" fill="rgba(255,255,255,.04)"/>
+
+        <!-- CALCINHA/PARTE INFERIOR -->
+        <path d="M238 380 Q237 420 242 445 L310 445 Q318 420 314 380 Q295 390 276 392 Q257 390 238 380Z" fill="url(#laceTop)"/>
+        <!-- Elástico calcinha -->
+        <path d="M238 380 Q257 372 276 370 Q295 372 314 380" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
+
+        <!-- Perna esquerda dela -->
+        <path d="M244 440 Q240 480 238 520 L260 520 Q265 480 268 440Z" fill="url(#skinF)"/>
+        <!-- Perna direita dela -->
+        <path d="M308 440 Q312 480 314 520 L292 520 Q287 480 284 440Z" fill="url(#skinF)"/>
+
+        <!-- PESCOÇO feminino -->
+        <path d="M265 154 Q276 148 287 154 L290 118 Q276 112 262 118Z" fill="url(#skinF)"/>
+        <!-- Clavícula -->
+        <path d="M248 175 Q262 165 276 162 Q290 165 304 175" stroke="rgba(0,0,0,.12)" stroke-width="1.5" fill="none"/>
+
+        <!-- CABEÇA feminina -->
+        <ellipse cx="276" cy="96" rx="36" ry="40" fill="url(#skinF)"/>
+        <!-- Orelha esq -->
+        <ellipse cx="240" cy="98" rx="7" ry="11" fill="url(#skinF)"/>
+        <!-- Orelha dir (atrás do cabelo) -->
+        <ellipse cx="312" cy="96" rx="6" ry="10" fill="url(#skinF)" opacity=".5"/>
+
+        <!-- ROSTO feminino — sensual, de frente -->
+        <!-- Sobrancelhas bem definidas -->
+        <path d="M258 80 Q266 75 274 77" stroke="#1A0A05" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M278 77 Q285 75 294 80" stroke="#1A0A05" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Pálpebras / olhos fechados levemente -->
+        <path d="M258 88 Q266 83 276 85 Q282 83 292 88" stroke="#2A1208" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Olhos abertos -->
+        <ellipse cx="265" cy="90" rx="8" ry="7" fill="#1A0A05"/>
+        <ellipse cx="287" cy="90" rx="8" ry="7" fill="#1A0A05"/>
+        <!-- Íris -->
+        <ellipse cx="265" cy="91" rx="5" ry="5.5" fill="#2A1510"/>
+        <ellipse cx="287" cy="91" rx="5" ry="5.5" fill="#2A1510"/>
+        <!-- Reflexo olhos -->
+        <circle cx="267" cy="88" r="2.2" fill="rgba(255,255,255,.75)"/>
+        <circle cx="289" cy="88" r="2.2" fill="rgba(255,255,255,.75)"/>
+        <!-- Cílios superiores -->
+        <path d="M257 87 Q260 82 264 81" stroke="#0A0502" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M264 84 Q266 79 270 79" stroke="#0A0502" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M283 84 Q285 79 289 80" stroke="#0A0502" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M289 87 Q293 82 296 83" stroke="#0A0502" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Nariz delicado -->
+        <path d="M274 100 Q271 110 273 114 Q276 117 279 114 Q281 110 278 100" stroke="#9C6E48" stroke-width="1.2" fill="none" opacity=".6"/>
+        <!-- Narinas -->
+        <ellipse cx="272" cy="114" rx="3" ry="2" fill="rgba(80,40,20,.2)"/>
+        <ellipse cx="280" cy="114" rx="3" ry="2" fill="rgba(80,40,20,.2)"/>
+        <!-- Lábios sensuais -->
+        <path d="M262 126 Q270 121 276 122 Q282 121 290 126" stroke="#8C4848" stroke-width="1" fill="none"/>
+        <path d="M260 127 Q268 134 276 136 Q284 134 292 127" fill="#A85858" opacity=".7"/>
+        <path d="M260 127 Q268 122 276 122 Q284 122 292 127 Q284 134 276 136 Q268 134 260 127Z" fill="#C06868" opacity=".8"/>
+        <!-- Brilho lábio superior -->
+        <path d="M268 125 Q276 122 284 125" stroke="rgba(255,255,255,.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Bochechas rosadas suaves -->
+        <ellipse cx="253" cy="108" rx="10" ry="7" fill="rgba(200,80,80,.12)" filter="url(#blur2)"/>
+        <ellipse cx="299" cy="108" rx="10" ry="7" fill="rgba(200,80,80,.12)" filter="url(#blur2)"/>
+
+        <!-- BRINCOS — pequenos, elegantes -->
+        <circle cx="239" cy="102" r="3.5" fill="#C8A060"/>
+        <path d="M239 106 Q238 113 239 116" stroke="#C8A060" stroke-width="1.8" fill="none"/>
+        <circle cx="239" cy="118" r="3" fill="#C8A060"/>
+
+        <!-- BRAÇO dela esquerdo — descendo pelo corpo do cara / cintura -->
+        <path d="M253 185 Q235 200 218 220 Q202 240 196 268" stroke="url(#skinF)" stroke-width="20" fill="none" stroke-linecap="round"/>
+        <!-- Mão dela no pescoço/ombro do cara -->
+        <ellipse cx="194" cy="275" rx="14" ry="11" fill="url(#skinF)" transform="rotate(15,194,275)"/>
+        <!-- Dedos -->
+        <path d="M183 268 Q178 260 183 256" stroke="url(#skinF)" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M190 264 Q186 256 191 253" stroke="url(#skinF)" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M198 264 Q196 255 201 253" stroke="url(#skinF)" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- Anel dela -->
+        <path d="M197 267 Q199 264 203 265" stroke="#C8A060" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- BRAÇO dela direito — levantado, mão no ombro do cara -->
+        <path d="M300 188 Q318 195 332 210 Q342 225 340 248" stroke="url(#skinF)" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <!-- Mão dir dela no ombro dele -->
+        <ellipse cx="338" cy="256" rx="13" ry="10" fill="url(#skinF)" transform="rotate(-10,338,256)"/>
+
+        <!-- ── PERNA dela levantada / encostada (elemento dramático) ── -->
+        <path d="M252 360 Q235 340 225 310 Q218 285 222 262" stroke="url(#skinF)" stroke-width="26" fill="none" stroke-linecap="round"/>
+        <!-- Joelho -->
+        <ellipse cx="224" cy="258" rx="17" ry="14" fill="url(#skinF)"/>
+        <!-- Panturrilha -->
+        <path d="M216 250 Q205 228 208 198 Q210 175 215 160" stroke="url(#skinF)" stroke-width="20" fill="none" stroke-linecap="round"/>
+        <!-- Pé/tornozelo -->
+        <ellipse cx="215" cy="155" rx="13" ry="10" fill="url(#skinF)" transform="rotate(-20,215,155)"/>
+
+        <!-- ── MÃO do cara na coxa/quadril dela ── -->
+        <ellipse cx="388" cy="298" rx="18" ry="13" fill="url(#skinM)" transform="rotate(25,388,298)"/>
+        <!-- Dedos na cintura -->
+        <path d="M376 288 Q370 280 376 276" stroke="url(#skinM)" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M383 284 Q378 276 384 273" stroke="url(#skinM)" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M391 284 Q388 275 394 273" stroke="url(#skinM)" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M398 288 Q396 280 402 279" stroke="url(#skinM)" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+        <!-- ── VINHETA dramática nas bordas ── -->
+        <rect width="430" height="538" fill="url(#vignette)" opacity=".8"/>
+
+        <!-- ── ACCENT LINE vermelho — elemento de design ── -->
+        <rect x="22" y="512" width="40" height="2.5" rx="1.5" fill="#E63946" opacity=".9"/>
+        <rect x="368" y="512" width="40" height="2.5" rx="1.5" fill="#E63946" opacity=".9"/>
+
+      </svg>
+
+      <!-- Overlay gradiente -->
+      <div class="hero-overlay"></div>
+
+      <!-- Badge topo -->
+      <div class="h-badge">
+        <div class="logo-dot"></div>
+        <div class="logo-txt">AGENTE X</div>
       </div>
-      <div class="lei-lock">🔒</div>
-    </div>
-    <div class="lei-row">
-      <div class="lei-n">07</div>
-      <div class="lei-txt">
-        <p>Escassez cria desejo</p>
-        <span>Disponível 24h = invisível</span>
+
+      <!-- Texto sobre a imagem -->
+      <div class="hero-copy">
+        <div class="hero-pill">⚡ As 12 Leis da Conquista</div>
+        <h1 class="hero-main">
+          CHEGA<br>
+          DE C#<br>
+          <span class="red-word">DOCE.</span>
+        </h1>
+        <div class="red-rule"></div>
+        <p class="hero-sub-txt">
+          <strong>A conversa certa define a conquista.</strong>
+          Cada palavra sua vai ser precisa.
+        </p>
       </div>
-      <div class="lei-lock">🔒</div>
-    </div>
-    <div class="lei-row">
-      <div class="lei-n">12</div>
-      <div class="lei-txt">
-        <p>Feche sempre</p>
-        <span>Intenção sem ação é amizade</span>
-      </div>
-      <div class="lei-lock">🔒</div>
     </div>
   </div>
 
-  <div class="stats">
-    <div class="stat"><div class="n">12</div><div class="l">Leis</div></div>
-    <div class="stat"><div class="n">2</div><div class="l">Minutos</div></div>
-    <div class="stat"><div class="n">Free</div><div class="l">Grátis</div></div>
-  </div>
+  <!-- Corpo abaixo -->
+  <div class="home-body">
+    <div class="proof">
+      <div class="proof-dot"></div>
+      <p><strong>1.247 homens</strong> descobriram o plano certo esta semana</p>
+    </div>
 
-  <div class="urgency">
-    <div class="urgency-dot"></div>
-    <p>1.247 homens já descobriram o perfil delas esta semana. Vai ficar pra trás?</p>
-  </div>
-
-  <div class="cta-wrap">
-    <button class="btn-cta" onclick="goTo('p2')">Descobrir meu perfil agora →</button>
-    <p class="cta-note">2 perguntas · totalmente grátis · resultado na hora</p>
+    <button class="btn-cta" onclick="go('p2')">
+      Descobrir meu plano agora →
+    </button>
+    <p class="cta-note">2 perguntas · grátis · resultado na hora</p>
   </div>
 
 </section>
 
-<!-- ══════════════ PAGE 2 — QUIZ (2 perguntas) ══════════════ -->
-<section class="screen hidden" id="p2">
-
-  <div class="quiz-nav">
-    <div class="back-btn" onclick="goTo('p1')">←</div>
+<!-- ══════════ P2 QUIZ ══════════ -->
+<section class="scr off" id="p2">
+  <div class="pg-nav">
+    <button class="back-btn" onclick="go('p1')">←</button>
     <div class="prog-wrap">
-      <div class="prog-lbl">
-        <span>Pergunta <span id="qNum">1</span> de 2</span>
-        <span id="qPct" style="color:var(--txt3)">50%</span>
+      <div class="prog-row">
+        <span>Pergunta <em id="qNum">1</em> de 2</span>
+        <em id="qPct">50%</em>
       </div>
       <div class="prog-track"><div class="prog-fill" id="progFill" style="width:50%"></div></div>
     </div>
   </div>
 
-  <!-- QUESTION 1 -->
-  <div id="qBlock1" style="width:100%;display:flex;flex-direction:column;align-items:flex-start">
-    <div class="step-pill" style="margin-top:28px">Status</div>
-    <h2 class="q-title">QUAL É A SUA<br>SITUAÇÃO COM ELA?</h2>
-    <p class="q-desc">Seja honesto — isso define toda a estratégia.</p>
+  <div id="qB1" class="qbody">
+    <div class="q-chip">📍 Status</div>
+    <h2 class="q-title">Qual é a<br>situação?</h2>
+    <p class="q-sub">Seja honesto — isso define a estratégia inteira.</p>
     <div class="opts">
-      <button class="opt del1" onclick="selectQ1(this,'chegando')">
+      <button class="opt" style="animation-delay:.04s" onclick="selQ1(this,'chegando')">
         <div class="opt-ico">🎯</div>
-        <div class="opt-body"><p>Vou chegar</p><span>Ainda não rolou nada, mas quero chegar</span></div>
-        <div class="opt-check"></div>
+        <div class="opt-body"><p>Vou chegar</p><span>Ainda não rolou nada, mas quero conquistar</span></div>
+        <div class="chk"></div>
       </button>
-      <button class="opt del2" onclick="selectQ1(this,'ficando')">
+      <button class="opt" style="animation-delay:.1s" onclick="selQ1(this,'ficando')">
         <div class="opt-ico">🔥</div>
-        <div class="opt-body"><p>Já estou ficando</p><span>Já aconteceu alguma coisa entre nós</span></div>
-        <div class="opt-check"></div>
+        <div class="opt-body"><p>Já estou ficando</p><span>Já aconteceu algo entre nós</span></div>
+        <div class="chk"></div>
       </button>
     </div>
-    <button class="btn-next" id="btnQ1" onclick="showQ2()">Próxima →</button>
+    <button class="btn-next" id="bnQ1" onclick="showQ2()">Próxima pergunta →</button>
   </div>
 
-  <!-- QUESTION 2 -->
-  <div id="qBlock2" style="width:100%;display:flex;flex-direction:column;align-items:flex-start;display:none">
-    <div class="step-pill" style="margin-top:28px">Comportamento dela</div>
-    <h2 class="q-title">COMO ELA AGE<br>COM VOCÊ?</h2>
-    <p class="q-desc">Analise o padrão, não só o último episódio.</p>
+  <div id="qB2" class="qbody" style="display:none">
+    <div class="q-chip">💬 Comportamento</div>
+    <h2 class="q-title">Como ela age<br>com você?</h2>
+    <p class="q-sub">Analise o padrão — não só o último episódio.</p>
     <div class="opts">
-      <button class="opt del1" onclick="selectQ2(this,'quente')">
+      <button class="opt" style="animation-delay:.04s" onclick="selQ2(this,'quente')">
         <div class="opt-ico">😍</div>
-        <div class="opt-body"><p>Ela demonstra interesse</p><span>Inicia conversa, manda meme, fica animada</span></div>
-        <div class="opt-check"></div>
+        <div class="opt-body"><p>Demonstra interesse</p><span>Inicia conversa, manda meme, fica animada</span></div>
+        <div class="chk"></div>
       </button>
-      <button class="opt del2" onclick="selectQ2(this,'morno')">
+      <button class="opt" style="animation-delay:.1s" onclick="selQ2(this,'morno')">
         <div class="opt-ico">🌡️</div>
-        <div class="opt-body"><p>Morno / quente e frio</p><span>Às vezes empolgada, às vezes some</span></div>
-        <div class="opt-check"></div>
+        <div class="opt-body"><p>Quente e frio</p><span>Às vezes empolgada, às vezes some</span></div>
+        <div class="chk"></div>
       </button>
-      <button class="opt del3" onclick="selectQ2(this,'frio')">
+      <button class="opt" style="animation-delay:.16s" onclick="selQ2(this,'frio')">
         <div class="opt-ico">🧊</div>
-        <div class="opt-body"><p>Ela é distante</p><span>Responde pouco, sem iniciativa</span></div>
-        <div class="opt-check"></div>
+        <div class="opt-body"><p>É distante</p><span>Responde pouco, sem iniciativa</span></div>
+        <div class="chk"></div>
       </button>
-      <button class="opt del4" onclick="selectQ2(this,'amizade')">
+      <button class="opt" style="animation-delay:.22s" onclick="selQ2(this,'amizade')">
         <div class="opt-ico">🤝</div>
-        <div class="opt-body"><p>Me trata como amigo</p><span>Friendzone claro, fala de outros caras</span></div>
-        <div class="opt-check"></div>
+        <div class="opt-body"><p>Me trata como amigo</p><span>Fala de outros caras, friendzone claro</span></div>
+        <div class="chk"></div>
       </button>
     </div>
-    <button class="btn-next" id="btnQ2" onclick="goTo('p3')">Próxima →</button>
+    <button class="btn-next" id="bnQ2" onclick="go('p3')">Ver análise dela →</button>
   </div>
-
 </section>
 
-<!-- ══════════════ PAGE 3 — UPLOAD ══════════════ -->
-<section class="screen hidden" id="p3">
-
-  <div class="quiz-nav">
-    <div class="back-btn" onclick="backToQ2()">←</div>
+<!-- ══════════ P3 UPLOAD/FORM ══════════ -->
+<section class="scr off" id="p3">
+  <div class="pg-nav">
+    <button class="back-btn" onclick="backToQ2()">←</button>
     <div class="prog-wrap">
-      <div class="prog-lbl"><span>Opcional — mas poderoso</span><span style="color:var(--red2)">+precisão</span></div>
+      <div class="prog-row"><span>Contexto</span><em>+precisão</em></div>
       <div class="prog-track"><div class="prog-fill" style="width:75%"></div></div>
     </div>
   </div>
+  <div class="p3body">
+    <div class="sec-chip">📎 Conversa</div>
+    <h2 class="p3-title">Cola a conversa<br>com ela.</h2>
+    <p class="p3-sub">Mais contexto = plano mais preciso.</p>
 
-  <div class="step-pill" style="margin-top:28px">Análise da Conversa</div>
-  <h2 class="q-title">COLA A CONVERSA<br>COM ELA.</h2>
-  <p class="q-desc" style="margin-top:8px">Quanto mais contexto, mais preciso o seu plano de conquista.</p>
-
-  <div class="upload-zone" id="uploadZone"
-    ondragover="event.preventDefault();this.classList.add('hover')"
-    ondragleave="this.classList.remove('hover')"
-    ondrop="handleDrop(event)">
-    <input type="file" id="fileInput" accept=".txt,.png,.jpg,.jpeg,.pdf" onchange="handleFile(event)">
-    <div class="upload-ico">📲</div>
-    <div class="upload-title">Toque para enviar</div>
-    <p class="upload-sub">Print da conversa ou arquivo .txt<br>com o histórico do chat</p>
-    <div class="upload-formats">
-      <span class="fmt-tag">PNG</span>
-      <span class="fmt-tag">JPG</span>
-      <span class="fmt-tag">TXT</span>
-      <span class="fmt-tag">PDF</span>
-    </div>
-  </div>
-
-  <div class="upload-preview" id="uploadPreview">
-    <div class="preview-file">
-      <div class="preview-ico" id="previewIco">📄</div>
-      <div class="preview-info">
-        <p id="previewName">arquivo.png</p>
-        <span>✓ Pronto para análise</span>
+    <div class="upload-zone" id="upZone"
+      ondragover="event.preventDefault();this.classList.add('hover')"
+      ondragleave="this.classList.remove('hover')"
+      ondrop="dropFile(event)">
+      <input type="file" id="fileIn" accept=".txt,.png,.jpg,.jpeg,.pdf" onchange="pickFile(event)">
+      <div class="u-ico-wrap">📲</div>
+      <div class="u-title">Toque para enviar</div>
+      <p class="u-sub">Print ou arquivo .txt da conversa</p>
+      <div class="fmt-row">
+        <span class="fmt">PNG</span><span class="fmt">JPG</span>
+        <span class="fmt">TXT</span><span class="fmt">PDF</span>
       </div>
-      <button class="preview-remove" onclick="removeFile()">✕</button>
     </div>
-  </div>
 
-  <div class="privacy-box">
-    <div class="privacy-ico">🔒</div>
-    <div class="privacy-txt">
-      <p>Fique tranquilo</p>
-      <span>Esses dados não são armazenados. A análise acontece só pra gerar seu resultado — depois some.</span>
+    <div class="prev-box" id="prevBox">
+      <div class="prev-ico-w" id="prevIco">📄</div>
+      <div style="flex:1">
+        <div class="prev-name" id="prevName">arquivo</div>
+        <span class="prev-ok">✓ Pronto para análise</span>
+      </div>
+      <button class="prev-rm" onclick="rmFile()">✕</button>
     </div>
-  </div>
 
-  <div class="cta-wrap" style="margin-top:20px">
-    <button class="btn-cta" onclick="goTo('p4')" id="btnAnalizar">
-      Analisar e ver meu resultado →
-    </button>
-    <button class="skip-link" onclick="goTo('p4')">Pular esta etapa →</button>
-  </div>
+    <div class="priv-box">
+      <div class="priv-ico">🔒</div>
+      <div class="priv-txt">
+        <p>Fique tranquilo</p>
+        <span>Dados não são armazenados — some após gerar o resultado.</span>
+      </div>
+    </div>
 
+    <div id="btnComArq" style="display:none">
+      <button class="btn-cta" onclick="go('p4')">Analisar e ver resultado →</button>
+    </div>
+
+    <div class="or-div">
+      <div class="or-line"></div>
+      <div class="or-txt">Ou responda sobre ela</div>
+      <div class="or-line"></div>
+    </div>
+
+    <div class="f-group">
+      <div class="f-lbl">Como ela é?</div>
+      <textarea rows="3" placeholder="Ex: Extrovertida, segura de si, sabe que é bonita..."></textarea>
+    </div>
+    <div class="f-group">
+      <div class="f-lbl">Idade dela</div>
+      <select>
+        <option value="" disabled selected>Selecionar...</option>
+        <option>18–21 anos</option><option>22–25 anos</option>
+        <option>26–30 anos</option><option>30+ anos</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <div class="f-lbl">Última mensagem que ela mandou</div>
+      <textarea rows="2" placeholder="Cole o que ela disse por último..."></textarea>
+    </div>
+    <div class="f-group">
+      <div class="f-lbl">O que rolou entre vocês?</div>
+      <textarea rows="2" placeholder="Ex: Ficamos, mas ela esfriou depois..."></textarea>
+    </div>
+
+    <button class="btn-cta" onclick="go('p4')">Ver meu plano de conquista →</button>
+    <button class="btn-ghost" onclick="go('p4')">Pular esta etapa →</button>
+  </div>
 </section>
 
-<!-- ══════════════ PAGE 4 — RESULTADO ══════════════ -->
-<section class="screen hidden" id="p4">
-
-  <div class="result-header">
-    <div class="result-crown" id="rCrown">🎯</div>
-    <p class="result-eyebrow">Arquétipo dela</p>
-    <h2 class="result-big">A <span id="rTitle">CAÇADORA</span></h2>
+<!-- ══════════ P4 RESULTADO ══════════ -->
+<section class="scr off" id="p4">
+  <div class="r4-hero">
+    <div class="r-crown" id="rCrown">🎯</div>
+    <p class="r-eye">Arquétipo identificado</p>
+    <h2 class="r-title">A <span id="rTitle">CAÇADORA</span></h2>
   </div>
-
-  <div class="gauge-card">
-    <div class="gauge-label">⚡ Suas chances de conquista</div>
-    <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
-    <div class="gauge-row">
-      <div class="gauge-pct" id="gaugePct">0%</div>
-      <div class="gauge-sub" id="gaugeSub">Calculando com base nas suas respostas...</div>
+  <div class="r4-body">
+    <div class="gauge">
+      <div class="g-lbl">⚡ Suas chances reais de conquista</div>
+      <div class="g-track"><div class="g-fill" id="gFill"></div></div>
+      <div class="g-row">
+        <div class="g-pct" id="gPct">0%</div>
+        <div class="g-sub" id="gSub"></div>
+      </div>
     </div>
+    <div class="arq-card">
+      <div class="arq-badge">✦ Perfil dela</div>
+      <div class="arq-name" id="arqName"></div>
+      <p class="arq-desc" id="arqDesc"></p>
+    </div>
+    <div class="traits" id="traitsGrid"></div>
+    <div class="tatica" id="taticaCard"></div>
+    <button class="btn-cta" onclick="go('p5')">🔓 Desbloquear as 12 Leis completas →</button>
+    <p class="cta-note">Plano completo + mensagens prontas com IA</p>
+    <button class="btn-ghost" style="margin-top:-4px" onclick="restart()">↺ Refazer o quiz</button>
   </div>
+</section>
 
-  <div class="arq-card">
-    <div class="arq-badge">✦ Perfil identificado</div>
-    <div class="arq-name" id="arqName">A Caçadora</div>
-    <p class="arq-desc" id="arqDesc">Ela demonstra interesse, mas testa constantemente. Qualquer fraqueza e ela perde o tesão.</p>
+<!-- ══════════ P5 CHECKOUT ══════════ -->
+<section class="scr off" id="p5">
+  <div class="pg-nav" style="padding-top:20px">
+    <button class="back-btn" onclick="go('p4')">←</button>
+    <span style="font-size:12px;font-weight:700;color:var(--N4);letter-spacing:.05em">FINALIZAR</span>
   </div>
-
-  <div class="traits" id="traitsGrid"></div>
-
-  <div class="tatica-card" id="taticaCard"></div>
-
-  <button class="btn-restart" onclick="restart()">↺ Refazer o quiz</button>
-
+  <div class="ck-hero">
+    <div class="ck-ico">⚔️</div>
+    <h2 class="ck-title">Ative seu<br>Agente X</h2>
+    <p class="ck-sub">Uma única vez. Acesso vitalício ao plano completo.</p>
+  </div>
+  <div class="ck-body">
+    <div class="price-card">
+      <div class="pc-lbl">Investimento único</div>
+      <div class="pc-main">
+        <div class="pc-price">R$9<span style="font-size:28px;font-weight:800">,90</span></div>
+        <div class="pc-right">
+          <div class="pc-period">acesso vitalício</div>
+          <div class="pc-old">De R$47,00</div>
+        </div>
+      </div>
+      <div class="pc-save">🔥 Economize 79%</div>
+    </div>
+    <div class="incl-list">
+      <div class="incl-row"><div class="incl-ico">⚡</div><div class="incl-txt"><p>As 12 Leis completas</p><span>Desbloqueadas para o seu perfil</span></div></div>
+      <div class="incl-row"><div class="incl-ico">💬</div><div class="incl-txt"><p>Mensagens prontas com IA</p><span>Link direto para o WhatsApp dela</span></div></div>
+      <div class="incl-row"><div class="incl-ico">🎯</div><div class="incl-txt"><p>Plano tático personalizado</p><span>Baseado no arquétipo dela</span></div></div>
+      <div class="incl-row"><div class="incl-ico">🔄</div><div class="incl-txt"><p>Acesso vitalício</p><span>Use para quantas situações quiser</span></div></div>
+    </div>
+    <button class="btn-cta" style="font-size:16px;padding:20px" onclick="alert('Integrar Mercado Pago aqui!')">
+      🔒 Pagar R$9,90 e ativar agora
+    </button>
+    <p class="cta-note">Pix ou Cartão · Acesso imediato após pagamento</p>
+    <div class="trust-row">
+      <div class="tr-chip">🔒 Pix</div>
+      <div class="tr-chip">💳 Cartão</div>
+      <div class="tr-chip">⚡ Imediato</div>
+    </div>
+    <div class="urgency-bar">
+      <div class="u-dot"></div>
+      <p>Oferta por tempo limitado. Depois volta para <strong>R$47,00.</strong></p>
+    </div>
+    <button class="btn-ghost" onclick="restart()">← Voltar ao início</button>
+  </div>
 </section>
 
 <script>
-var ans = { q1: null, q2: null, hasFile: false };
-
-/* ─── NAVEGAÇÃO ─── */
-function goTo(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+var A={q1:null,q2:null};
+function go(id){
+  document.querySelectorAll('.scr').forEach(function(s){s.classList.add('off')});
+  document.getElementById(id).classList.remove('off');
   window.scrollTo({top:0,behavior:'smooth'});
-  if(id === 'p4') buildResult();
+  if(id==='p4')buildResult();
 }
 function backToQ2(){
-  document.getElementById('qBlock2').style.display = 'flex';
-  document.getElementById('qBlock1').style.display = 'none';
-  document.getElementById('qNum').textContent = '2';
-  document.getElementById('qPct').textContent = '100%';
-  document.getElementById('progFill').style.width = '100%';
-  goTo('p2');
+  document.getElementById('qB2').style.display='flex';
+  document.getElementById('qB2').style.flexDirection='column';
+  document.getElementById('qB1').style.display='none';
+  document.getElementById('qNum').textContent='2';
+  document.getElementById('qPct').textContent='100%';
+  document.getElementById('progFill').style.width='100%';
+  go('p2');
 }
-
-/* ─── QUIZ Q1 ─── */
-function selectQ1(btn, val){
-  document.querySelectorAll('#qBlock1 .opt').forEach(o => {
-    o.classList.remove('sel');
-    o.querySelector('.opt-check').textContent = '';
-  });
-  btn.classList.add('sel');
-  btn.querySelector('.opt-check').textContent = '✓';
-  ans.q1 = val;
-  document.getElementById('btnQ1').classList.add('on');
+function selQ1(btn,val){
+  document.querySelectorAll('#qB1 .opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
+  btn.classList.add('sel');btn.querySelector('.chk').textContent='✓';
+  A.q1=val;document.getElementById('bnQ1').classList.add('on');
 }
 function showQ2(){
-  if(!ans.q1) return;
-  document.getElementById('qBlock1').style.display = 'none';
-  var b2 = document.getElementById('qBlock2');
-  b2.style.display = 'flex';
-  b2.style.flexDirection = 'column';
-  b2.style.alignItems = 'flex-start';
-  document.getElementById('qNum').textContent = '2';
-  document.getElementById('qPct').textContent = '100%';
-  document.getElementById('progFill').style.width = '100%';
+  if(!A.q1)return;
+  document.getElementById('qB1').style.display='none';
+  var b2=document.getElementById('qB2');
+  b2.style.display='flex';b2.style.flexDirection='column';
+  document.getElementById('qNum').textContent='2';
+  document.getElementById('qPct').textContent='100%';
+  document.getElementById('progFill').style.width='100%';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
-/* ─── QUIZ Q2 ─── */
-function selectQ2(btn, val){
-  document.querySelectorAll('#qBlock2 .opt').forEach(o => {
-    o.classList.remove('sel');
-    o.querySelector('.opt-check').textContent = '';
-  });
-  btn.classList.add('sel');
-  btn.querySelector('.opt-check').textContent = '✓';
-  ans.q2 = val;
-  document.getElementById('btnQ2').classList.add('on');
+function selQ2(btn,val){
+  document.querySelectorAll('#qB2 .opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
+  btn.classList.add('sel');btn.querySelector('.chk').textContent='✓';
+  A.q2=val;document.getElementById('bnQ2').classList.add('on');
 }
-
-/* ─── UPLOAD ─── */
-function handleFile(e){
-  var f = e.target.files[0];
-  if(f) showPreview(f);
+function pickFile(e){if(e.target.files[0])showPrev(e.target.files[0]);}
+function dropFile(e){
+  e.preventDefault();document.getElementById('upZone').classList.remove('hover');
+  if(e.dataTransfer.files[0])showPrev(e.dataTransfer.files[0]);
 }
-function handleDrop(e){
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('hover');
-  var f = e.dataTransfer.files[0];
-  if(f) showPreview(f);
+function showPrev(f){
+  var ext=f.name.split('.').pop().toLowerCase();
+  var ic={png:'🖼️',jpg:'🖼️',jpeg:'🖼️',pdf:'📕',txt:'📝'};
+  document.getElementById('prevIco').textContent=ic[ext]||'📄';
+  document.getElementById('prevName').textContent=f.name;
+  document.getElementById('prevBox').classList.add('show');
+  document.getElementById('btnComArq').style.display='block';
 }
-function showPreview(f){
-  ans.hasFile = true;
-  var ext = f.name.split('.').pop().toLowerCase();
-  var icons = {png:'🖼️',jpg:'🖼️',jpeg:'🖼️',pdf:'📕',txt:'📝'};
-  document.getElementById('previewIco').textContent = icons[ext] || '📄';
-  document.getElementById('previewName').textContent = f.name;
-  document.getElementById('uploadPreview').classList.add('show');
-  document.getElementById('btnAnalizar').textContent = 'Ver meu resultado →';
+function rmFile(){
+  document.getElementById('prevBox').classList.remove('show');
+  document.getElementById('fileIn').value='';
+  document.getElementById('btnComArq').style.display='none';
 }
-function removeFile(){
-  ans.hasFile = false;
-  document.getElementById('uploadPreview').classList.remove('show');
-  document.getElementById('fileInput').value = '';
-}
-
-/* ─── RESULTADO ─── */
-var PROFILES = {
-  chegando_quente:{
-    crown:'🦅', title:'ENTREGADORA', arqName:'A Entregadora',
-    arqDesc:'Ela já quer — o perigo é você parecer fraco agora. Ela precisa sentir que conquistou algo difícil.',
-    pct:78, subGauge:'Alta. Mas um erro besta pode zerar tudo.',
-    traits:[
-      {label:'Interesse',val:85,cls:'red'},{label:'Teste',val:70,cls:'gold'},
-      {label:'Paciência',val:40,cls:'green'},{label:'Ego',val:75,cls:'red'}
-    ],
-    passos:[
-      {n:'01',title:'Desacelere agora',desc:'Ela já demonstrou. Quem corre muito, espanta.'},
-      {n:'02',title:'Crie resistência leve',desc:'Discorde de algo pequeno. Mostre que tem opinião.'},
-      {n:'03',title:'Marque, não pergunte',desc:'"Quinta à noite você tá livre" — não "o que acha de sair?"'},
-    ]
-  },
-  chegando_morno:{
-    crown:'🎯', title:'CALCULISTA', arqName:'A Calculista',
-    arqDesc:'Ela está avaliando. Cada ação sua é uma informação. Cuidado com consistência — ela nota padrões.',
-    pct:54, subGauge:'Mediana. Depende 100% da sua jogada.',
-    traits:[
-      {label:'Interesse',val:45,cls:'gold'},{label:'Teste',val:88,cls:'red'},
-      {label:'Paciência',val:70,cls:'green'},{label:'Ego',val:65,cls:'gold'}
-    ],
-    passos:[
-      {n:'01',title:'Pare de perseguir',desc:'Todo dia que você aparece, ela some mais um pouco.'},
-      {n:'02',title:'Mude o padrão',desc:'Suma por 5 dias. Quando voltar, o jogo mudou.'},
-      {n:'03',title:'Mostre vida social',desc:'Stories de rolê, não de quarto. Prove que tem vida.'},
-    ]
-  },
-  chegando_frio:{
-    crown:'🔥', title:'DESAFIADORA', arqName:'A Desafiadora',
-    arqDesc:'Ela é distante porque ainda não viu motivo pra não ser. Você precisa ser algo que ela ainda não viu.',
-    pct:36, subGauge:'Difícil, mas possível com a jogada certa.',
-    traits:[
-      {label:'Interesse',val:20,cls:'red'},{label:'Teste',val:90,cls:'red'},
-      {label:'Paciência',val:80,cls:'green'},{label:'Ego',val:85,cls:'red'}
-    ],
-    passos:[
-      {n:'01',title:'Pare de tentar direto',desc:'Abordagem direta agora só confirma que você é previsível.'},
-      {n:'02',title:'Construa presença social',desc:'Ela precisa ouvi-lo falar sobre você antes de você chegar.'},
-      {n:'03',title:'Contato indireto',desc:'Reagir no story, um comentário engraçado. Nada mais.'},
-    ]
-  },
-  chegando_amizade:{
-    crown:'⚠️', title:'CÚMPLICE', arqName:'A Cúmplice',
-    arqDesc:'Friendzone real. A conexão existe — falta tensão. Ela precisa te ver como homem, não como parceiro de reclamação.',
-    pct:29, subGauge:'Zona de perigo. Precisa de reset urgente.',
-    traits:[
-      {label:'Conforto',val:90,cls:'green'},{label:'Atração',val:15,cls:'red'},
-      {label:'Respeito',val:60,cls:'gold'},{label:'Tensão',val:5,cls:'red'}
-    ],
-    passos:[
-      {n:'01',title:'Pare de ser o confidente',desc:'Toda vez que ouve problema de ex dela, você cava mais fundo.'},
-      {n:'02',title:'Introduza tensão',desc:'Discorde. Provoque levemente. Pare de concordar com tudo.'},
-      {n:'03',title:'Distância estratégica',desc:'Suma por 2 semanas. Ela vai sentir a falta — ou não. Descobre agora.'},
-    ]
-  },
-  ficando_quente:{
-    crown:'👑', title:'APAIXONADA', arqName:'A Apaixonada',
-    arqDesc:'Ela já caiu. Agora o risco é você ser previsível demais e ela perder o tesão por te ter fácil.',
-    pct:82, subGauge:'Alta. Mas não relaxe — é aqui que os caras erram.',
-    traits:[
-      {label:'Atração',val:92,cls:'red'},{label:'Segurança',val:75,cls:'green'},
-      {label:'Intensidade',val:80,cls:'red'},{label:'Ciúme',val:60,cls:'gold'}
-    ],
-    passos:[
-      {n:'01',title:'Mantenha o mistério',desc:'Não explique tudo. Deixe perguntas sem resposta às vezes.'},
-      {n:'02',title:'Preserve sua vida',desc:'Continue com seus planos, amigos, objetivos. Não some neles.'},
-      {n:'03',title:'Escalone a intensidade',desc:'Cada encontro tem que ser melhor que o anterior — planeje.'},
-    ]
-  },
-  ficando_morno:{
-    crown:'⚔️', title:'TESTADORA', arqName:'A Testadora',
-    arqDesc:'Ela ficou, mas está avaliando se você é fraco. Cada teste que você passa aumenta a atração. Cada falha, diminui.',
-    pct:61, subGauge:'Boa, desde que não passe nos testes errados.',
-    traits:[
-      {label:'Atração',val:65,cls:'red'},{label:'Teste',val:95,cls:'red'},
-      {label:'Interesse',val:60,cls:'gold'},{label:'Paciência',val:35,cls:'green'}
-    ],
-    passos:[
-      {n:'01',title:'Não justifique nada',desc:'Ela some e volta. Não pergunte por quê. Continue sua vida.'},
-      {n:'02',title:'Reaja pouco',desc:'Ela espera reação emocional. Dê o contrário: calma e indiferença.'},
-      {n:'03',title:'Seja imprevisível',desc:'Mude os planos às vezes. Apareça diferente. Quebre o padrão.'},
-    ]
-  },
-  ficando_frio:{
-    crown:'🧊', title:'ARREPENDIDA', arqName:'A Arrependida',
-    arqDesc:'Algo aconteceu pra ela refriar. Pode ser erro seu, pode ser teste. Precisa descobrir antes de agir.',
-    pct:41, subGauge:'Incerta. O próximo passo define tudo.',
-    traits:[
-      {label:'Interesse',val:30,cls:'red'},{label:'Confusão',val:75,cls:'gold'},
-      {label:'Distância',val:80,cls:'red'},{label:'Respeito',val:45,cls:'gold'}
-    ],
-    passos:[
-      {n:'01',title:'Pare tudo por 7 dias',desc:'Qualquer mensagem agora parece desespero. Para. Completo.'},
-      {n:'02',title:'Avalie o que mudou',desc:'Algo aconteceu antes do esfriamento? Identifique antes de agir.'},
-      {n:'03',title:'Contato cirúrgico',desc:'Após 7 dias: uma mensagem, divertida, sem expectativa. Avalia.'},
-    ]
-  },
-  ficando_amizade:{
-    crown:'🚪', title:'ESCAPISTA', arqName:'A Escapista',
-    arqDesc:'Ficou, mas está recuando pro lado amigo. Ela está criando distância emocional pra não se comprometer.',
-    pct:33, subGauge:'Complicado. Precisa de ação não convencional.',
-    traits:[
-      {label:'Atração',val:40,cls:'gold'},{label:'Medo',val:70,cls:'red'},
-      {label:'Conforto',val:85,cls:'green'},{label:'Tensão',val:20,cls:'red'}
-    ],
-    passos:[
-      {n:'01',title:'Nomeie a situação',desc:'"Tô sentindo que você tá evitando o assunto. Errei em algo?"'},
-      {n:'02',title:'Declare sem implorar',desc:'"Gosto de você de verdade, mas não vou ficar nessa zona."'},
-      {n:'03',title:'Dê um prazo interno',desc:'Se em 2 semanas não mudou, corta o contato e segue em frente.'},
-    ]
-  }
+var PRF={
+  chegando_quente:{crown:'🦅',title:'ENTREGADORA',name:'A Entregadora',desc:'Ela já quer — o perigo é você parecer fraco agora. Ela precisa sentir que conquistou algo difícil.',pct:78,sub:'Alta. Um erro agora pode zerar tudo.',traits:[{l:'Interesse',v:85,c:'r'},{l:'Teste',v:70,c:'b'},{l:'Paciência',v:40,c:'t'},{l:'Ego',v:75,c:'r'}],passos:[{n:'01',t:'Desacelere agora',d:'Ela já demonstrou. Quem corre, espanta.'},{n:'02',t:'Crie resistência leve',d:'Discorde de algo pequeno. Mostre que tem opinião.'},{n:'03',t:'Marque, não pergunte',d:'"Quinta você tá livre" — não "o que acha?"'}]},
+  chegando_morno:{crown:'🎯',title:'CALCULISTA',name:'A Calculista',desc:'Ela está te avaliando. Cada ação sua é informação. Ela nota padrões.',pct:54,sub:'Mediana. Depende do seu próximo passo.',traits:[{l:'Interesse',v:45,c:'b'},{l:'Teste',v:88,c:'r'},{l:'Paciência',v:70,c:'t'},{l:'Ego',v:65,c:'b'}],passos:[{n:'01',t:'Pare de perseguir',d:'Todo dia que você aparece, ela some mais.'},{n:'02',t:'Mude o padrão',d:'Suma 5 dias. Quando voltar, o jogo mudou.'},{n:'03',t:'Mostre vida social',d:'Stories de rolê. Prove que tem vida além dela.'}]},
+  chegando_frio:{crown:'🔥',title:'DESAFIADORA',name:'A Desafiadora',desc:'Ela é distante porque ainda não viu motivo pra não ser. Você precisa ser algo novo.',pct:36,sub:'Difícil, mas viável com a jogada exata.',traits:[{l:'Interesse',v:20,c:'r'},{l:'Teste',v:90,c:'r'},{l:'Paciência',v:80,c:'t'},{l:'Ego',v:85,c:'r'}],passos:[{n:'01',t:'Para de chegar direto',d:'Abordagem direta confirma que você é previsível.'},{n:'02',t:'Construa presença',d:'Ela precisa ouvir sobre você antes de você chegar.'},{n:'03',t:'Contato indireto',d:'Reagir no story. Um comentário. Nada mais agora.'}]},
+  chegando_amizade:{crown:'⚠️',title:'CÚMPLICE',name:'A Cúmplice',desc:'Friendzone real. A conexão existe — falta tensão. Ela precisa te ver como homem.',pct:29,sub:'Zona de perigo. Precisa de reset urgente.',traits:[{l:'Conforto',v:90,c:'t'},{l:'Atração',v:15,c:'r'},{l:'Respeito',v:60,c:'b'},{l:'Tensão',v:5,c:'r'}],passos:[{n:'01',t:'Pare de ser confidente',d:'Ouvir problema de ex dela cava você mais fundo.'},{n:'02',t:'Introduza tensão',d:'Discorde. Provoque. Para de concordar com tudo.'},{n:'03',t:'Distância estratégica',d:'Suma 2 semanas. Ela vai sentir — ou não.'}]},
+  ficando_quente:{crown:'👑',title:'APAIXONADA',name:'A Apaixonada',desc:'Ela já caiu. O risco é ser previsível demais e ela perder o tesão por te ter fácil.',pct:82,sub:'Alta. É aqui que os caras mais erram.',traits:[{l:'Atração',v:92,c:'r'},{l:'Segurança',v:75,c:'t'},{l:'Intensidade',v:80,c:'r'},{l:'Ciúme',v:60,c:'b'}],passos:[{n:'01',t:'Mantenha o mistério',d:'Não explique tudo. Deixe perguntas sem resposta.'},{n:'02',t:'Preserve sua vida',d:'Continue com seus planos. Não some neles por ela.'},{n:'03',t:'Escalone a intensidade',d:'Cada encontro tem que ser melhor que o anterior.'}]},
+  ficando_morno:{crown:'⚔️',title:'TESTADORA',name:'A Testadora',desc:'Ficou, mas está avaliando se você é fraco. Cada teste que você passa aumenta a atração.',pct:61,sub:'Boa, desde que não passe nos testes errados.',traits:[{l:'Atração',v:65,c:'r'},{l:'Teste',v:95,c:'r'},{l:'Interesse',v:60,c:'b'},{l:'Paciência',v:35,c:'t'}],passos:[{n:'01',t:'Não justifique nada',d:'Ela some e volta. Não pergunte por quê.'},{n:'02',t:'Reaja pouco',d:'Ela espera reação emocional. Dê o contrário: calma.'},{n:'03',t:'Seja imprevisível',d:'Quebre o padrão. Apareça diferente.'}]},
+  ficando_frio:{crown:'🧊',title:'ARREPENDIDA',name:'A Arrependida',desc:'Algo aconteceu pra ela refriar. Pode ser erro seu, pode ser teste. Descobre antes de agir.',pct:41,sub:'Incerta. O próximo passo define tudo.',traits:[{l:'Interesse',v:30,c:'r'},{l:'Confusão',v:75,c:'b'},{l:'Distância',v:80,c:'r'},{l:'Respeito',v:45,c:'b'}],passos:[{n:'01',t:'Para tudo por 7 dias',d:'Qualquer mensagem agora parece desespero.'},{n:'02',t:'Avalie o que mudou',d:'O que aconteceu antes do esfriamento?'},{n:'03',t:'Contato cirúrgico',d:'Após 7 dias: uma mensagem engraçada, sem expectativa.'}]},
+  ficando_amizade:{crown:'🚪',title:'ESCAPISTA',name:'A Escapista',desc:'Ficou, mas está recuando pro lado amigo. Criando distância pra não se comprometer.',pct:33,sub:'Complicado. Precisa de ação não convencional.',traits:[{l:'Atração',v:40,c:'b'},{l:'Medo',v:70,c:'r'},{l:'Conforto',v:85,c:'t'},{l:'Tensão',v:20,c:'r'}],passos:[{n:'01',t:'Nomeie a situação',d:'"Tô sentindo que você tá evitando o assunto."'},{n:'02',t:'Declare sem implorar',d:'"Gosto de você, mas não vou ficar nessa zona."'},{n:'03',t:'Prazo interno',d:'2 semanas sem mudança = corta e segue em frente.'}]}
 };
-
 function buildResult(){
-  var key = (ans.q1||'chegando') + '_' + (ans.q2||'morno');
-  var p = PROFILES[key] || PROFILES['chegando_morno'];
-
-  document.getElementById('rCrown').textContent = p.crown;
-  document.getElementById('rTitle').textContent = p.title;
-  document.getElementById('arqName').textContent = p.arqName;
-  document.getElementById('arqDesc').textContent = p.arqDesc;
-  document.getElementById('gaugeSub').textContent = p.subGauge;
-
-  /* gauge animation */
+  var k=(A.q1||'chegando')+'_'+(A.q2||'morno');
+  var p=PRF[k]||PRF['chegando_morno'];
+  document.getElementById('rCrown').textContent=p.crown;
+  document.getElementById('rTitle').textContent=p.title;
+  document.getElementById('arqName').textContent=p.name;
+  document.getElementById('arqDesc').textContent=p.desc;
+  document.getElementById('gSub').textContent=p.sub;
   setTimeout(function(){
-    document.getElementById('gaugeFill').style.width = p.pct + '%';
-    var el = document.getElementById('gaugePct');
-    var cur = 0;
-    var timer = setInterval(function(){
-      cur += 2;
-      if(cur >= p.pct){ cur = p.pct; clearInterval(timer); }
-      el.textContent = cur + '%';
-    }, 18);
-  }, 300);
-
-  /* traits */
-  var tg = document.getElementById('traitsGrid');
-  tg.innerHTML = '';
-  p.traits.forEach(function(t){
-    var d = document.createElement('div');
-    d.className = 'trait';
-    d.innerHTML = '<div class="trait-label">'+t.label+'</div>'
-      +'<div class="trait-bar"><div class="trait-fill '+t.cls+'" style="width:0" data-w="'+t.val+'%"></div></div>'
-      +'<div class="trait-val" style="color:var(--'+t.cls+')">'+t.val+'</div>';
+    document.getElementById('gFill').style.width=p.pct+'%';
+    var el=document.getElementById('gPct'),cur=0;
+    var t=setInterval(function(){cur+=2;if(cur>=p.pct){cur=p.pct;clearInterval(t);}el.textContent=cur+'%';},16);
+  },400);
+  var tg=document.getElementById('traitsGrid');tg.innerHTML='';
+  var cm={r:['tr-r','var(--P)'],b:['tr-b','var(--S)'],t:['tr-t','var(--SL)']};
+  p.traits.forEach(function(tr){
+    var d=document.createElement('div');d.className='trait';
+    d.innerHTML='<div class="tr-lbl">'+tr.l+'</div>'
+      +'<div class="tr-track"><div class="tr-fill '+cm[tr.c][0]+'" data-w="'+tr.v+'%" style="width:0"></div></div>'
+      +'<div class="tr-val" style="color:'+cm[tr.c][1]+'">'+tr.v+'</div>';
     tg.appendChild(d);
   });
-  setTimeout(function(){
-    tg.querySelectorAll('.trait-fill').forEach(function(f){
-      f.style.width = f.dataset.w;
-    });
-  }, 400);
-
-  /* tática */
-  var tc = document.getElementById('taticaCard');
-  var html = '<div class="tatica-title">⚔️ Sua tática das 12 leis</div>';
+  setTimeout(function(){tg.querySelectorAll('.tr-fill').forEach(function(f){f.style.width=f.dataset.w;});},500);
+  var tc=document.getElementById('taticaCard');
+  var h='<div class="tc-head">⚔️ Seu plano das 12 leis</div>';
   p.passos.forEach(function(s){
-    html += '<div class="tatica-step">'
-      +'<div class="step-num">'+s.n+'</div>'
-      +'<div class="step-body"><p>'+s.title+'</p><span>'+s.desc+'</span></div>'
-      +'</div>';
+    h+='<div class="tc-step"><div class="tc-num">'+s.n+'</div><div class="tc-b"><p>'+s.t+'</p><span>'+s.d+'</span></div></div>';
   });
-  tc.innerHTML = html;
+  tc.innerHTML=h;
 }
-
 function restart(){
-  ans = {q1:null, q2:null, hasFile:false};
-  document.getElementById('qBlock1').style.display = 'flex';
-  document.getElementById('qBlock2').style.display = 'none';
-  document.getElementById('qNum').textContent = '1';
-  document.getElementById('qPct').textContent = '50%';
-  document.getElementById('progFill').style.width = '50%';
-  document.getElementById('btnQ1').classList.remove('on');
-  document.getElementById('btnQ2').classList.remove('on');
-  document.querySelectorAll('.opt').forEach(function(o){
-    o.classList.remove('sel');
-    o.querySelector('.opt-check').textContent='';
-  });
-  removeFile();
-  goTo('p1');
+  A={q1:null,q2:null};
+  document.getElementById('qB1').style.display='flex';
+  document.getElementById('qB2').style.display='none';
+  document.getElementById('qNum').textContent='1';
+  document.getElementById('qPct').textContent='50%';
+  document.getElementById('progFill').style.width='50%';
+  document.getElementById('bnQ1').classList.remove('on');
+  document.getElementById('bnQ2').classList.remove('on');
+  document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
+  rmFile();go('p1');
 }
 </script>
 </body>
