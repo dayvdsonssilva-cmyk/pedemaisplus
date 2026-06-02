@@ -522,6 +522,66 @@ select option{background:#3D0000;color:var(--W)}
 .gf-txt p{font-size:14px;font-weight:700;color:var(--W);line-height:1.2}
 .gf-txt span{font-size:12px;color:var(--WB);margin-top:2px;display:block}
 
+/* ══ FRASES RUINS ══ */
+.frases-card{
+  background:var(--WD);border:1px solid var(--WC);
+  border-radius:20px;padding:20px;
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;overflow:hidden;
+}
+.frases-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,#C9A84C,#E8CC7A);
+}
+.fr-head{
+  font-size:10px;font-weight:800;letter-spacing:.14em;
+  color:var(--WB);text-transform:uppercase;
+}
+.fr-item{
+  background:rgba(0,0,0,.2);border:1px solid var(--WC);
+  border-radius:14px;padding:14px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.fr-frase{
+  font-size:13px;font-style:italic;color:var(--WA);
+  border-left:2px solid rgba(201,168,76,.4);padding-left:10px;
+  line-height:1.5;
+}
+.fr-problema{
+  font-size:11px;font-weight:700;color:#E05A65;
+  display:flex;align-items:center;gap:5px;
+}
+.fr-correto{
+  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);
+  border-radius:8px;padding:8px 10px;
+  font-size:12px;color:#E8CC7A;font-weight:600;line-height:1.5;
+}
+.fr-correto span{
+  font-size:10px;font-weight:700;letter-spacing:.08em;
+  color:rgba(232,204,122,.6);text-transform:uppercase;
+  display:block;margin-bottom:3px;
+}
+
+/* Loading overlay */
+.loading-overlay{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(10,0,0,.85);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;
+}
+.loading-overlay.hide{display:none}
+.loading-spinner{
+  width:44px;height:44px;border-radius:50%;
+  border:3px solid rgba(201,168,76,.2);
+  border-top-color:#C9A84C;
+  animation:spin .9s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{
+  font-size:14px;font-weight:600;color:var(--WA);
+  letter-spacing:.04em;text-align:center;max-width:220px;line-height:1.6;
+}
+
 /* note */
 .cta-note{
   text-align:center;font-size:11px;color:var(--WB);letter-spacing:.01em;
@@ -533,6 +593,12 @@ select option{background:#3D0000;color:var(--W)}
 <!-- BG global -->
 <img class="bg-img" src="assets/cover.png" alt="" onerror="this.style.display='none'">
 <div class="bg-overlay"></div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay hide" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-txt">Analisando a conversa...<br>Identificando os erros 🔍</div>
+</div>
 
 <!-- ══════════════ P1 HOME ══════════════ -->
 <section class="scr" id="p1">
@@ -824,6 +890,12 @@ select option{background:#3D0000;color:var(--W)}
       </button>
     </div>
 
+    <!-- FRASES RUINS — preenchido pela IA -->
+    <div class="frases-card" id="frasesCard" style="display:none">
+      <div class="fr-head">🔍 O que você errou na conversa</div>
+      <div id="frasesLista"></div>
+    </div>
+
     <button class="btn-ghost" onclick="restart()">↺ Refazer o quiz</button>
   </div>
 </section>
@@ -888,12 +960,39 @@ select option{background:#3D0000;color:var(--W)}
   setInterval(upd,4000);
 })();
 
-var A={q1:null,q2:null};
+var A={q1:null,q2:null,conversaTexto:null,aiResult:null};
 function go(id){
+  if(id==='p4' && A.conversaTexto && A.conversaTexto.length > 30 && !A.aiResult){
+    analisarConversa(function(){ mostrarTela('p4'); });
+  } else {
+    mostrarTela(id);
+  }
+}
+function mostrarTela(id){
   document.querySelectorAll('.scr').forEach(function(s){s.classList.add('off')});
   document.getElementById(id).classList.remove('off');
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='p4')buildResult();
+}
+function analisarConversa(cb){
+  document.getElementById('loadingOverlay').classList.remove('hide');
+  fetch('/api/analyze',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({conversation:A.conversaTexto,q1:A.q1,q2:A.q2})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data && data.arquetipo){
+      A.aiResult=data;
+    }
+    document.getElementById('loadingOverlay').classList.add('hide');
+    cb();
+  })
+  .catch(function(){
+    document.getElementById('loadingOverlay').classList.add('hide');
+    cb();
+  });
 }
 function backToQ2(){
   document.getElementById('qB2').style.display='flex';
@@ -948,6 +1047,15 @@ function showPrev(f){
   document.getElementById('prevName').textContent=f.name;
   document.getElementById('prevBox').classList.add('show');
   document.getElementById('btnComArq').style.display='block';
+  // Lê o conteúdo se for .txt
+  if(ext==='txt'){
+    var rd=new FileReader();
+    rd.onload=function(ev){A.conversaTexto=ev.target.result;};
+    rd.readAsText(f);
+  } else {
+    // Para imagens/PDF, armazena nome como fallback
+    A.conversaTexto='[arquivo: '+f.name+']';
+  }
 }
 function rmFile(){
   document.getElementById('prevBox').classList.remove('show');
@@ -967,6 +1075,15 @@ var PRF={
 function buildResult(){
   var k=(A.q1||'chegando')+'_'+(A.q2||'morno');
   var p=PRF[k]||PRF['chegando_morno'];
+  // Se IA retornou resultado, usa os dados dela
+  if(A.aiResult){
+    // Mapeia arquétipo da IA para dados locais
+    var aiKey=Object.keys(PRF).find(function(k){
+      return PRF[k].title===A.aiResult.arquetipo || k.includes(A.aiResult.arquetipo.toLowerCase());
+    });
+    if(aiKey) p=PRF[aiKey];
+    p=Object.assign({},p,{pct:A.aiResult.pct,sub:A.aiResult.sub||p.sub});
+  }
   document.getElementById('rCrown').textContent=p.crown;
   document.getElementById('rTitle').textContent=p.title;
   document.getElementById('arqName').textContent=p.name;
@@ -993,9 +1110,29 @@ function buildResult(){
     h+='<div class="tc-step"><div class="tc-num">'+s.n+'</div><div class="tc-b"><p>'+s.t+'</p><span>'+s.d+'</span></div></div>';
   });
   tc.innerHTML=h;
+
+  // Frases ruins da IA
+  var fc=document.getElementById('frasesCard');
+  var fl=document.getElementById('frasesLista');
+  if(A.aiResult && A.aiResult.frases_ruins && A.aiResult.frases_ruins.length){
+    fl.innerHTML='';
+    A.aiResult.frases_ruins.forEach(function(fr){
+      var div=document.createElement('div');
+      div.className='fr-item';
+      div.innerHTML=
+        '<div class="fr-frase">"'+fr.frase+'"</div>'+
+        '<div class="fr-problema">❌ '+fr.problema+'</div>'+
+        '<div class="fr-correto"><span>✓ Deveria ter dito</span>'+fr.correto+'</div>';
+      fl.appendChild(div);
+    });
+    fc.style.display='flex';
+    fc.style.flexDirection='column';
+  } else {
+    fc.style.display='none';
+  }
 }
 function restart(){
-  A={q1:null,q2:null};
+  A={q1:null,q2:null,conversaTexto:null,aiResult:null};
   document.getElementById('qB1').style.display='flex';
   document.getElementById('qB2').style.display='none';
   document.getElementById('qNum').textContent='1';
