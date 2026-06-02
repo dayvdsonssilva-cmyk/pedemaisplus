@@ -16,9 +16,9 @@
   --red2:#E63946;
   --salmon:#C9A84C;
   --dark:#3D0000;
-  --darker:#1A0000; 
+  --darker:#1A0000;
   --overlay:rgba(100,0,0,.72);
-  --W:#FFFFFF; 
+  --W:#FFFFFF;
   --WA:rgba(255,255,255,.75);
   --WB:rgba(255,255,255,.45);
   --WC:rgba(255,255,255,.12);
@@ -522,6 +522,65 @@ select option{background:#3D0000;color:var(--W)}
 .gf-txt p{font-size:14px;font-weight:700;color:var(--W);line-height:1.2}
 .gf-txt span{font-size:12px;color:var(--WB);margin-top:2px;display:block}
 
+/* ══ BALÕES WHATSAPP ══ */
+.wpp-card{
+  background:var(--WD);border:1px solid var(--WC);
+  border-radius:20px;padding:20px;
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;overflow:hidden;
+}
+.wpp-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,#C9A84C,#E8CC7A);
+}
+.wpp-head{
+  font-size:10px;font-weight:800;letter-spacing:.14em;
+  color:var(--WB);text-transform:uppercase;margin-bottom:4px;
+}
+.wpp-item{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.wpp-item:last-child{margin-bottom:0}
+
+/* Balão enviado (mensagem ruim do usuário) */
+.bubble-sent{
+  align-self:flex-end;
+  background:#1F5C37;
+  color:#E8F5ED;
+  border-radius:14px 14px 2px 14px;
+  padding:9px 13px;
+  font-size:13px;line-height:1.5;
+  max-width:82%;position:relative;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+.bubble-sent::after{
+  content:'✓✓';
+  font-size:10px;color:rgba(255,255,255,.4);
+  display:block;text-align:right;margin-top:3px;
+}
+
+/* Badge de erro */
+.bubble-erro{
+  align-self:flex-end;
+  background:rgba(224,90,101,.15);border:1px solid rgba(224,90,101,.3);
+  border-radius:8px;padding:5px 10px;
+  font-size:11px;font-weight:700;color:#E05A65;
+  max-width:82%;
+}
+
+/* Balão recebido (versão correta — resposta do guru) */
+.bubble-fix{
+  align-self:flex-start;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);
+  border-radius:14px 14px 14px 2px;
+  padding:9px 13px;
+  font-size:13px;line-height:1.5;color:#E8CC7A;
+  max-width:82%;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.bubble-fix-label{
+  font-size:10px;font-weight:800;letter-spacing:.08em;
+  color:rgba(232,204,122,.5);text-transform:uppercase;margin-bottom:3px;
+}
+
 /* ══ FRASES RUINS ══ */
 .frases-card{
   background:var(--WD);border:1px solid var(--WC);
@@ -581,6 +640,98 @@ select option{background:#3D0000;color:var(--W)}
   font-size:14px;font-weight:600;color:var(--WA);
   letter-spacing:.04em;text-align:center;max-width:220px;line-height:1.6;
 }
+
+/* ══ GURU CHAT SCREEN ══ */
+#p_guru{justify-content:flex-start}
+.guru-header{
+  width:100%;padding:18px 22px 14px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--WC);flex-shrink:0;
+}
+.guru-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#C9A84C,#E8CC7A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.guru-info{flex:1}
+.guru-nome{font-size:15px;font-weight:800;color:var(--W);letter-spacing:.01em}
+.guru-status{font-size:11px;color:#4ADE80;display:flex;align-items:center;gap:5px}
+.guru-status::before{content:'';width:6px;height:6px;border-radius:50%;background:#4ADE80;display:inline-block}
+
+.chat-area{
+  flex:1;width:100%;padding:16px 16px 0;
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:12px;
+}
+.msg{display:flex;flex-direction:column;gap:3px;max-width:82%}
+.msg.user{align-self:flex-end;align-items:flex-end}
+.msg.guru{align-self:flex-start;align-items:flex-start}
+.msg-bubble{
+  padding:10px 14px;font-size:14px;line-height:1.6;
+  border-radius:18px;
+}
+.msg.user .msg-bubble{
+  background:linear-gradient(135deg,#C9A84C,#B8922E);
+  color:#1A0000;border-radius:18px 18px 4px 18px;
+  font-weight:500;
+}
+.msg.guru .msg-bubble{
+  background:var(--WD);border:1px solid var(--WC);
+  color:var(--WA);border-radius:18px 18px 18px 4px;
+}
+.msg-hora{font-size:10px;color:var(--WB);padding:0 4px}
+
+.chat-input-wrap{
+  width:100%;padding:12px 16px 28px;
+  display:flex;align-items:center;gap:10px;
+  border-top:1px solid var(--WC);flex-shrink:0;
+}
+.chat-input{
+  flex:1;background:var(--WD);border:1.5px solid var(--WC);
+  border-radius:24px;color:var(--W);
+  font-family:'Inter',sans-serif;font-size:14px;
+  padding:11px 16px;outline:none;resize:none;
+  max-height:100px;line-height:1.4;
+  transition:border-color .2s;
+}
+.chat-input:focus{border-color:var(--salmon)}
+.chat-input::placeholder{color:var(--WB)}
+.chat-send{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#C9A84C,#E8CC7A);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;transition:transform .12s;
+}
+.chat-send:active{transform:scale(.93)}
+.guru-typing{
+  display:none;align-self:flex-start;
+  background:var(--WD);border:1px solid var(--WC);
+  border-radius:18px 18px 18px 4px;
+  padding:10px 16px;
+}
+.guru-typing span{
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--WB);margin:0 2px;
+  animation:typing .9s ease-in-out infinite;
+}
+.guru-typing span:nth-child(2){animation-delay:.2s}
+.guru-typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+.leis-pills{
+  display:flex;gap:6px;flex-wrap:wrap;
+  padding:0 16px 10px;
+}
+.lei-pill{
+  background:var(--WD);border:1px solid var(--WC);
+  border-radius:99px;padding:5px 12px;
+  font-size:11px;font-weight:600;color:var(--WB);
+  cursor:pointer;white-space:nowrap;
+  transition:background .15s,color .15s;
+}
+.lei-pill:active{background:rgba(201,168,76,.15);color:#E8CC7A;border-color:rgba(201,168,76,.3)}
 
 /* note */
 .cta-note{
@@ -885,14 +1036,17 @@ select option{background:#3D0000;color:var(--W)}
         </div>
       </div>
 
-      <button class="btn-main" onclick="go('p5')" style="margin-top:4px">
-        GURU TORA AVENTUREIRA 🔥
+      <button class="btn-main" onclick="go('p_guru')" style="margin-top:4px">
+        FALAR COM O GURU 🔱
+      </button>
+      <button class="btn-main" onclick="go('p5')" style="background:linear-gradient(135deg,#8B0000,#C1121F);color:var(--W);box-shadow:0 4px 16px rgba(139,0,0,.3);margin-top:-8px">
+        GURU TORA AVENTUREIRA →
       </button>
     </div>
 
-    <!-- FRASES RUINS — preenchido pela IA -->
-    <div class="frases-card" id="frasesCard" style="display:none">
-      <div class="fr-head">🔍 O que você errou na conversa</div>
+    <!-- BALÕES RUINS — preenchido pela IA -->
+    <div class="wpp-card" id="frasesCard" style="display:none">
+      <div class="wpp-head">📱 Mensagens que te prejudicaram</div>
       <div id="frasesLista"></div>
     </div>
 
@@ -944,6 +1098,57 @@ select option{background:#3D0000;color:var(--W)}
     </div>
     <button class="btn-ghost" onclick="restart()">← Voltar ao início</button>
   </div>
+</section>
+
+<!-- ══════════ P_GURU — CHAT ══════════ -->
+<section class="scr off" id="p_guru">
+
+  <div class="guru-header">
+    <button class="back-btn" onclick="go('p4')" style="flex-shrink:0">←</button>
+    <div class="guru-avatar">🔱</div>
+    <div class="guru-info">
+      <div class="guru-nome">Guru Tora Aventureira</div>
+      <div class="guru-status">online agora</div>
+    </div>
+  </div>
+
+  <!-- Atalhos das 12 Leis -->
+  <div class="leis-pills" id="leisPills">
+    <div class="lei-pill" onclick="perguntarLei('Lei da Escassez')">⚡ Escassez</div>
+    <div class="lei-pill" onclick="perguntarLei('Lei do Mistério')">🌑 Mistério</div>
+    <div class="lei-pill" onclick="perguntarLei('Lei da Tensão')">🔥 Tensão</div>
+    <div class="lei-pill" onclick="perguntarLei('Lei do Silêncio')">🤫 Silêncio</div>
+    <div class="lei-pill" onclick="perguntarLei('Lei da Imprevisibilidade')">🎲 Imprevisível</div>
+    <div class="lei-pill" onclick="perguntarLei('Lei da Abundância')">♾️ Abundância</div>
+  </div>
+
+  <div class="chat-area" id="chatArea">
+    <!-- Mensagem inicial do Guru -->
+    <div class="msg guru">
+      <div class="msg-bubble">
+        Analisei sua conversa. Vejo os padrões.<br><br>
+        Me pergunta qualquer coisa — sobre ela, sobre a próxima mensagem, sobre o que fazer agora. Ou clica nas Leis acima para entender como aplicar cada uma na sua situação. 🔱
+      </div>
+      <div class="msg-hora">Guru</div>
+    </div>
+    <!-- Typing indicator -->
+    <div class="guru-typing" id="guruTyping">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="chat-input-wrap">
+    <textarea
+      class="chat-input"
+      id="chatInput"
+      rows="1"
+      placeholder="Pergunte ao Guru..."
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensagem()}"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button class="chat-send" onclick="enviarMensagem()">➤</button>
+  </div>
+
 </section>
 
 <script>
@@ -1111,19 +1316,19 @@ function buildResult(){
   });
   tc.innerHTML=h;
 
-  // Frases ruins da IA
+  // Balões WhatsApp com frases ruins
   var fc=document.getElementById('frasesCard');
   var fl=document.getElementById('frasesLista');
   if(A.aiResult && A.aiResult.frases_ruins && A.aiResult.frases_ruins.length){
     fl.innerHTML='';
     A.aiResult.frases_ruins.forEach(function(fr){
-      var div=document.createElement('div');
-      div.className='fr-item';
-      div.innerHTML=
-        '<div class="fr-frase">"'+fr.frase+'"</div>'+
-        '<div class="fr-problema">❌ '+fr.problema+'</div>'+
-        '<div class="fr-correto"><span>✓ Deveria ter dito</span>'+fr.correto+'</div>';
-      fl.appendChild(div);
+      var item=document.createElement('div');
+      item.className='wpp-item';
+      item.innerHTML=
+        '<div class="bubble-sent">'+escapeHtml(fr.frase)+'</div>'+
+        '<div class="bubble-erro">❌ '+escapeHtml(fr.problema)+'</div>'+
+        '<div class="bubble-fix"><div class="bubble-fix-label">✓ Guru sugere</div>'+escapeHtml(fr.correto)+'</div>';
+      fl.appendChild(item);
     });
     fc.style.display='flex';
     fc.style.flexDirection='column';
@@ -1131,8 +1336,95 @@ function buildResult(){
     fc.style.display='none';
   }
 }
+function escapeHtml(t){
+  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+/* ── GURU CHAT ── */
+var guruMessages=[];
+var guruContexto='';
+
+function buildGuruContexto(){
+  var ctx='';
+  if(A.q1) ctx+='Situação: '+(A.q1==='chegando'?'Quer conquistar':'Já ficou com ela')+'. ';
+  if(A.q2) ctx+='Comportamento dela: '+A.q2+'. ';
+  if(A.aiResult){
+    ctx+='Arquétipo: '+A.aiResult.arquetipo+'. ';
+    ctx+='Chances estimadas: '+A.aiResult.pct+'%. ';
+    if(A.aiResult.frases_ruins){
+      ctx+='Frases ruins identificadas: ';
+      A.aiResult.frases_ruins.forEach(function(f,i){
+        ctx+=(i+1)+') "'+f.frase+'" — problema: '+f.problema+'. ';
+      });
+    }
+  }
+  if(A.conversaTexto && A.conversaTexto.length>20){
+    ctx+='\n\nTrecho da conversa analisada:\n'+A.conversaTexto.substring(0,800);
+  }
+  return ctx;
+}
+
+function enviarMensagem(){
+  var inp=document.getElementById('chatInput');
+  var txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';inp.style.height='auto';
+
+  adicionarMsg('user',txt);
+  guruMessages.push({role:'user',content:txt});
+  mostrarTyping(true);
+
+  if(!guruContexto) guruContexto=buildGuruContexto();
+
+  fetch('/api/guru',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({messages:guruMessages,contexto:guruContexto})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    mostrarTyping(false);
+    var reply=data.reply||'Desculpa, tive um problema. Tente novamente.';
+    guruMessages.push({role:'assistant',content:reply});
+    adicionarMsg('guru',reply);
+  })
+  .catch(function(){
+    mostrarTyping(false);
+    adicionarMsg('guru','Conexão falhou. Tente novamente.');
+  });
+}
+
+function perguntarLei(lei){
+  document.getElementById('chatInput').value='Me explica a '+lei+' e como aplicar na minha situação.';
+  enviarMensagem();
+  // Esconde pills após usar
+  document.getElementById('leisPills').style.display='none';
+}
+
+function adicionarMsg(tipo,txt){
+  var area=document.getElementById('chatArea');
+  var typing=document.getElementById('guruTyping');
+  var div=document.createElement('div');
+  div.className='msg '+tipo;
+  var hora=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  div.innerHTML='<div class="msg-bubble">'+txt.replace(/\n/g,'<br>')+'</div><div class="msg-hora">'+hora+'</div>';
+  area.insertBefore(div,typing);
+  area.scrollTop=area.scrollHeight;
+}
+
+function mostrarTyping(show){
+  var t=document.getElementById('guruTyping');
+  t.style.display=show?'flex':'none';
+  if(show) document.getElementById('chatArea').scrollTop=9999;
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
+}
+
 function restart(){
   A={q1:null,q2:null,conversaTexto:null,aiResult:null};
+  guruMessages=[];guruContexto='';
   document.getElementById('qB1').style.display='flex';
   document.getElementById('qB2').style.display='none';
   document.getElementById('qNum').textContent='1';
@@ -1146,3 +1438,4 @@ function restart(){
 </script>
 </body>
 </html>
+   
