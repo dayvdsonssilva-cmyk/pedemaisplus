@@ -984,8 +984,6 @@ select option{background:#3D0000;color:var(--W)}
 <!-- ══════════ P4 RESULTADO ══════════ -->
 <section class="scr off" id="p4">
 
-  <!-- HERO: arquétipo centralizado -->
-  <!-- HERO: arquétipo + chances -->
   <div class="r4-hero">
     <div class="r-crown" id="rCrown">🎯</div>
     <p class="r-eye">Arquétipo identificado</p>
@@ -993,16 +991,6 @@ select option{background:#3D0000;color:var(--W)}
   </div>
 
   <div class="r4-body">
-
-    <!-- GAUGE -->
-    <div class="gauge">
-      <div class="g-lbl">⚡ Suas chances de conquistar ela</div>
-      <div class="g-track"><div class="g-fill" id="gFill"></div></div>
-      <div class="g-row">
-        <div class="g-pct" id="gPct">0%</div>
-        <div class="g-sub" id="gSub"></div>
-      </div>
-    </div>
 
     <!-- DIAGNÓSTICO DA IA -->
     <div class="diag-card" id="diagCard" style="display:none">
@@ -1017,9 +1005,11 @@ select option{background:#3D0000;color:var(--W)}
       <div id="mataLista"></div>
     </div>
 
-    <!-- SEM CONVERSA: CTA simples -->
-    <div id="semConversaCard" style="display:none">
-      <button class="btn-main" onclick="go('p3')">📱 Subir conversa para gerar frases</button>
+    <!-- ERRO / SEM RESULTADO -->
+    <div class="diag-card" id="erroCard" style="display:none">
+      <div class="diag-head">⚠️ Não conseguimos analisar</div>
+      <p class="diag-txt" id="erroTxt">Tente subir a imagem novamente com melhor qualidade.</p>
+      <button class="btn-main" onclick="go('p3')" style="margin-top:8px">Tentar novamente</button>
     </div>
 
     <button class="btn-ghost" onclick="restart()" style="margin-top:8px">↺ Refazer o quiz</button>
@@ -1279,82 +1269,36 @@ var PRF={
   ficando_amizade:{crown:'🚪',title:'ESCAPISTA',name:'A Escapista',desc:'Ficou, mas está recuando pro lado amigo. Criando distância pra não se comprometer.',pct:33,sub:'Complicado. Precisa de ação não convencional.',traits:[{l:'Atração',v:40,c:'b'},{l:'Medo',v:70,c:'r'},{l:'Conforto',v:85,c:'t'},{l:'Tensão',v:20,c:'r'}],passos:[{n:'01',t:'Nomeie a situação',d:'"Tô sentindo que você tá evitando o assunto."'},{n:'02',t:'Declare sem implorar',d:'"Gosto de você, mas não vou ficar nessa zona."'},{n:'03',t:'Prazo interno',d:'2 semanas sem mudança = corta e segue em frente.'}]}
 };
 function buildResult(){
+  // Arquétipo pelo quiz
   var k=(A.q1||'chegando')+'_'+(A.q2||'morno');
   var p=PRF[k]||PRF['chegando_morno'];
-  // Se IA retornou resultado, usa os dados dela
-  if(A.aiResult){
-    console.log('AI Result recebido:', JSON.stringify(A.aiResult));
+
+  // Sobrescreve arquétipo se a IA identificou
+  if(A.aiResult && A.aiResult.arquetipo){
     var aiKey=Object.keys(PRF).find(function(chave){
       return PRF[chave].title===A.aiResult.arquetipo;
     });
     if(aiKey) p=PRF[aiKey];
-    // Só usa pct da IA se for número válido > 0
-    var aiPct=parseInt(A.aiResult.pct);
-    if(aiPct > 0) p=Object.assign({},p,{pct:aiPct});
-    if(A.aiResult.sub) p=Object.assign({},p,{sub:A.aiResult.sub});
   }
-  console.log('PCT final:', p.pct);
+
+  // Hero
   document.getElementById('rCrown').textContent=p.crown;
   document.getElementById('rTitle').textContent=p.title;
-  document.getElementById('arqName').textContent=p.name;
-  document.getElementById('arqDesc').textContent=p.desc;
-  document.getElementById('gSub').textContent=p.sub;
-
-  // Reseta antes de animar
-  var gFill=document.getElementById('gFill');
-  var gPct=document.getElementById('gPct');
-  gFill.style.transition='none';
-  gFill.style.width='0%';
-  gPct.textContent='0%';
-
-  var targetPct=parseInt(p.pct);
-  if(!targetPct || targetPct<=0) targetPct=45; // fallback visível
-  console.log('Target PCT animação:', targetPct);
-
-  setTimeout(function(){
-    gFill.style.transition='width 1.4s cubic-bezier(.4,0,.2,1)';
-    gFill.style.width=targetPct+'%';
-    var cur=0;
-    var t=setInterval(function(){
-      cur+=2;
-      if(cur>=targetPct){cur=targetPct;clearInterval(t);}
-      gPct.textContent=cur+'%';
-    },16);
-  },200);
-  var tg=document.getElementById('traitsGrid');tg.innerHTML='';
-  var cm={r:['tr-r','var(--salmon)'],b:['tr-b','#E05A65'],t:['tr-t','#E9C46A']};
-  p.traits.forEach(function(tr){
-    var d=document.createElement('div');d.className='trait';
-    d.innerHTML='<div class="tr-lbl">'+tr.l+'</div>'
-      +'<div class="tr-track"><div class="tr-fill '+cm[tr.c][0]+'" data-w="'+tr.v+'%" style="width:0"></div></div>'
-      +'<div class="tr-val" style="color:'+cm[tr.c][1]+'">'+tr.v+'</div>';
-    tg.appendChild(d);
-  });
-  setTimeout(function(){tg.querySelectorAll('.tr-fill').forEach(function(f){f.style.width=f.dataset.w;});},500);
-  var tc=document.getElementById('taticaCard');
-  var h='<div class="tc-head">⚔️ Seu plano das 12 leis</div>';
-  p.passos.forEach(function(s){
-    h+='<div class="tc-step"><div class="tc-num">'+s.n+'</div><div class="tc-b"><p>'+s.t+'</p><span>'+s.d+'</span></div></div>';
-  });
-  tc.innerHTML=h;
 
   // Diagnóstico
   var diagCard=document.getElementById('diagCard');
-  var semCard=document.getElementById('semConversaCard');
   if(A.aiResult && A.aiResult.diagnostico){
     document.getElementById('diagTxt').textContent=A.aiResult.diagnostico;
-    diagCard.style.display='flex';
-    diagCard.style.flexDirection='column';
-    semCard.style.display='none';
+    diagCard.style.cssText='display:flex;flex-direction:column';
   } else {
     diagCard.style.display='none';
-    semCard.style.display='flex';
-    semCard.style.flexDirection='column';
   }
 
   // Frases matadoras
   var mataCard=document.getElementById('mataCard');
   var mataLista=document.getElementById('mataLista');
+  var erroCard=document.getElementById('erroCard');
+
   if(A.aiResult && A.aiResult.frases_matadoras && A.aiResult.frases_matadoras.length){
     mataLista.innerHTML='';
     A.aiResult.frases_matadoras.forEach(function(fm,i){
@@ -1364,14 +1308,19 @@ function buildResult(){
       item.innerHTML=
         '<div class="mata-ctx">'+(i+1)+'. '+escapeHtml(fm.contexto)+'</div>'+
         '<div class="mata-bubble">'+escapeHtml(fm.frase)+'</div>'+
-        '<a class="btn-wpp" href="'+wppUrl+'" target="_blank" rel="noopener">'+
-        '📲 Enviar no WhatsApp</a>';
+        '<a class="btn-wpp" href="'+wppUrl+'" target="_blank" rel="noopener">📲 Enviar no WhatsApp</a>';
       mataLista.appendChild(item);
     });
-    mataCard.style.display='flex';
-    mataCard.style.flexDirection='column';
-  } else {
+    mataCard.style.cssText='display:flex;flex-direction:column';
+    erroCard.style.display='none';
+  } else if(A.conversaImagem || A.conversaTexto){
+    // Tinha conversa mas algo falhou
     mataCard.style.display='none';
+    erroCard.style.cssText='display:flex;flex-direction:column';
+  } else {
+    // Sem conversa — nunca chegou aqui normalmente
+    mataCard.style.display='none';
+    erroCard.style.display='none';
   }
 }
 function escapeHtml(t){
