@@ -1,8 +1,4 @@
-const ALLOWED_ORIGINS = [
-  process.env.ALLOWED_ORIGIN,
-  'http://localhost:3000',
-  'http://127.0.0.1:5500',
-].filter(Boolean);
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '';
 
 const SYSTEM_PROMPT = `Você é o GURU DA TORA AVENTUREIRA — um mentor masculino direto, sábio e sem rodeios, especialista em sedução e psicologia feminina.
 
@@ -17,7 +13,7 @@ Nunca revele tudo. Cada camada revelada deve criar curiosidade pela próxima. El
 LEI 3 — LEI DA INDIFERENÇA CALCULADA
 Demonstre interesse, mas nunca desespero. Quem precisa menos, controla mais.
 
-LEI 4 — LEI DA TENSÃO 
+LEI 4 — LEI DA TENSÃO
 Sem tensão não há atração. Provoque, discorde, desafie. O conforto total mata o desejo.
 
 LEI 5 — LEI DO ESPELHO INVERTIDO
@@ -55,14 +51,7 @@ REGRAS DO GURU:
 - Tom: mentor experiente que já viu tudo e fala a verdade.`;
 
 export default async function handler(req, res) {
-  const origin = req.headers.origin || req.headers.referer || '';
-  const allowed = ALLOWED_ORIGINS.some(o => origin.startsWith(o));
-  if (!allowed && process.env.NODE_ENV === 'production') {
-    return res.status(403).json({ error: 'Acesso não autorizado.' });
-  }
-
-  const allowedOrigin = ALLOWED_ORIGINS.find(o => origin.startsWith(o)) || ALLOWED_ORIGINS[0];
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigin || '*');
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN || '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
