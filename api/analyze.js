@@ -13,49 +13,44 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Nenhuma conversa enviada.' });
   }
 
-  const contexto = `CONTEXTO DO USUÁRIO:
-- Situação: ${q1 === 'chegando' ? 'Quer conquistar ela (ainda não rolou nada)' : 'Já ficou com ela'}
+  const contexto = `
+- Situação: ${q1 === 'chegando' ? 'Ele ainda não ficou com ela' : 'Já ficaram juntos'}
 - Comportamento dela: ${q2 === 'quente' ? 'Demonstra interesse' : q2 === 'morno' ? 'Quente e frio' : q2 === 'frio' ? 'É distante' : 'Trata como amigo (friendzone)'}`;
 
-  const instrucao = `Você é um especialista em sedução e comunicação masculina. Analise a conversa de WhatsApp ${imagem ? 'na imagem' : 'abaixo'} e retorne um JSON com a análise.
+  const instrucao = `Você é um especialista em sedução e comunicação masculina. Analise a conversa de WhatsApp ${imagem ? 'na imagem' : 'abaixo'} e retorne um JSON.
 
-${contexto}
+CONTEXTO:${contexto}
 ${conversation ? '\nCONVERSA:\n' + conversation : ''}
 
-Retorne APENAS um JSON válido, sem markdown, sem texto extra, neste formato exato:
+Retorne APENAS um JSON válido, sem markdown, sem texto extra:
 {
-  "arquetipo": "NOME DO ARQUÉTIPO EM MAIÚSCULAS (ex: CALCULISTA, ENTREGADORA, DESAFIADORA, CÚMPLICE, APAIXONADA, TESTADORA, ARREPENDIDA, ESCAPISTA)",
+  "arquetipo": "uma dessas opções: CALCULISTA, ENTREGADORA, DESAFIADORA, CÚMPLICE, APAIXONADA, TESTADORA, ARREPENDIDA, ESCAPISTA",
   "pct": 65,
-  "sub": "Frase curta sobre as chances (ex: Alta. Mas cuidado agora.)",
-  "frases_ruins": [
+  "diagnostico": "2-3 frases diretas explicando o padrão da conversa e onde ele está errando. Ex: Você está parecendo ansioso e disponível demais. Ela sentiu que tem o controle total e reduziu o interesse.",
+  "frases_matadoras": [
     {
-      "frase": "mensagem exata que ele enviou (copie literalmente da conversa)",
-      "problema": "Por que essa frase foi ruim em 1 frase curta",
-      "correto": "Como deveria ter dito"
+      "contexto": "quando ela demorar pra responder",
+      "frase": "Mensagem pronta e poderosa para mandar agora. Natural, no estilo dela, sem parecer robô."
     },
     {
-      "frase": "outra mensagem ruim",
-      "problema": "Problema em 1 frase",
-      "correto": "Versão melhorada"
+      "contexto": "para reativar o interesse dela",
+      "frase": "Segunda mensagem matadora. Cria tensão ou curiosidade."
     },
     {
-      "frase": "terceira mensagem ruim",
-      "problema": "Problema em 1 frase",
-      "correto": "Versão melhorada"
+      "contexto": "para marcar um encontro",
+      "frase": "Terceira mensagem. Direta, segura, sem pedir permissão."
     }
   ]
 }
 
 Regras:
-- pct deve ser entre 10 e 90
-- as frases_ruins devem ser EXATAMENTE retiradas da conversa (leia a imagem se for o caso)
-- Se não houver 3 frases ruins claras, aponte as 3 piores mesmo que sejam mediocres
-- Seja direto e masculino no tom`;
+- pct entre 15 e 85
+- diagnostico: brutal e honesto, máximo 3 frases
+- frases_matadoras: mensagens PRONTAS para copiar e mandar no WhatsApp, no português informal brasileiro, sem aspas desnecessárias
+- As frases devem ser baseadas no contexto real da conversa analisada`;
 
-  // Monta o conteúdo da mensagem — texto ou imagem
   let userContent;
   if (imagem) {
-    // GPT-4o Vision: envia imagem base64
     const base64 = imagem.split(',')[1];
     const mimeType = imagem.split(';')[0].split(':')[1];
     userContent = [
@@ -75,7 +70,7 @@ Regras:
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        max_tokens: 1024,
+        max_tokens: 1200,
         messages: [{ role: 'user', content: userContent }],
       }),
     });
@@ -83,15 +78,13 @@ Regras:
     if (!response.ok) {
       const err = await response.text();
       console.error('API error:', err);
-      return res.status(500).json({ error: 'Erro na API de análise.' });
+      return res.status(500).json({ error: 'Erro na API.' });
     }
 
     const data = await response.json();
     const text = data.choices[0].message.content.trim();
-
-    // Extrai JSON mesmo se vier com texto extra
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return res.status(500).json({ error: 'Resposta inválida da IA.' });
+    if (!jsonMatch) return res.status(500).json({ error: 'Resposta inválida.' });
 
     const result = JSON.parse(jsonMatch[0]);
     return res.status(200).json(result);
