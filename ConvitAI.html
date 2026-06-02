@@ -470,6 +470,55 @@ select option{background:#3D0000;color:var(--W)}
 .urgency-bar p{font-size:12px;color:var(--WA);font-weight:500;line-height:1.55}
 .urgency-bar strong{color:var(--salmon)}
 
+/* ══ P4 NOVO ══ */
+.arq-desc-hero{
+  font-size:13px;color:var(--WB);line-height:1.65;
+  text-align:center;max-width:280px;margin-top:6px;
+}
+.urgency-card{
+  background:rgba(224,90,101,.1);border:1px solid rgba(224,90,101,.25);
+  border-radius:16px;padding:18px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.urg-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.urg-txt{font-size:13px;color:var(--WA);line-height:1.7}
+.urg-txt strong{color:var(--salmon)}
+.urg-txt span{display:block;margin-top:6px;color:var(--WB);font-size:12px}
+
+.guru-card{
+  background:var(--WD);border:1px solid var(--WC);
+  border-radius:20px;padding:22px;
+  display:flex;flex-direction:column;gap:18px;
+  backdrop-filter:blur(10px);
+  position:relative;overflow:hidden;
+}
+.guru-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--red),var(--salmon));
+}
+.guru-pill{
+  display:inline-flex;align-self:flex-start;
+  background:rgba(224,90,101,.15);border:1px solid rgba(224,90,101,.3);
+  border-radius:99px;padding:4px 13px;
+  font-size:10px;font-weight:800;letter-spacing:.14em;
+  color:var(--salmon);text-transform:uppercase;
+}
+.guru-cta{
+  font-size:15px;line-height:1.7;color:var(--WA);
+}
+.guru-cta strong{color:var(--W);font-weight:800}
+
+.guru-features{display:flex;flex-direction:column;gap:12px}
+.gf-row{display:flex;align-items:flex-start;gap:12px}
+.gf-ico{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(224,90,101,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.gf-txt p{font-size:14px;font-weight:700;color:var(--W);line-height:1.2}
+.gf-txt span{font-size:12px;color:var(--WB);margin-top:2px;display:block}
+
 /* note */
 .cta-note{
   text-align:center;font-size:11px;color:var(--WB);letter-spacing:.01em;
@@ -615,10 +664,12 @@ select option{background:#3D0000;color:var(--W)}
       <div class="prog-track"><div class="prog-fill" style="width:75%"></div></div>
     </div>
   </div>
-  <div class="p3body">
-    <div class="pill" style="align-self:flex-start">📎 Conversa</div>
-    <h2 class="sec-title">Cola a conversa<br>com ela.</h2>
-    <p class="sec-sub">Mais contexto = plano mais preciso.</p>
+
+  <!-- BLOCO UPLOAD -->
+  <div class="p3body" id="p3Upload">
+    <div class="pill" style="align-self:flex-start">📱 Conversa</div>
+    <h2 class="sec-title">Envie uma parte<br>da conversa.</h2>
+    <p class="sec-sub">Quanto mais contexto, mais preciso o seu plano.</p>
 
     <div class="upload-zone" id="upZone"
       ondragover="event.preventDefault();this.classList.add('hover')"
@@ -643,6 +694,7 @@ select option{background:#3D0000;color:var(--W)}
       <button class="prev-rm" onclick="rmFile()">✕</button>
     </div>
 
+    <!-- Privacidade -->
     <div class="priv-box">
       <div class="priv-ico">🔒</div>
       <div class="priv-txt">
@@ -651,15 +703,27 @@ select option{background:#3D0000;color:var(--W)}
       </div>
     </div>
 
+    <!-- Botão continuar (aparece após upload) -->
     <div id="btnComArq" style="display:none">
-      <button class="btn-main" onclick="go('p4')">Analisar e ver resultado →</button>
+      <button class="btn-main" onclick="go('p4')">Continuar →</button>
     </div>
 
+    <!-- Separador -->
     <div class="or-div">
       <div class="or-line"></div>
-      <div class="or-txt">Ou responda sobre ela</div>
+      <div class="or-txt">Se não quiser mandar a conversa</div>
       <div class="or-line"></div>
     </div>
+
+    <!-- Botão informar manualmente -->
+    <button class="btn-ghost" onclick="showManual()">✏️ Informar manualmente</button>
+  </div>
+
+  <!-- BLOCO MANUAL (oculto por padrão) -->
+  <div class="p3body" id="p3Manual" style="display:none">
+    <div class="pill" style="align-self:flex-start">✏️ Manual</div>
+    <h2 class="sec-title">Conte sobre<br>ela.</h2>
+    <p class="sec-sub">Responda o que souber — pode deixar em branco o que não sabe.</p>
 
     <div class="f-group">
       <div class="f-lbl">Como ela é?</div>
@@ -682,37 +746,82 @@ select option{background:#3D0000;color:var(--W)}
       <textarea rows="2" placeholder="Ex: Ficamos, mas ela esfriou depois..."></textarea>
     </div>
 
-    <button class="btn-main" onclick="go('p4')">Ver meu plano de conquista →</button>
-    <button class="btn-ghost" onclick="go('p4')">Pular esta etapa →</button>
+    <button class="btn-main" onclick="go('p4')">Continuar →</button>
+    <button class="btn-ghost" onclick="hideManual()">← Voltar</button>
   </div>
 </section>
 
 <!-- ══════════ P4 RESULTADO ══════════ -->
 <section class="scr off" id="p4">
+
+  <!-- HERO: arquétipo centralizado -->
   <div class="r4-hero">
     <div class="r-crown" id="rCrown">🎯</div>
     <p class="r-eye">Arquétipo identificado</p>
     <h2 class="r-title"><span id="rTitle">CAÇADORA</span></h2>
+    <p class="arq-desc-hero" id="arqDesc"></p>
   </div>
+
   <div class="r4-body">
+
+    <!-- GAUGE: chances -->
     <div class="gauge">
-      <div class="g-lbl">⚡ Suas chances reais de conquista</div>
+      <div class="g-lbl">⚡ Suas chances de conquistar ela</div>
       <div class="g-track"><div class="g-fill" id="gFill"></div></div>
       <div class="g-row">
         <div class="g-pct" id="gPct">0%</div>
         <div class="g-sub" id="gSub"></div>
       </div>
     </div>
-    <div class="arq-card">
-      <div class="arq-badge">✦ Perfil dela</div>
-      <div class="arq-name" id="arqName"></div>
-      <p class="arq-desc" id="arqDesc"></p>
+
+    <!-- URGÊNCIA -->
+    <div class="urgency-card">
+      <div class="urg-icon">⚠️</div>
+      <p class="urg-txt">
+        Cada mensagem errada <strong>afasta ela um passo.</strong>
+        Enquanto você hesita, outro cara já está agindo.
+        <span>O momento certo é agora — antes que ela esfrie de vez.</span>
+      </p>
     </div>
-    <div class="traits" id="traitsGrid"></div>
-    <div class="tatica" id="taticaCard"></div>
-    <button class="btn-main" onclick="go('p5')">🔓 Desbloquear as 12 Leis completas →</button>
-    <p class="cta-note">Plano completo + mensagens prontas com IA</p>
-    <button class="btn-ghost" style="margin-top:-4px" onclick="restart()">↺ Refazer o quiz</button>
+
+    <!-- CTA BLOCO -->
+    <div class="guru-card">
+      <div class="guru-pill">✦ GURU TORA</div>
+      <p class="guru-cta">
+        As mensagens certas vão determinar o destino da sua <strong>TORA.</strong>
+        Com o nosso Guru você terá à mãos as palavras exatas para conquistar ela.
+      </p>
+
+      <div class="guru-features">
+        <div class="gf-row">
+          <div class="gf-ico">💬</div>
+          <div class="gf-txt">
+            <p>Suba sua conversa completa</p>
+            <span>Análise profunda do histórico entre vocês</span>
+          </div>
+        </div>
+        <div class="gf-row">
+          <div class="gf-ico">🎙️</div>
+          <div class="gf-txt">
+            <p>Leitura do seu jeito de falar</p>
+            <span>Mensagens no seu estilo — não parecem robô</span>
+          </div>
+        </div>
+        <div class="gf-row">
+          <div class="gf-ico">📲</div>
+          <div class="gf-txt">
+            <p>Envio para o WhatsApp com 1 clique</p>
+            <span>Direto para ela, sem copiar e colar</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="go('p5')" style="margin-top:4px">
+        GURU TORA AVENTUREIRA 🔥
+      </button>
+    </div>
+
+    <button class="btn-ghost" onclick="restart()">↺ Refazer o quiz</button>
   </div>
 </section>
 
@@ -811,6 +920,18 @@ function selQ2(btn,val){
   document.querySelectorAll('#qB2 .opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
   btn.classList.add('sel');btn.querySelector('.chk').textContent='✓';
   A.q2=val;document.getElementById('bnQ2').classList.add('on');
+}
+function showManual(){
+  document.getElementById('p3Upload').style.display='none';
+  document.getElementById('p3Manual').style.display='flex';
+  document.getElementById('p3Manual').style.flexDirection='column';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function hideManual(){
+  document.getElementById('p3Manual').style.display='none';
+  document.getElementById('p3Upload').style.display='flex';
+  document.getElementById('p3Upload').style.flexDirection='column';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function pickFile(e){if(e.target.files[0])showPrev(e.target.files[0]);}
 function dropFile(e){
