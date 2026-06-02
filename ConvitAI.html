@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FFFFFF">
-<title>Tora Aventureira</title>
+<title>Agente X</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -556,6 +556,41 @@ select{cursor:pointer;
   flex-shrink:0;margin-top:5px;animation:blk 1.6s ease-in-out infinite}
 .urgency-bar p{font-size:12px;color:var(--S);font-weight:500;line-height:1.55}
 .urgency-bar strong{color:var(--P)}
+
+/* ══════════════════════════════
+   HOME — ONLINE BAR + DEPS
+══════════════════════════════ */
+.online-bar{
+  display:flex;align-items:center;gap:8px;
+  justify-content:center;
+  font-size:12px;color:var(--N5);font-weight:500;
+}
+.online-bar strong{color:var(--N6)}
+.online-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#22C55E;flex-shrink:0;
+  box-shadow:0 0 0 3px rgba(34,197,94,.2);
+  animation:blk 1.8s ease-in-out infinite;
+}
+.dep-title{
+  font-size:11px;font-weight:800;letter-spacing:.1em;
+  color:var(--N4);text-transform:uppercase;text-align:center;
+}
+.deps{display:flex;flex-direction:column;gap:10px}
+.dep{
+  background:var(--N);border:1px solid var(--N3);
+  border-radius:14px;padding:14px;box-shadow:var(--sh1);
+}
+.dep-top{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.dep-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--S);color:var(--W);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;flex-shrink:0;
+}
+.dep-name{font-size:13px;font-weight:700;color:var(--S);line-height:1.2}
+.dep-stars{font-size:11px;color:#F59E0B;letter-spacing:.05em}
+.dep-txt{font-size:13px;color:var(--N5);line-height:1.6;font-style:italic}
 </style>
 </head>
 <body>
@@ -580,7 +615,7 @@ select{cursor:pointer;
       <!-- Badge topo -->
       <div class="h-badge">
         <div class="logo-dot"></div>
-        <div class="logo-txt">Tora Aventureira</div>
+        <div class="logo-txt">AGENTE X</div>
       </div>
 
       <!-- Texto sobre a imagem -->
@@ -608,9 +643,51 @@ select{cursor:pointer;
     </div>
 
     <button class="btn-cta" onclick="go('p2')">
-      Descobrir meu plano agora →
+      INICIAR FALAS MATADORAS
     </button>
     <p class="cta-note">2 perguntas · grátis · resultado na hora</p>
+
+    <!-- Online now -->
+    <div class="online-bar">
+      <div class="online-dot"></div>
+      <span><strong id="onlineCount">347</strong> homens consultando o guia agora</span>
+    </div>
+
+    <!-- Depoimentos -->
+    <div class="dep-title">O que dizem quem já usou</div>
+    <div class="deps">
+      <div class="dep">
+        <div class="dep-top">
+          <div class="dep-avatar">R</div>
+          <div>
+            <div class="dep-name">Rafael M.</div>
+            <div class="dep-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="dep-txt">"Tava travado nas mensagens, sem saber o que falar. Peguei o guia, segui o passo 2 e consegui chamar ela pra sair na mesma semana."</p>
+      </div>
+      <div class="dep">
+        <div class="dep-top">
+          <div class="dep-avatar">L</div>
+          <div>
+            <div class="dep-name">Lucas T.</div>
+            <div class="dep-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="dep-txt">"Ela tava me deixando no vácuo há dias. Aprendi a parar de perseguir e em 3 dias ela me mandou mensagem primeiro."</p>
+      </div>
+      <div class="dep">
+        <div class="dep-top">
+          <div class="dep-avatar">G</div>
+          <div>
+            <div class="dep-name">Gabriel S.</div>
+            <div class="dep-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="dep-txt">"Achei que tava na friendzone pra sempre. O plano me mostrou exatamente o que fazer. Mudou o jogo."</p>
+      </div>
+    </div>
+
   </div>
 
 </section>
@@ -837,6 +914,19 @@ select{cursor:pointer;
 </section>
 
 <script>
+// Online counter — flutua de forma realista
+(function(){
+  var base=347,el;
+  function upd(){
+    el=el||document.getElementById('onlineCount');
+    if(!el)return;
+    base+=Math.floor(Math.random()*7)-3;
+    if(base<310)base=310;if(base>420)base=420;
+    el.textContent=base;
+  }
+  setInterval(upd,4000);
+})();
+
 var A={q1:null,q2:null};
 function go(id){
   document.querySelectorAll('.scr').forEach(function(s){s.classList.add('off')});
