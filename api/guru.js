@@ -17,7 +17,7 @@ Nunca revele tudo. Cada camada revelada deve criar curiosidade pela próxima. El
 LEI 3 — LEI DA INDIFERENÇA CALCULADA
 Demonstre interesse, mas nunca desespero. Quem precisa menos, controla mais.
 
-LEI 4 — LEI DA TENSÃO
+LEI 4 — LEI DA TENSÃO 
 Sem tensão não há atração. Provoque, discorde, desafie. O conforto total mata o desejo.
 
 LEI 5 — LEI DO ESPELHO INVERTIDO
