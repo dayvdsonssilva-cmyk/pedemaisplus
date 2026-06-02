@@ -93,7 +93,8 @@ REGRAS ABSOLUTAS:
         model: 'gpt-4o',
         max_tokens: 1500,
         temperature: 0.7,
-        response_format: { type: 'json_object' },
+        // response_format json_object NÃO funciona com imagem (vision)
+        ...(imagem ? {} : { response_format: { type: 'json_object' } }),
         messages: [{ role: 'user', content: userContent }],
       }),
     });
@@ -105,7 +106,13 @@ REGRAS ABSOLUTAS:
     }
 
     const data = await response.json();
-    const text = data.choices[0].message.content.trim();
+    console.log('finish_reason:', data.choices?.[0]?.finish_reason);
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) {
+      console.error('Conteúdo nulo. Resposta completa:', JSON.stringify(data).substring(0, 500));
+      return res.status(500).json({ error: 'IA não retornou conteúdo. Tente com outra imagem.' });
+    }
+    const text = content.trim();
     console.log('Resposta OpenAI:', text.substring(0, 300));
 
     let result;
