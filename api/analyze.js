@@ -13,49 +13,70 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Nenhuma conversa enviada.' });
   }
 
-  const contexto = `
-- Situação: ${q1 === 'chegando' ? 'Ele ainda não ficou com ela' : 'Já ficaram juntos'}
-- Comportamento dela: ${q2 === 'quente' ? 'Demonstra interesse' : q2 === 'morno' ? 'Quente e frio' : q2 === 'frio' ? 'É distante' : 'Trata como amigo (friendzone)'}`;
+  const situacao = q1 === 'chegando'
+    ? 'Ele ainda NÃO ficou com ela — quer conquistar'
+    : 'Ele JÁ ficou com ela';
 
-  const instrucao = `Você é um especialista em sedução e comunicação masculina. Analise a conversa de WhatsApp ${imagem ? 'na imagem' : 'abaixo'} e retorne um JSON.
+  const comportamento = {
+    quente:   'Ela demonstra interesse — inicia conversa, manda meme',
+    morno:    'Ela é quente e frio — às vezes empolgada, às vezes some',
+    frio:     'Ela é distante — responde pouco, sem iniciativa',
+    amizade:  'Ela trata ele como amigo — friendzone claro',
+  }[q2] || 'Comportamento indefinido';
 
-CONTEXTO:${contexto}
+  const instrucao = `Você é um especialista em sedução e leitura de conversas de WhatsApp.
+
+LEIA CADA MENSAGEM DA CONVERSA ${imagem ? 'NA IMAGEM' : 'ABAIXO'} COM ATENÇÃO TOTAL.
+Identifique: o tom do usuário, onde ele errou, o nível de interesse dela, o momento da conversa.
+
+CONTEXTO:
+- Situação: ${situacao}
+- Comportamento dela: ${comportamento}
 ${conversation ? '\nCONVERSA:\n' + conversation : ''}
 
-Retorne APENAS um JSON válido, sem markdown, sem texto extra:
+COM BASE NO QUE VOCÊ LREU NA CONVERSA, retorne APENAS este JSON válido, sem markdown:
 {
-  "arquetipo": "uma dessas opções: CALCULISTA, ENTREGADORA, DESAFIADORA, CÚMPLICE, APAIXONADA, TESTADORA, ARREPENDIDA, ESCAPISTA",
-  "pct": 65,
-  "diagnostico": "2-3 frases diretas explicando o padrão da conversa e onde ele está errando. Ex: Você está parecendo ansioso e disponível demais. Ela sentiu que tem o controle total e reduziu o interesse.",
+  "arquetipo": "escolha um: CALCULISTA, ENTREGADORA, DESAFIADORA, CÚMPLICE, APAIXONADA, TESTADORA, ARREPENDIDA, ESCAPISTA",
+  "diagnostico": "2-3 frases diretas e brutais sobre o que você viu na conversa. Cite comportamentos específicos que ele demonstrou. Ex: Você respondeu rápido demais em todas as mensagens e usou muito emoji. Isso sinalizou ansiedade e ela percebeu que tem o controle.",
   "frases_matadoras": [
     {
-      "contexto": "quando ela demorar pra responder",
-      "frase": "Mensagem pronta e poderosa para mandar agora. Natural, no estilo dela, sem parecer robô."
+      "contexto": "quando usar — baseado no momento atual da conversa",
+      "frase": "Mensagem PRONTA para copiar e mandar. Natural, no português informal brasileiro. Baseada no estilo da conversa que você leu. Sem aspas."
     },
     {
-      "contexto": "para reativar o interesse dela",
-      "frase": "Segunda mensagem matadora. Cria tensão ou curiosidade."
+      "contexto": "segunda situação baseada na conversa",
+      "frase": "Segunda frase matadora. Cria curiosidade ou tensão com base no que rolou entre eles."
     },
     {
-      "contexto": "para marcar um encontro",
-      "frase": "Terceira mensagem. Direta, segura, sem pedir permissão."
+      "contexto": "terceira situação — próximo passo lógico",
+      "frase": "Terceira frase. Ousada e direta. Para avançar a conquista com base no contexto real."
     }
   ]
 }
 
-Regras:
-- pct entre 15 e 85
-- diagnostico: brutal e honesto, máximo 3 frases
-- frases_matadoras: mensagens PRONTAS para copiar e mandar no WhatsApp, no português informal brasileiro, sem aspas desnecessárias
-- As frases devem ser baseadas no contexto real da conversa analisada`;
+REGRAS ABSOLUTAS:
+- As frases_matadoras DEVEM ser baseadas na conversa que você leu — não podem ser genéricas
+- O diagnostico DEVE mencionar algo específico que você viu nas mensagens
+- Português informal brasileiro, como um cara falando mesmo
+- Frases prontas para copiar — sem explicações dentro da frase`;
 
+  // Monta mensagem para a OpenAI
   let userContent;
   if (imagem) {
     const base64 = imagem.split(',')[1];
     const mimeType = imagem.split(';')[0].split(':')[1];
     userContent = [
-      { type: 'text', text: instrucao },
-      { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}`, detail: 'high' } }
+      {
+        type: 'text',
+        text: instrucao
+      },
+      {
+        type: 'image_url',
+        image_url: {
+          url: `data:${mimeType};base64,${base64}`,
+          detail: 'high'
+        }
+      }
     ];
   } else {
     userContent = instrucao;
@@ -70,27 +91,32 @@ Regras:
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        max_tokens: 1200,
+        max_tokens: 1500,
+        temperature: 0.7,
         messages: [{ role: 'user', content: userContent }],
       }),
     });
 
     if (!response.ok) {
       const err = await response.text();
-      console.error('API error:', err);
-      return res.status(500).json({ error: 'Erro na API.' });
+      console.error('OpenAI error:', err);
+      return res.status(500).json({ error: 'Erro na análise.' });
     }
 
     const data = await response.json();
     const text = data.choices[0].message.content.trim();
+
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return res.status(500).json({ error: 'Resposta inválida.' });
+    if (!jsonMatch) {
+      console.error('JSON não encontrado na resposta:', text);
+      return res.status(500).json({ error: 'Resposta inválida da IA.' });
+    }
 
     const result = JSON.parse(jsonMatch[0]);
     return res.status(200).json(result);
 
   } catch (err) {
-    console.error('Handler error:', err);
-    return res.status(500).json({ error: 'Erro interno.' });
+    console.error('Handler error:', err.message);
+    return res.status(500).json({ error: 'Erro interno: ' + err.message });
   }
 }
