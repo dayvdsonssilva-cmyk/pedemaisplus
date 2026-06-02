@@ -1306,11 +1306,26 @@ function buildResult(){
   document.getElementById('arqName').textContent=p.name;
   document.getElementById('arqDesc').textContent=p.desc;
   document.getElementById('gSub').textContent=p.sub;
+
+  // Reseta antes de animar
+  var gFill=document.getElementById('gFill');
+  var gPct=document.getElementById('gPct');
+  gFill.style.transition='none';
+  gFill.style.width='0%';
+  gPct.textContent='0%';
+
+  var targetPct=parseInt(p.pct)||0;
+
   setTimeout(function(){
-    document.getElementById('gFill').style.width=p.pct+'%';
-    var el=document.getElementById('gPct'),cur=0;
-    var t=setInterval(function(){cur+=2;if(cur>=p.pct){cur=p.pct;clearInterval(t);}el.textContent=cur+'%';},16);
-  },400);
+    gFill.style.transition='width 1.4s cubic-bezier(.4,0,.2,1)';
+    gFill.style.width=targetPct+'%';
+    var cur=0;
+    var t=setInterval(function(){
+      cur+=2;
+      if(cur>=targetPct){cur=targetPct;clearInterval(t);}
+      gPct.textContent=cur+'%';
+    },16);
+  },200);
   var tg=document.getElementById('traitsGrid');tg.innerHTML='';
   var cm={r:['tr-r','var(--salmon)'],b:['tr-b','#E05A65'],t:['tr-t','#E9C46A']};
   p.traits.forEach(function(tr){
