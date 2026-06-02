@@ -1143,27 +1143,69 @@ function mostrarTela(id){
   if(id==='p4')buildResult();
 }
 function analisarConversa(cb){
-  document.getElementById('loadingOverlay').classList.remove('hide');
+  var overlay=document.getElementById('loadingOverlay');
+  overlay.classList.remove('hide');
+
+  // Verifica tamanho da imagem antes de enviar
+  var payload={
+    conversation: A.conversaTexto||null,
+    imagem: A.conversaImagem||null,
+    q1:A.q1,
+    q2:A.q2
+  };
+  var payloadStr=JSON.stringify(payload);
+  var tamanhoMB=(payloadStr.length/1024/1024).toFixed(2);
+  console.log('Payload tamanho:', tamanhoMB+'MB');
+
+  if(parseFloat(tamanhoMB)>4){
+    console.warn('Imagem muito grande:', tamanhoMB+'MB — comprimindo mais');
+    // Recomprime com qualidade menor
+    if(A.conversaImagem){
+      var img=new Image();
+      img.onload=function(){
+        var canvas=document.createElement('canvas');
+        var maxW=900;
+        var scale=Math.min(1,maxW/img.width);
+        canvas.width=img.width*scale;
+        canvas.height=img.height*scale;
+        canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+        A.conversaImagem=canvas.toDataURL('image/jpeg',0.65);
+        payload.imagem=A.conversaImagem;
+        payloadStr=JSON.stringify(payload);
+        console.log('Recomprimido para:', (payloadStr.length/1024/1024).toFixed(2)+'MB');
+        enviarParaAPI(payload,overlay,cb);
+      };
+      img.src=A.conversaImagem;
+      return;
+    }
+  }
+  enviarParaAPI(payload,overlay,cb);
+}
+
+function enviarParaAPI(payload,overlay,cb){
   fetch('/api/analyze',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      conversation: A.conversaTexto||null,
-      imagem: A.conversaImagem||null,
-      q1:A.q1,
-      q2:A.q2
-    })
+    body:JSON.stringify(payload)
   })
-  .then(function(r){return r.json();})
+  .then(function(r){
+    console.log('Status da API:', r.status);
+    return r.json();
+  })
   .then(function(data){
-    if(data && data.arquetipo){
+    console.log('Resposta da API:', JSON.stringify(data));
+    if(data && data.frases_matadoras){
       A.aiResult=data;
+    } else if(data && data.error){
+      console.error('Erro da API:', data.error);
+      A.aiErro=data.error;
     }
-    document.getElementById('loadingOverlay').classList.add('hide');
+    overlay.classList.add('hide');
     cb();
   })
-  .catch(function(){
-    document.getElementById('loadingOverlay').classList.add('hide');
+  .catch(function(err){
+    console.error('Fetch error:', err);
+    overlay.classList.add('hide');
     cb();
   });
 }
@@ -1314,8 +1356,9 @@ function buildResult(){
     mataCard.style.cssText='display:flex;flex-direction:column';
     erroCard.style.display='none';
   } else if(A.conversaImagem || A.conversaTexto){
-    // Tinha conversa mas algo falhou
     mataCard.style.display='none';
+    document.getElementById('erroTxt').textContent=
+      A.aiErro || 'Não conseguimos ler a imagem. Tente um print com o texto mais legível.';
     erroCard.style.cssText='display:flex;flex-direction:column';
   } else {
     // Sem conversa — nunca chegou aqui normalmente
