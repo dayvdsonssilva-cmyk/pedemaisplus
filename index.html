@@ -742,7 +742,7 @@ select option{background:#3D0000;color:var(--W)}
 <body>
 
 <!-- BG global -->
-<img class="bg-img" src="ativos/cover.png" alt="" onerror="this.style.display='none'">
+<img class="bg-img" src="assets/cover.png" alt="" onerror="this.style.display='none'">
 <div class="bg-overlay"></div>
 
 <!-- Loading overlay -->
@@ -1402,7 +1402,7 @@ function perguntarLei(lei){
 
 function adicionarMsg(tipo,txt){
   var area=document.getElementById('chatArea');
-  var typing=document.getElementById('guruTyping');   
+  var typing=document.getElementById('guruTyping');
   var div=document.createElement('div');
   div.className='msg '+tipo;
   var hora=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
