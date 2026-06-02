@@ -4,34 +4,37 @@
   "outputDirectory": ".",
   "framework": null,
   "functions": {
-    "api/generate-image.js": {
-      "maxDuration": 60
-    },
-    "api/transcribe.js": {
-      "maxDuration": 30
-    },
-    "api/claude.js": {
-      "maxDuration": 30
-    },
-    "api/create-pix.js": {
-      "maxDuration": 15
-    },
-    "api/check-payment.js": {
-      "maxDuration": 10
-    }
+    "api/generate-image.js": { "maxDuration": 60 },
+    "api/transcribe.js":     { "maxDuration": 30 },
+    "api/claude.js":         { "maxDuration": 30 },
+    "api/analyze.js":        { "maxDuration": 30 },
+    "api/create-pix.js":     { "maxDuration": 15 },
+    "api/check-payment.js":  { "maxDuration": 10 }
   },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
-      "source": "/",
-      "destination": "/ConvitAI.html"
-    },
+  "headers": [
     {
       "source": "/(.*)",
-      "destination": "/ConvitAI.html"
+      "headers": [
+        { "key": "X-Frame-Options",           "value": "DENY" },
+        { "key": "X-Content-Type-Options",    "value": "nosniff" },
+        { "key": "Referrer-Policy",           "value": "strict-origin-when-cross-origin" },
+        { "key": "X-XSS-Protection",          "value": "1; mode=block" },
+        { "key": "Permissions-Policy",        "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "Content-Security-Policy",   "value": "frame-ancestors 'none'" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin",  "value": "https://SEU-DOMINIO.vercel.app" },
+        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
     }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/",         "destination": "/index2.html" },
+    { "source": "/(.*)",     "destination": "/index2.html" }
   ]
 }
