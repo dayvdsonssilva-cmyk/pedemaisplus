@@ -7,7 +7,7 @@
 <title>Falas Matadoras</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -59,19 +59,21 @@ html,body{
 }
 
 /* ══ P1 HOME ══ */
-#p1{justify-content:center;min-height:100svh;padding:0 28px 48px;}
+#p1{justify-content:center;min-height:100svh;padding:0 24px 48px;}
 .home-inner{
   width:100%;display:flex;flex-direction:column;
   align-items:center;gap:0;
-  margin-top:auto;
+  padding-top:56px;
 }
-.h1-badge{margin-bottom:28px}
+.h1-badge{margin-bottom:32px}
 .h1-headline{
-  font-size:clamp(52px,16vw,80px);font-weight:900;
-  line-height:.9;letter-spacing:-.03em;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(52px,14.5vw,72px);font-weight:400;
+  line-height:.92;letter-spacing:.04em;
   color:var(--W);text-align:center;
   text-transform:uppercase;
   margin-bottom:20px;
+  width:100%;
 }
 .h1-sub{
   font-size:15px;font-weight:400;line-height:1.65;
@@ -172,8 +174,9 @@ html,body{
   text-transform:uppercase;margin-bottom:16px;align-self:flex-start;
 }
 .q-title{
-  font-size:clamp(34px,9.5vw,46px);font-weight:900;
-  line-height:.95;letter-spacing:-.03em;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,10vw,48px);font-weight:400;
+  line-height:1;letter-spacing:.03em;
   color:var(--W);margin-bottom:8px;text-transform:uppercase;
 }
 .q-sub{font-size:13px;color:var(--WB);line-height:1.55;margin-bottom:24px}
@@ -235,8 +238,9 @@ html,body{
   display:flex;flex-direction:column;gap:16px;
 }
 .sec-title{
-  font-size:clamp(28px,8vw,36px);font-weight:900;
-  letter-spacing:-.03em;color:var(--W);line-height:.95;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,9vw,44px);font-weight:400;
+  letter-spacing:.03em;color:var(--W);line-height:1;
   text-transform:uppercase;
 }
 .sec-sub{font-size:13px;color:var(--WB);line-height:1.55}
@@ -326,18 +330,19 @@ select option{background:#3D0000;color:var(--W)}
 
 /* ══ P4 RESULTADO ══ */
 .r4-hero{
-  width:100%;padding:36px 24px 28px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
+  width:100%;padding:32px 24px 24px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
 }
-.r-crown{font-size:48px;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
+.r-crown{font-size:36px;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes crDrop{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
-.r-eye{font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--WB);text-transform:uppercase}
+.r-eye{font-size:9px;font-weight:600;letter-spacing:.25em;color:var(--WB);text-transform:uppercase}
 .r-title{
   width:100%;
-  font-size:clamp(28px,8.5vw,42px);font-weight:900;
-  letter-spacing:-.025em;line-height:1;text-align:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(38px,11vw,56px);font-weight:400;
+  letter-spacing:.04em;line-height:.95;text-align:center;
   color:var(--W);text-transform:uppercase;
-  word-break:break-word;padding:0 4px;
+  word-break:normal;padding:0 8px;
 }
 .r-title span{color:var(--salmon)}
 
@@ -413,8 +418,9 @@ select option{background:#3D0000;color:var(--W)}
 }
 .ck-ico{font-size:52px;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
 .ck-title{
-  font-size:clamp(38px,11vw,56px);font-weight:900;
-  letter-spacing:-.035em;line-height:.9;text-align:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(52px,15vw,72px);font-weight:300;
+  letter-spacing:.03em;line-height:.9;text-align:center;
   color:var(--W);text-transform:uppercase;
 }
 .ck-sub{font-size:13px;color:var(--WB);text-align:center;line-height:1.6;max-width:260px}
@@ -472,8 +478,8 @@ select option{background:#3D0000;color:var(--W)}
 
 /* ══ P4 NOVO ══ */
 .arq-desc-hero{
-  font-size:13px;color:var(--WB);line-height:1.65;
-  text-align:center;max-width:280px;margin-top:6px;
+  font-size:12px;color:var(--WB);line-height:1.6;
+  text-align:center;max-width:260px;margin-top:4px;
 }
 .urgency-card{
   background:rgba(224,90,101,.1);border:1px solid rgba(224,90,101,.25);
@@ -608,7 +614,7 @@ select option{background:#3D0000;color:var(--W)}
 
   <div id="qB1" class="qbody">
     <div class="q-chip">📍 Status</div>
-    <h2 class="q-title">Qual é a<br>situação?</h2>
+    <h2 class="q-title">Qual é a situação?</h2>
     <p class="q-sub">Seja honesto — isso define a estratégia inteira.</p>
     <div class="opts">
       <button class="opt" style="animation-delay:.04s" onclick="selQ1(this,'chegando')">
@@ -627,7 +633,7 @@ select option{background:#3D0000;color:var(--W)}
 
   <div id="qB2" class="qbody" style="display:none">
     <div class="q-chip">💬 Comportamento</div>
-    <h2 class="q-title">Como ela age<br>com você?</h2>
+    <h2 class="q-title">Como ela age com você?</h2>
     <p class="q-sub">Analise o padrão — não só o último episódio.</p>
     <div class="opts">
       <button class="opt" style="animation-delay:.04s" onclick="selQ2(this,'quente')">
@@ -668,7 +674,7 @@ select option{background:#3D0000;color:var(--W)}
   <!-- BLOCO UPLOAD -->
   <div class="p3body" id="p3Upload">
     <div class="pill" style="align-self:flex-start">📱 Conversa</div>
-    <h2 class="sec-title">Envie uma parte<br>da conversa.</h2>
+    <h2 class="sec-title">Envie a conversa.</h2>
     <p class="sec-sub">Quanto mais contexto, mais preciso o seu plano.</p>
 
     <div class="upload-zone" id="upZone"
@@ -722,7 +728,7 @@ select option{background:#3D0000;color:var(--W)}
   <!-- BLOCO MANUAL (oculto por padrão) -->
   <div class="p3body" id="p3Manual" style="display:none">
     <div class="pill" style="align-self:flex-start">✏️ Manual</div>
-    <h2 class="sec-title">Conte sobre<br>ela.</h2>
+    <h2 class="sec-title">Conte sobre ela.</h2>
     <p class="sec-sub">Responda o que souber — pode deixar em branco o que não sabe.</p>
 
     <div class="f-group">
