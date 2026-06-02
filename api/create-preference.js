@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         items: [
-          {
+          { 
             title: `ConvitAI — Convite ${tema || "Festa"} de ${nome || "Aniversário"}`,
             description: "Convite digital personalizado com arte gerada por IA",
             quantity: 1,
