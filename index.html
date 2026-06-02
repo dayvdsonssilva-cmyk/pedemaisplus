@@ -1165,9 +1165,10 @@ select option{background:#3D0000;color:var(--W)}
   setInterval(upd,4000);
 })();
 
-var A={q1:null,q2:null,conversaTexto:null,aiResult:null};
+var A={q1:null,q2:null,conversaTexto:null,conversaImagem:null,aiResult:null};
 function go(id){
-  if(id==='p4' && A.conversaTexto && A.conversaTexto.length > 30 && !A.aiResult){
+  var temConteudo=(A.conversaTexto && A.conversaTexto.length>30) || A.conversaImagem;
+  if(id==='p4' && temConteudo && !A.aiResult){
     analisarConversa(function(){ mostrarTela('p4'); });
   } else {
     mostrarTela(id);
@@ -1184,7 +1185,12 @@ function analisarConversa(cb){
   fetch('/api/analyze',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({conversation:A.conversaTexto,q1:A.q1,q2:A.q2})
+    body:JSON.stringify({
+      conversation: A.conversaTexto||null,
+      imagem: A.conversaImagem||null,
+      q1:A.q1,
+      q2:A.q2
+    })
   })
   .then(function(r){return r.json();})
   .then(function(data){
@@ -1252,14 +1258,20 @@ function showPrev(f){
   document.getElementById('prevName').textContent=f.name;
   document.getElementById('prevBox').classList.add('show');
   document.getElementById('btnComArq').style.display='block';
-  // Lê o conteúdo se for .txt
   if(ext==='txt'){
     var rd=new FileReader();
-    rd.onload=function(ev){A.conversaTexto=ev.target.result;};
+    rd.onload=function(ev){
+      A.conversaTexto=ev.target.result;
+      A.conversaImagem=null;
+    };
     rd.readAsText(f);
-  } else {
-    // Para imagens/PDF, armazena nome como fallback
-    A.conversaTexto='[arquivo: '+f.name+']';
+  } else if(['png','jpg','jpeg'].includes(ext)){
+    var rd2=new FileReader();
+    rd2.onload=function(ev){
+      A.conversaImagem=ev.target.result; // base64 completo
+      A.conversaTexto=null;
+    };
+    rd2.readAsDataURL(f);
   }
 }
 function rmFile(){
@@ -1423,7 +1435,7 @@ function autoResize(el){
 }
 
 function restart(){
-  A={q1:null,q2:null,conversaTexto:null,aiResult:null};
+  A={q1:null,q2:null,conversaTexto:null,conversaImagem:null,aiResult:null};
   guruMessages=[];guruContexto='';
   document.getElementById('qB1').style.display='flex';
   document.getElementById('qB2').style.display='none';
