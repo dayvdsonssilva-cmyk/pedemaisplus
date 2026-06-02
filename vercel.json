@@ -8,6 +8,7 @@
     "api/transcribe.js":     { "maxDuration": 30 },
     "api/claude.js":         { "maxDuration": 30 },
     "api/analyze.js":        { "maxDuration": 30 },
+    "api/guru.js":           { "maxDuration": 30 },
     "api/create-pix.js":     { "maxDuration": 15 },
     "api/check-payment.js":  { "maxDuration": 10 }
   },
@@ -26,7 +27,7 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin",  "value": "https://aventureira.vercel.app/" },
+        { "key": "Access-Control-Allow-Origin",  "value": "https://SEU-DOMINIO.vercel.app" },
         { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
       ]
@@ -34,7 +35,7 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/",         "destination": "/index2.html" }, 
-    { "source": "/(.*)",     "destination": "/index2.html" }
+    { "source": "/",         "destination": "/aventura.html" },
+    { "source": "/(.*)",     "destination": "/aventura.html" }
   ]
 }
