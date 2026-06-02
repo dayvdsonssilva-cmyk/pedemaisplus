@@ -1258,18 +1258,35 @@ function showPrev(f){
   document.getElementById('prevName').textContent=f.name;
   document.getElementById('prevBox').classList.add('show');
   document.getElementById('btnComArq').style.display='block';
+  // Esconde botão até carregar
+  document.getElementById('btnComArq').style.display='none';
+
   if(ext==='txt'){
     var rd=new FileReader();
     rd.onload=function(ev){
       A.conversaTexto=ev.target.result;
       A.conversaImagem=null;
+      document.getElementById('btnComArq').style.display='block';
     };
     rd.readAsText(f);
   } else if(['png','jpg','jpeg'].includes(ext)){
     var rd2=new FileReader();
     rd2.onload=function(ev){
-      A.conversaImagem=ev.target.result; // base64 completo
-      A.conversaTexto=null;
+      // Comprime a imagem antes de enviar (max 1200px, qualidade 0.82)
+      var img=new Image();
+      img.onload=function(){
+        var canvas=document.createElement('canvas');
+        var maxW=1200;
+        var scale=Math.min(1, maxW/img.width);
+        canvas.width=img.width*scale;
+        canvas.height=img.height*scale;
+        var ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        A.conversaImagem=canvas.toDataURL('image/jpeg',0.82);
+        A.conversaTexto=null;
+        document.getElementById('btnComArq').style.display='block';
+      };
+      img.src=ev.target.result;
     };
     rd2.readAsDataURL(f);
   }
