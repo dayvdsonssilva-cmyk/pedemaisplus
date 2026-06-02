@@ -93,6 +93,7 @@ REGRAS ABSOLUTAS:
         model: 'gpt-4o',
         max_tokens: 1500,
         temperature: 0.7,
+        response_format: { type: 'json_object' },
         messages: [{ role: 'user', content: userContent }],
       }),
     });
@@ -105,14 +106,22 @@ REGRAS ABSOLUTAS:
 
     const data = await response.json();
     const text = data.choices[0].message.content.trim();
+    console.log('Resposta OpenAI:', text.substring(0, 300));
 
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error('JSON não encontrado na resposta:', text);
-      return res.status(500).json({ error: 'Resposta inválida da IA.' });
+    let result;
+    try {
+      // response_format json_object já vem como JSON puro
+      result = JSON.parse(text);
+    } catch(e) {
+      // fallback: tenta extrair JSON do texto
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error('JSON inválido:', text);
+        return res.status(500).json({ error: 'IA não retornou JSON válido.' });
+      }
+      result = JSON.parse(jsonMatch[0]);
     }
 
-    const result = JSON.parse(jsonMatch[0]);
     return res.status(200).json(result);
 
   } catch (err) {
