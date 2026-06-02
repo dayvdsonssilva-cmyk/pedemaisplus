@@ -976,49 +976,8 @@ select option{background:#3D0000;color:var(--W)}
 
     <!-- Botão continuar (aparece após upload) -->
     <div id="btnComArq" style="display:none">
-      <button class="btn-main" onclick="go('p4')">Continuar →</button>
+      <button class="btn-main" onclick="go('p4')">Gerar frases matadoras ⚡</button>
     </div>
-
-    <!-- Separador -->
-    <div class="or-div">
-      <div class="or-line"></div>
-      <div class="or-txt">Se não quiser mandar a conversa</div>
-      <div class="or-line"></div>
-    </div>
-
-    <!-- Botão informar manualmente -->
-    <button class="btn-ghost" onclick="showManual()">✏️ Informar manualmente</button>
-  </div>
-
-  <!-- BLOCO MANUAL (oculto por padrão) -->
-  <div class="p3body" id="p3Manual" style="display:none">
-    <div class="pill" style="align-self:flex-start">✏️ Manual</div>
-    <h2 class="sec-title">Conte sobre ela.</h2>
-    <p class="sec-sub">Responda o que souber — pode deixar em branco o que não sabe.</p>
-
-    <div class="f-group">
-      <div class="f-lbl">Como ela é?</div>
-      <textarea rows="3" placeholder="Ex: Extrovertida, segura de si, sabe que é bonita..."></textarea>
-    </div>
-    <div class="f-group">
-      <div class="f-lbl">Idade dela</div>
-      <select>
-        <option value="" disabled selected>Selecionar...</option>
-        <option>18–21 anos</option><option>22–25 anos</option>
-        <option>26–30 anos</option><option>30+ anos</option>
-      </select>
-    </div>
-    <div class="f-group">
-      <div class="f-lbl">Última mensagem que ela mandou</div>
-      <textarea rows="2" placeholder="Cole o que ela disse por último..."></textarea>
-    </div>
-    <div class="f-group">
-      <div class="f-lbl">O que rolou entre vocês?</div>
-      <textarea rows="2" placeholder="Ex: Ficamos, mas ela esfriou depois..."></textarea>
-    </div>
-
-    <button class="btn-main" onclick="go('p4')">Continuar →</button>
-    <button class="btn-ghost" onclick="hideManual()">← Voltar</button>
   </div>
 </section>
 
@@ -1058,21 +1017,12 @@ select option{background:#3D0000;color:var(--W)}
       <div id="mataLista"></div>
     </div>
 
-    <!-- SEM CONVERSA: CTA para subir -->
-    <div class="guru-card" id="semConversaCard">
-      <div class="guru-pill">✦ GURU TORA</div>
-      <p class="guru-cta">
-        Suba o print da conversa e receba as <strong>3 frases matadoras</strong> personalizadas para a sua situação — prontas para enviar com 1 clique.
-      </p>
-      <button class="btn-main" onclick="go('p3')">
-        📱 Subir conversa agora
-      </button>
+    <!-- SEM CONVERSA: CTA simples -->
+    <div id="semConversaCard" style="display:none">
+      <button class="btn-main" onclick="go('p3')">📱 Subir conversa para gerar frases</button>
     </div>
 
-    <button class="btn-main" onclick="go('p_guru')" style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:#E8CC7A;box-shadow:none">
-      🔱 Falar com o Guru
-    </button>
-    <button class="btn-ghost" onclick="restart()">↺ Refazer o quiz</button>
+    <button class="btn-ghost" onclick="restart()" style="margin-top:8px">↺ Refazer o quiz</button>
   </div>
 </section>
 
