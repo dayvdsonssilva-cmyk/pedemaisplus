@@ -24,41 +24,36 @@ export default async function handler(req, res) {
     amizade:  'Ela trata ele como amigo — friendzone claro',
   }[q2] || 'Comportamento indefinido';
 
-  const instrucao = `Você é um especialista em sedução e leitura de conversas de WhatsApp.
+  const instrucao = `Você é um coach de comunicação interpessoal especializado em análise de conversas de texto.
 
-LEIA CADA MENSAGEM DA CONVERSA ${imagem ? 'NA IMAGEM' : 'ABAIXO'} COM ATENÇÃO TOTAL.
-Identifique: o tom do usuário, onde ele errou, o nível de interesse dela, o momento da conversa.
+Leia com atenção a conversa ${imagem ? 'na imagem' : 'abaixo'} e analise o padrão de comunicação do usuário.
 
 CONTEXTO:
 - Situação: ${situacao}
-- Comportamento dela: ${comportamento}
+- Perfil dela: ${comportamento}
 ${conversation ? '\nCONVERSA:\n' + conversation : ''}
 
-COM BASE NO QUE VOCÊ LREU NA CONVERSA, retorne APENAS este JSON válido, sem markdown:
+Analise o estilo de comunicação, identifique pontos de melhoria e gere mensagens de exemplo mais eficazes.
+
+Retorne APENAS este JSON (sem markdown):
 {
   "arquetipo": "escolha um: CALCULISTA, ENTREGADORA, DESAFIADORA, CÚMPLICE, APAIXONADA, TESTADORA, ARREPENDIDA, ESCAPISTA",
-  "diagnostico": "2-3 frases diretas e brutais sobre o que você viu na conversa. Cite comportamentos específicos que ele demonstrou. Ex: Você respondeu rápido demais em todas as mensagens e usou muito emoji. Isso sinalizou ansiedade e ela percebeu que tem o controle.",
+  "diagnostico": "2-3 frases sobre o padrão de comunicação observado na conversa. Seja específico com o que viu. Ex: O usuário respondeu de forma muito imediata em todas as mensagens, demonstrando ansiedade comunicativa. Isso reduziu o valor percebido na troca.",
   "frases_matadoras": [
     {
-      "contexto": "quando usar — baseado no momento atual da conversa",
-      "frase": "Mensagem PRONTA para copiar e mandar. Natural, no português informal brasileiro. Baseada no estilo da conversa que você leu. Sem aspas."
+      "contexto": "situação de uso — baseada no momento da conversa",
+      "frase": "Mensagem de exemplo pronta para usar. Português informal brasileiro. Baseada no contexto real da conversa lida."
     },
     {
-      "contexto": "segunda situação baseada na conversa",
-      "frase": "Segunda frase matadora. Cria curiosidade ou tensão com base no que rolou entre eles."
+      "contexto": "segunda situação",
+      "frase": "Segunda mensagem de exemplo. Cria interesse ou curiosidade com base no que foi lido."
     },
     {
-      "contexto": "terceira situação — próximo passo lógico",
-      "frase": "Terceira frase. Ousada e direta. Para avançar a conquista com base no contexto real."
+      "contexto": "terceira situação — próximo passo natural",
+      "frase": "Terceira mensagem. Direta e confiante. Baseada no contexto real."
     }
   ]
-}
-
-REGRAS ABSOLUTAS:
-- As frases_matadoras DEVEM ser baseadas na conversa que você leu — não podem ser genéricas
-- O diagnostico DEVE mencionar algo específico que você viu nas mensagens
-- Português informal brasileiro, como um cara falando mesmo
-- Frases prontas para copiar — sem explicações dentro da frase`;
+}`;
 
   // Monta mensagem para a OpenAI
   let userContent;
@@ -106,11 +101,15 @@ REGRAS ABSOLUTAS:
     }
 
     const data = await response.json();
-    console.log('finish_reason:', data.choices?.[0]?.finish_reason);
-    const content = data.choices?.[0]?.message?.content;
+    const choice = data.choices?.[0];
+    console.log('finish_reason:', choice?.finish_reason);
+    console.log('refusal:', choice?.message?.refusal);
+    console.log('choice completo:', JSON.stringify(choice).substring(0, 600));
+    const content = choice?.message?.content;
     if (!content) {
-      console.error('Conteúdo nulo. Resposta completa:', JSON.stringify(data).substring(0, 500));
-      return res.status(500).json({ error: 'IA não retornou conteúdo. Tente com outra imagem.' });
+      const motivo = choice?.message?.refusal || choice?.finish_reason || 'desconhecido';
+      console.error('Conteúdo nulo. Motivo:', motivo);
+      return res.status(500).json({ error: 'Erro: ' + motivo });
     }
     const text = content.trim();
     console.log('Resposta OpenAI:', text.substring(0, 300));
