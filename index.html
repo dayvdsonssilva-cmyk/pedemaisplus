@@ -346,7 +346,7 @@ select option{background:#3D0000;color:var(--W)}
 }
 .r-title span{color:var(--salmon)}
 
-.r4-body{width:100%;padding:16px 22px 64px;display:flex;flex-direction:column;gap:12px}
+.r4-body{width:100%;padding:20px 22px 80px;display:flex;flex-direction:column;gap:20px}
 
 .gauge{
   background:var(--WD);border:1px solid var(--WC);border-radius:18px;
@@ -534,8 +534,8 @@ select option{background:#3D0000;color:var(--W)}
 /* ══ FRASES MATADORAS ══ */
 .matadoras-card{
   background:var(--WD);border:1px solid rgba(201,168,76,.25);
-  border-radius:20px;padding:20px;
-  display:flex;flex-direction:column;gap:16px;
+  border-radius:20px;padding:22px;
+  display:flex;flex-direction:column;gap:20px;
   position:relative;overflow:hidden;
 }
 .matadoras-card::before{
@@ -547,11 +547,14 @@ select option{background:#3D0000;color:var(--W)}
   color:#E8CC7A;text-transform:uppercase;
 }
 .mata-sub{font-size:12px;color:var(--WB);margin-top:-8px}
-.mata-item{display:flex;flex-direction:column;gap:8px}
+.mata-item{display:flex;flex-direction:column;gap:10px;padding-bottom:20px;border-bottom:1px solid var(--WC);}
+.mata-item:last-child{border-bottom:none;padding-bottom:0}
 .mata-ctx{
   font-size:10px;font-weight:700;letter-spacing:.08em;
   color:var(--WB);text-transform:uppercase;
+  margin-bottom:2px;
 }
+
 .mata-bubble{
   background:#1F5C37;border-radius:14px 14px 2px 14px;
   padding:12px 14px;font-size:14px;color:#E8F5ED;
