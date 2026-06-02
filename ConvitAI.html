@@ -7,13 +7,14 @@
 <title>Falas Matadoras</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/the-seasons" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --red:#C1121F;
   --red2:#E63946;
-  --salmon:#E05A65;
+  --salmon:#C9A84C;
   --dark:#3D0000;
   --darker:#1A0000;
   --overlay:rgba(100,0,0,.72);
@@ -39,12 +40,14 @@ html,body{
 
 /* ══ BG IMAGE ══ */
 .bg-img{
-  position:fixed;inset:0;z-index:0;
-  width:100%;height:100%;object-fit:cover;object-position:center top;
+  position:fixed;top:0;left:0;z-index:0;
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  display:block;
 }
 .bg-overlay{
   position:fixed;inset:0;z-index:1;
-  background:linear-gradient(180deg,rgba(80,0,0,.55) 0%,rgba(40,0,0,.78) 55%,rgba(15,0,0,.96) 100%);
+  background:linear-gradient(180deg,rgba(60,0,0,.45) 0%,rgba(30,0,0,.60) 50%,rgba(10,0,0,.75) 100%);
 }
 .scr>*{position:relative;z-index:2}
 
@@ -67,9 +70,9 @@ html,body{
 }
 .h1-badge{margin-bottom:32px}
 .h1-headline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,14.5vw,72px);font-weight:400;
-  line-height:.92;letter-spacing:.04em;
+  font-family:'The Seasons',serif;
+  font-size:13.5vw;font-weight:400;
+  line-height:.94;letter-spacing:.03em;
   color:var(--W);text-align:center;
   text-transform:uppercase;
   margin-bottom:20px;
@@ -85,15 +88,16 @@ html,body{
 /* CTA button */
 .btn-main{
   width:100%;padding:20px;
-  background:var(--salmon);color:var(--W);
+  background:linear-gradient(135deg,#C9A84C,#E8CC7A,#B8922E);
+  color:#3D2800;
   font-family:'Inter',sans-serif;
   font-size:16px;font-weight:800;letter-spacing:.04em;
   border:none;border-radius:99px;cursor:pointer;
-  box-shadow:0 6px 28px rgba(192,57,70,.45);
+  box-shadow:0 6px 28px rgba(201,168,76,.35);
   transition:transform .12s,box-shadow .18s;
   text-transform:uppercase;
 }
-.btn-main:active{transform:scale(.97);box-shadow:0 2px 12px rgba(192,57,70,.3)}
+.btn-main:active{transform:scale(.97);box-shadow:0 2px 12px rgba(201,168,76,.2)}
 
 /* Online bar */
 .online-bar{
@@ -121,7 +125,6 @@ html,body{
 .dep{
   background:var(--WD);border:1px solid var(--WC);
   border-radius:16px;padding:15px;
-  backdrop-filter:blur(8px);
 }
 .dep-top{display:flex;align-items:center;gap:10px;margin-bottom:9px}
 .dep-avatar{
@@ -174,8 +177,8 @@ html,body{
   text-transform:uppercase;margin-bottom:16px;align-self:flex-start;
 }
 .q-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(36px,10vw,48px);font-weight:400;
+  font-family:'The Seasons',serif;
+  font-size:9.5vw;font-weight:400;
   line-height:1;letter-spacing:.03em;
   color:var(--W);margin-bottom:8px;text-transform:uppercase;
 }
@@ -192,7 +195,6 @@ html,body{
   font-family:'Inter',sans-serif;color:var(--W);
   transition:border-color .15s,background .15s,box-shadow .15s,transform .1s;
   animation:fadeUp .26s both;
-  backdrop-filter:blur(6px);
 }
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .opt:active{transform:scale(.988)}
@@ -221,12 +223,13 @@ html,body{
 
 .btn-next{
   width:100%;padding:18px;
-  background:var(--salmon);color:var(--W);
+  background:linear-gradient(135deg,#C9A84C,#E8CC7A,#B8922E);
+  color:#3D2800;
   font-family:'Inter',sans-serif;font-size:15px;font-weight:800;
   border:none;border-radius:99px;cursor:pointer;
   margin-top:24px;text-transform:uppercase;letter-spacing:.04em;
   opacity:.2;pointer-events:none;
-  box-shadow:0 4px 20px rgba(224,90,101,.3);
+  box-shadow:0 4px 20px rgba(201,168,76,.3);
   transition:opacity .25s,transform .12s;
 }
 .btn-next.on{opacity:1;pointer-events:all}
@@ -238,8 +241,8 @@ html,body{
   display:flex;flex-direction:column;gap:16px;
 }
 .sec-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(34px,9vw,44px);font-weight:400;
+  font-family:'The Seasons',serif;
+  font-size:9.5vw;font-weight:400;
   letter-spacing:.03em;color:var(--W);line-height:1;
   text-transform:uppercase;
 }
@@ -252,7 +255,6 @@ html,body{
   display:flex;flex-direction:column;align-items:center;gap:9px;
   cursor:pointer;position:relative;overflow:hidden;
   transition:border-color .2s,background .2s;
-  backdrop-filter:blur(6px);
 }
 .upload-zone.hover{border-color:var(--salmon);background:rgba(224,90,101,.1)}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
@@ -289,7 +291,6 @@ html,body{
   width:100%;background:var(--WD);border:1px solid var(--WC);
   border-radius:12px;padding:13px 14px;
   display:flex;align-items:flex-start;gap:10px;
-  backdrop-filter:blur(6px);
 }
 .priv-ico{font-size:17px;flex-shrink:0;margin-top:1px}
 .priv-txt p{font-size:13px;color:var(--W);font-weight:700;margin-bottom:2px}
@@ -309,7 +310,6 @@ textarea,select{
   padding:12px 13px;outline:none;
   transition:border-color .2s,box-shadow .2s;
   -webkit-appearance:none;
-  backdrop-filter:blur(6px);
 }
 textarea{resize:none;line-height:1.55}
 textarea::placeholder{color:var(--WB)}
@@ -338,8 +338,8 @@ select option{background:#3D0000;color:var(--W)}
 .r-eye{font-size:9px;font-weight:600;letter-spacing:.25em;color:var(--WB);text-transform:uppercase}
 .r-title{
   width:100%;
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(38px,11vw,56px);font-weight:400;
+  font-family:'The Seasons',serif;
+  font-size:10.5vw;font-weight:400;
   letter-spacing:.04em;line-height:.95;text-align:center;
   color:var(--W);text-transform:uppercase;
   word-break:normal;padding:0 8px;
@@ -351,7 +351,6 @@ select option{background:#3D0000;color:var(--W)}
 .gauge{
   background:var(--WD);border:1px solid var(--WC);border-radius:18px;
   padding:20px;position:relative;overflow:hidden;
-  backdrop-filter:blur(8px);
 }
 .gauge::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
@@ -418,8 +417,8 @@ select option{background:#3D0000;color:var(--W)}
 }
 .ck-ico{font-size:52px;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
 .ck-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,15vw,72px);font-weight:300;
+  font-family:'The Seasons',serif;
+  font-size:11vw;font-weight:400;
   letter-spacing:.03em;line-height:.9;text-align:center;
   color:var(--W);text-transform:uppercase;
 }
@@ -430,7 +429,6 @@ select option{background:#3D0000;color:var(--W)}
 .price-card{
   background:var(--WD);border:1px solid var(--WC);border-radius:18px;
   padding:20px;position:relative;overflow:hidden;
-  backdrop-filter:blur(8px);
 }
 .price-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
@@ -495,7 +493,6 @@ select option{background:#3D0000;color:var(--W)}
   background:var(--WD);border:1px solid var(--WC);
   border-radius:20px;padding:22px;
   display:flex;flex-direction:column;gap:18px;
-  backdrop-filter:blur(10px);
   position:relative;overflow:hidden;
 }
 .guru-card::before{
@@ -657,7 +654,7 @@ select option{background:#3D0000;color:var(--W)}
         <div class="chk"></div>
       </button>
     </div>
-    <button class="btn-next" id="bnQ2" onclick="go('p3')">Ver análise dela →</button>
+    <button class="btn-next" id="bnQ2" onclick="go('p3')">Continuar →</button>
   </div>
 </section>
 
