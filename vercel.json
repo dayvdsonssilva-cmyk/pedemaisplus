@@ -3,21 +3,9 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
-  "functions": {
-    "api/generate-image.js":    { "maxDuration": 60 },
-    "api/transcribe.js":        { "maxDuration": 30 },
-    "api/claude.js":            { "maxDuration": 30 },
-    "api/analyze.js":           { "maxDuration": 30 },
-    "api/guru.js":              { "maxDuration": 30 },
-    "api/create-pix.js":        { "maxDuration": 15 },
-    "api/create-preference.js": { "maxDuration": 15 },
-    "api/check-payment.js":     { "maxDuration": 10 },
-    "api/check-models.js":      { "maxDuration": 10 }
-  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/",         "destination": "/aventura.html" },
     { "source": "/(.*)",     "destination": "/aventura.html" }
   ]
 }
-    
