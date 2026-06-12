@@ -572,6 +572,10 @@
         <label class="form-label">Seu E-mail</label>
         <input class="form-input" id="emailInput" type="email" placeholder="joao@email.com" autocomplete="email">
       </div>
+      <div class="form-group">
+        <label class="form-label">WhatsApp / Telefone</label>
+        <input class="form-input" id="telInput" type="tel" placeholder="(35) 99999-0000" autocomplete="tel">
+      </div>
       <button class="btn-primary" onclick="irParaPix()">VER PIX PARA FECHAR →</button>
       <button class="btn-ghost" onclick="fecharOverlay('overlayCheckout')">Voltar</button>
     </div>
@@ -631,11 +635,23 @@ let sel     = new Set();
 let isCombo = false;
 let nome_u  = '';
 let email_u = '';
+let tel_u   = '';
 let pedidoId = '';
+
+// Carrega jogadores do admin (se existirem) ou usa default
+function carregarJogadores() {
+  try {
+    const j = localStorage.getItem('cc_jogadores_loja');
+    if (j) return JSON.parse(j);
+  } catch(e) {}
+  return JOGADORES;
+}
+
+const JOGADORES_ATIVOS = carregarJogadores();
 
 // ── RENDER GRID ──
 const grid = document.getElementById('grid');
-JOGADORES.forEach(j => {
+JOGADORES_ATIVOS.forEach(j => {
   const d = document.createElement('div');
   d.className = 'card';
   d.id = 'card-' + j.id;
@@ -668,14 +684,14 @@ function selecionarCombo() {
   isCombo = !isCombo;
   const badge = document.getElementById('badgeCombo');
   if (isCombo) {
-    sel = new Set(JOGADORES.map(j => j.id));
-    JOGADORES.forEach(j => document.getElementById('card-' + j.id).classList.add('selected'));
+    sel = new Set(JOGADORES_ATIVOS.map(j => j.id));
+    JOGADORES_ATIVOS.forEach(j => document.getElementById('card-' + j.id).classList.add('selected'));
     badge.classList.add('combo-selected');
     badge.textContent = '✅ TIME COMPLETO — R$14,99';
     mostrarToast('🏆 Time completo selecionado!');
   } else {
     sel.clear();
-    JOGADORES.forEach(j => document.getElementById('card-' + j.id).classList.remove('selected'));
+    JOGADORES_ATIVOS.forEach(j => document.getElementById('card-' + j.id).classList.remove('selected'));
     badge.classList.remove('combo-selected');
     badge.textContent = '🏆 LEVE O TIME TODO — R$14,99';
   }
@@ -709,7 +725,7 @@ function abrirCarrinho() {
         <div class="item-cart-preco">${fmt(P_COMBO)}</div>
       </div></div>`;
   } else {
-    JOGADORES.filter(j => sel.has(j.id)).forEach(j => {
+    JOGADORES_ATIVOS.filter(j => sel.has(j.id)).forEach(j => {
       html += `<div class="item-cart">
         <div class="item-cart-emoji">${j.emoji}</div>
         <div class="item-cart-info">
@@ -740,7 +756,7 @@ function irParaCheckout() {
   if (isCombo) {
     linhas = `<div class="resumo-linha"><span>🏆 Combo Completo</span><span>${fmt(P_COMBO)}</span></div>`;
   } else {
-    JOGADORES.filter(j => sel.has(j.id)).forEach(j => {
+    JOGADORES_ATIVOS.filter(j => sel.has(j.id)).forEach(j => {
       linhas += `<div class="resumo-linha"><span>${j.emoji} ${j.nome}</span><span>${fmt(P_UNIT)}</span></div>`;
     });
   }
@@ -753,6 +769,7 @@ function irParaCheckout() {
 function irParaPix() {
   nome_u  = document.getElementById('nomeInput').value.trim();
   email_u = document.getElementById('emailInput').value.trim();
+  tel_u   = document.getElementById('telInput').value.trim();
   if (!nome_u)              { mostrarToast('Informe seu nome'); return; }
   if (!/\S+@\S+\.\S+/.test(email_u)) { mostrarToast('E-mail inválido'); return; }
   document.getElementById('pixValor').textContent = fmt(calcTotal());
@@ -763,8 +780,8 @@ function voltarDados() { mostrarEtapa('etapaDados'); }
 
 function confirmarPix() {
   pedidoId = gerarId();
-  salvarPedido({ id:pedidoId, nome:nome_u, email:email_u,
-    itens: isCombo ? ['COMBO'] : JOGADORES.filter(j=>sel.has(j.id)).map(j=>j.nome),
+  salvarPedido({ id:pedidoId, nome:nome_u, email:email_u, telefone:tel_u,
+    itens: isCombo ? ['COMBO'] : JOGADORES_ATIVOS.filter(j=>sel.has(j.id)).map(j=>j.nome),
     total: calcTotal(), ts: Date.now(), status:'pago' });
   document.getElementById('sucessoSub').textContent =
     `PDF enviado para ${email_u}. Baixe, imprima e monte!`;
@@ -778,7 +795,7 @@ function baixarPDF() {
 
 function reiniciar() {
   sel.clear(); isCombo = false;
-  JOGADORES.forEach(j => document.getElementById('card-'+j.id).classList.remove('selected'));
+  JOGADORES_ATIVOS.forEach(j => document.getElementById('card-'+j.id).classList.remove('selected'));
   document.getElementById('badgeCombo').classList.remove('combo-selected');
   document.getElementById('badgeCombo').textContent = '🏆 LEVE O TIME TODO — R$14,99';
   document.getElementById('nomeInput').value = '';
