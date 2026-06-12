@@ -28,8 +28,6 @@ header{background:var(--verde);padding:12px 16px 10px;position:sticky;top:0;z-in
 /* MINHAS COMPRAS BTN */
 .btn-minhas{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;padding:7px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;transition:.2s;white-space:nowrap}
 .btn-minhas:active{background:rgba(255,255,255,.25)}
-.btn-minhas .dot{width:7px;height:7px;background:var(--amarelo);border-radius:50%;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* BOLA CARRINHO */
 .cart-btn{position:relative;background:none;border:none;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent}
@@ -170,8 +168,7 @@ header{background:var(--verde);padding:12px 16px 10px;position:sticky;top:0;z-in
   </div>
   <div class="header-btns">
     <button class="btn-minhas" id="btnMinhas" onclick="abrirMinhasCompras()">
-      <div class="dot"></div>
-      MINHAS COMPRAS
+      📂 MINHAS COMPRAS
     </button>
     <button class="cart-btn" onclick="abrirCarrinho()" aria-label="Carrinho">
       <div class="ball">⚽</div>
@@ -385,7 +382,6 @@ function mostrarUsuarioLogado() {
   if (!usuarioAtual) return;
   document.getElementById('heroNome').textContent = usuarioAtual.nome.split(' ')[0];
   document.getElementById('heroUsuario').classList.add('show');
-  document.getElementById('btnMinhas').classList.add('show');
   // Pré-preenche form
   document.getElementById('nomeInput').value  = usuarioAtual.nome || '';
   document.getElementById('emailInput').value = usuarioAtual.email || '';
@@ -396,7 +392,6 @@ function trocarUsuario() {
   usuarioAtual = null;
   salvarSessao(null);
   document.getElementById('heroUsuario').classList.remove('show');
-  document.getElementById('btnMinhas').classList.remove('show');
   document.getElementById('nomeInput').value  = '';
   document.getElementById('emailInput').value = '';
   document.getElementById('telInput').value   = '';
@@ -588,7 +583,10 @@ function confirmarPix() {
 
 function fecharEIrParaCompras() {
   fecharOverlay('overlayCheckout');
-  setTimeout(() => abrirMinhasCompras(), 300);
+  setTimeout(() => {
+    renderCompras();
+    document.getElementById('overlayCompras').classList.add('show');
+  }, 300);
   reiniciarSelecao();
 }
 
@@ -607,59 +605,94 @@ function reiniciarSelecao() {
 
 // ── MINHAS COMPRAS ──
 function abrirMinhasCompras() {
-  if (!usuarioAtual) {
-    // Pede o e-mail para recuperar compras
-    const email = prompt('Digite seu e-mail para ver suas compras:');
-    if (!email) return;
-    const usuarios = lerUsuarios();
-    if (!usuarios[email]) { mostrarToast('E-mail não encontrado'); return; }
-    usuarioAtual = { email, nome: usuarios[email].nome, tel: usuarios[email].tel };
-    salvarSessao(email);
-    mostrarUsuarioLogado();
-  }
-
-  const usuarios = lerUsuarios();
-  const user = usuarios[usuarioAtual.email];
-  const compras = (user?.compras || []);
-
-  document.getElementById('comprasSubtitulo').textContent = `${user?.nome?.split(' ')[0] || ''} · ${compras.length} compra(s)`;
-
-  if (!compras.length) {
-    document.getElementById('comprasConteudo').innerHTML=
-      `<div class="compras-empty"><span>📭</span>Nenhuma compra ainda.<br>Escolha seus craques!</div>`;
+  if (usuarioAtual) {
+    renderCompras();
   } else {
-    document.getElementById('comprasConteudo').innerHTML = compras.map(c => {
-      const dt = new Date(c.ts).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
-
-      // Monta itens com imagem
-      const itensHtml = c.jogadorIds
-        ? JOGADORES.filter(j=>c.jogadorIds.includes(j.id)).map(j=>{
-            const img = j.img ? `<img src="${j.img}">` : j.emoji||'⚽';
-            return `<div class="compra-item">${img} ${j.nome}</div>`;
-          }).join('')
-        : c.itens.map(i=>`<div class="compra-item">⚽ ${i}</div>`).join('');
-
-      // Verifica se tem PDFs disponíveis
-      const jogsSel = c.jogadorIds
-        ? JOGADORES.filter(j=>c.jogadorIds.includes(j.id))
-        : [];
-      const temPdf = jogsSel.some(j=>j.pdf) || (c.itens[0]==='COMBO' && JOGADORES.some(j=>j.pdf));
-
-      return `<div class="compra-card">
-        <div class="compra-header">
-          <span class="compra-data">🗓 ${dt} · ${c.id}</span>
-          <span class="compra-total">${fmt(c.total)}</span>
-        </div>
-        <div class="compra-itens">${itensHtml}</div>
-        <button class="${temPdf?'btn-baixar':'btn-baixar sem-pdf'}"
-          onclick="${temPdf?`baixarPDFsCompra('${c.id}')`:'void(0)'}">
-          ${temPdf?'⬇️ BAIXAR PDF':'📄 PDF em breve'}
+    // Mostra tela de identificação dentro do modal
+    document.getElementById('comprasConteudo').innerHTML = `
+      <div style="text-align:center;padding:8px 0 20px">
+        <div style="font-size:42px;margin-bottom:10px">📂</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--azul);margin-bottom:6px">Acesse suas compras</div>
+        <div style="font-size:13px;color:#999;font-weight:700;margin-bottom:20px">Digite o e-mail que usou na compra</div>
+        <input id="loginEmail" type="email" class="form-input" placeholder="seuemail@email.com"
+          style="margin-bottom:10px" autocomplete="email"
+          onkeydown="if(event.key==='Enter')buscarPorEmail()">
+        <button class="btn-primary" onclick="buscarPorEmail()" style="margin-bottom:0">
+          VER MINHAS COMPRAS →
         </button>
       </div>`;
-    }).join('');
+    document.getElementById('comprasSubtitulo').textContent = 'Digite seu e-mail para acessar';
+  }
+  document.getElementById('overlayCompras').classList.add('show');
+}
+
+function buscarPorEmail() {
+  const email = (document.getElementById('loginEmail')?.value || '').trim().toLowerCase();
+  if (!/\S+@\S+\.\S+/.test(email)) { mostrarToast('E-mail inválido'); return; }
+  const usuarios = lerUsuarios();
+  if (!usuarios[email] || !usuarios[email].compras?.length) {
+    document.getElementById('comprasConteudo').innerHTML = `
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:40px;margin-bottom:10px">📭</div>
+        <div style="font-size:14px;font-weight:700;color:#aaa;margin-bottom:16px">Nenhuma compra encontrada para este e-mail</div>
+        <input id="loginEmail" type="email" class="form-input" placeholder="Tente outro e-mail"
+          style="margin-bottom:10px" autocomplete="email"
+          onkeydown="if(event.key==='Enter')buscarPorEmail()">
+        <button class="btn-primary" onclick="buscarPorEmail()" style="margin-bottom:0">BUSCAR</button>
+      </div>`;
+    return;
+  }
+  // Encontrou — loga e mostra compras
+  usuarioAtual = { email, nome: usuarios[email].nome, tel: usuarios[email].tel };
+  salvarSessao(email);
+  mostrarUsuarioLogado();
+  renderCompras();
+}
+
+function renderCompras() {
+  const usuarios = lerUsuarios();
+  const user = usuarios[usuarioAtual.email];
+  const compras = user?.compras || [];
+  const primeiroNome = user?.nome?.split(' ')[0] || '';
+
+  document.getElementById('comprasSubtitulo').textContent =
+    `${primeiroNome} · ${compras.length} compra${compras.length!==1?'s':''}`;
+
+  if (!compras.length) {
+    document.getElementById('comprasConteudo').innerHTML =
+      `<div class="compras-empty"><span>📭</span>Nenhuma compra ainda.<br>Escolha seus craques!</div>`;
+    return;
   }
 
-  document.getElementById('overlayCompras').classList.add('show');
+  document.getElementById('comprasConteudo').innerHTML = compras.map(c => {
+    const dt = new Date(c.ts).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+
+    const jogsSel = c.jogadorIds
+      ? JOGADORES.filter(j => c.jogadorIds.includes(j.id))
+      : [];
+
+    const itensHtml = jogsSel.length
+      ? jogsSel.map(j => {
+          const img = j.img ? `<img src="${j.img}">` : j.emoji || '⚽';
+          return `<div class="compra-item">${img} ${j.nome}</div>`;
+        }).join('')
+      : c.itens.map(i => `<div class="compra-item">⚽ ${i}</div>`).join('');
+
+    const temPdf = jogsSel.some(j => j.pdf) ||
+      (c.itens[0] === 'COMBO' && JOGADORES.some(j => j.pdf));
+
+    return `<div class="compra-card">
+      <div class="compra-header">
+        <span class="compra-data">🗓 ${dt}</span>
+        <span class="compra-total">${fmt(c.total)}</span>
+      </div>
+      <div class="compra-itens">${itensHtml}</div>
+      <button class="${temPdf ? 'btn-baixar' : 'btn-baixar sem-pdf'}"
+        onclick="${temPdf ? `baixarPDFsCompra('${c.id}')` : 'void(0)'}">
+        ${temPdf ? '⬇️ BAIXAR PDF' : '📄 PDF em breve'}
+      </button>
+    </div>`;
+  }).join('');
 }
 
 function baixarPDFsCompra(compraId) {
