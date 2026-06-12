@@ -7,499 +7,119 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --verde:#009C3B;--verde-esc:#007a2e;--amarelo:#FFDF00;
+  --azul:#002776;--branco:#fff;--cinza:#F0F0F0;--cinza2:#E4E4E4;
+  --sombra:rgba(0,39,118,0.12);
+}
+body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);min-height:100vh;overflow-x:hidden}
 
-  :root {
-    --verde: #009C3B;
-    --verde-esc: #007a2e;
-    --amarelo: #FFDF00;
-    --azul: #002776;
-    --branco: #FFFFFF;
-    --cinza: #F0F0F0;
-    --cinza2: #E4E4E4;
-    --sombra: rgba(0,39,118,0.12);
-  }
+/* HEADER */
+header{background:var(--verde);padding:12px 16px 10px;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--amarelo);letter-spacing:1px;line-height:1}
+.logo span{color:rgba(255,255,255,.75);font-size:11px;display:block;letter-spacing:2.5px;font-family:'Nunito',sans-serif;font-weight:700;text-transform:uppercase;margin-top:1px}
+.cart-btn{position:relative;background:none;border:none;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent}
+.ball{width:44px;height:44px;border-radius:50%;background:var(--branco);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 2px 8px rgba(0,0,0,.28);transition:transform .15s}
+.cart-btn:active .ball{transform:scale(.88)}
+.cart-count{position:absolute;top:-3px;right:-3px;background:var(--amarelo);color:var(--azul);font-size:11px;font-weight:900;border-radius:50%;width:20px;height:20px;display:none;align-items:center;justify-content:center;border:2px solid var(--verde)}
+.cart-count.show{display:flex}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--cinza);
-    color: var(--azul);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* HERO */
+.hero{background:linear-gradient(150deg,var(--amarelo) 0%,#FFEE55 100%);padding:20px 16px 16px;text-align:center;border-bottom:4px solid var(--verde);position:relative;overflow:hidden}
+.hero::before{content:'🇧🇷';position:absolute;font-size:120px;opacity:.07;top:-20px;right:-20px;pointer-events:none}
+.hero-eyebrow{font-size:11px;font-weight:900;color:var(--verde);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--azul);line-height:1;margin-bottom:6px;letter-spacing:.5px}
+.hero-sub{font-size:13px;color:rgba(0,39,118,.65);font-weight:700;margin-bottom:14px}
+.badge-combo{display:inline-flex;align-items:center;gap:6px;background:var(--verde);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.8px;border-radius:100px;padding:8px 20px;box-shadow:0 4px 14px rgba(0,150,59,.45);cursor:pointer;transition:transform .15s,background .2s;-webkit-tap-highlight-color:transparent}
+.badge-combo:active{transform:scale(.95)}
+.badge-combo.combo-selected{background:var(--azul);box-shadow:0 4px 14px rgba(0,39,118,.4)}
 
-  /* ── HEADER ── */
-  header {
-    background: var(--verde);
-    padding: 12px 16px 10px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.22);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    color: var(--amarelo);
-    letter-spacing: 1px;
-    line-height: 1;
-  }
-  .logo span {
-    color: rgba(255,255,255,0.75);
-    font-size: 11px;
-    display: block;
-    letter-spacing: 2.5px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
+/* SECAO */
+.secao-titulo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--azul);letter-spacing:1px;padding:14px 14px 8px;display:flex;align-items:center;gap:8px}
+.secao-titulo::after{content:'';flex:1;height:2px;background:var(--amarelo);border-radius:2px}
 
-  /* BOLA CARRINHO */
-  .cart-btn {
-    position: relative;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .ball {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--branco);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.28);
-    transition: transform 0.15s;
-  }
-  .cart-btn:active .ball { transform: scale(0.88); }
-  .cart-count {
-    position: absolute;
-    top: -3px; right: -3px;
-    background: var(--amarelo);
-    color: var(--azul);
-    font-size: 11px;
-    font-weight: 900;
-    border-radius: 50%;
-    width: 20px; height: 20px;
-    display: none;
-    align-items: center; justify-content: center;
-    border: 2px solid var(--verde);
-  }
-  .cart-count.show { display: flex; }
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 12px 110px}
 
-  /* ── HERO ── */
-  .hero {
-    background: linear-gradient(150deg, var(--amarelo) 0%, #FFEE55 100%);
-    padding: 20px 16px 16px;
-    text-align: center;
-    border-bottom: 4px solid var(--verde);
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '🇧🇷';
-    position: absolute;
-    font-size: 120px;
-    opacity: 0.07;
-    top: -20px; right: -20px;
-    pointer-events: none;
-  }
-  .hero-eyebrow {
-    font-size: 11px;
-    font-weight: 900;
-    color: var(--verde);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .hero h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 40px;
-    color: var(--azul);
-    line-height: 1;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-  }
-  .hero-sub {
-    font-size: 13px;
-    color: rgba(0,39,118,0.65);
-    font-weight: 700;
-    margin-bottom: 14px;
-  }
-  .badge-combo {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--verde);
-    color: var(--amarelo);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 19px;
-    letter-spacing: 0.8px;
-    border-radius: 100px;
-    padding: 8px 20px;
-    box-shadow: 0 4px 14px rgba(0,150,59,0.45);
-    cursor: pointer;
-    transition: transform 0.15s, background 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .badge-combo:active { transform: scale(0.95); }
-  .badge-combo.combo-selected {
-    background: var(--azul);
-    box-shadow: 0 4px 14px rgba(0,39,118,0.4);
-  }
+/* CARD */
+.card{background:var(--branco);border-radius:16px;box-shadow:0 2px 10px var(--sombra);overflow:hidden;cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s;border:2.5px solid transparent;-webkit-tap-highlight-color:transparent;user-select:none}
+.card:active{transform:scale(.94)}
+.card.selected{border-color:var(--verde);box-shadow:0 0 0 3px rgba(0,156,59,.2),0 2px 10px var(--sombra)}
+.check-icon{position:absolute;top:6px;right:6px;background:var(--verde);color:#fff;font-size:10px;font-weight:900;width:20px;height:20px;border-radius:50%;display:none;align-items:center;justify-content:center;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.card.selected .check-icon{display:flex}
+.card-img{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:54px;position:relative;overflow:hidden}
+.card-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card-num{position:absolute;bottom:4px;left:7px;font-family:'Bebas Neue',sans-serif;font-size:22px;color:rgba(0,39,118,.28);line-height:1;z-index:1}
+.card-bandeira{position:absolute;top:5px;right:5px;font-size:13px;z-index:1}
+.card-pos{position:absolute;bottom:5px;right:6px;font-size:8px;font-weight:900;color:rgba(0,39,118,.35);text-transform:uppercase;letter-spacing:.5px;z-index:1}
+.card-info{padding:7px 8px 8px;text-align:center;background:var(--branco)}
+.card-nome{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--azul);line-height:1.1;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-preco{font-size:11px;font-weight:900;color:var(--verde);margin-top:2px}
 
-  /* ── SEÇÃO TÍTULO ── */
-  .secao-titulo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    color: var(--azul);
-    letter-spacing: 1px;
-    padding: 14px 14px 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .secao-titulo::after {
-    content: '';
-    flex: 1;
-    height: 2px;
-    background: var(--amarelo);
-    border-radius: 2px;
-  }
+/* BOTTOM BAR */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:3px solid var(--amarelo);padding:10px 14px 14px;box-shadow:0 -4px 24px rgba(0,0,0,.14);z-index:99;transform:translateY(110%);transition:transform .35s cubic-bezier(.34,1.4,.64,1)}
+.bottom-bar.show{transform:translateY(0)}
+.bottom-resumo{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.bottom-resumo-txt{font-size:12px;color:#888;font-weight:700}
+.bottom-total{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--verde)}
+.btn-levar{background:linear-gradient(135deg,var(--verde) 0%,var(--verde-esc) 100%);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;border:none;border-radius:14px;padding:15px;width:100%;cursor:pointer;box-shadow:0 5px 18px rgba(0,156,59,.42);transition:transform .15s;-webkit-tap-highlight-color:transparent}
+.btn-levar:active{transform:scale(.97)}
 
-  /* ── GRID CRAQUES ── */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 4px 12px 110px;
-  }
+/* MODAIS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(2px)}
+.overlay.show{display:flex}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet{background:var(--branco);width:100%;max-height:88vh;border-radius:22px 22px 0 0;padding:16px 16px 36px;overflow-y:auto;animation:slideUp .3s cubic-bezier(.34,1.4,.64,1)}
+.handle{width:38px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 18px}
+.sheet-titulo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--azul);margin-bottom:4px}
+.sheet-sub{font-size:12px;color:#999;font-weight:700;margin-bottom:16px;letter-spacing:.3px}
+.item-cart{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f2f2f2}
+.item-cart-emoji{font-size:34px}
+.item-cart-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.item-cart-info{flex:1}
+.item-cart-nome{font-weight:900;font-size:14px;color:var(--azul)}
+.item-cart-preco{font-size:12px;color:var(--verde);font-weight:700;margin-top:2px}
+.item-cart-rm{background:none;border:none;font-size:18px;cursor:pointer;color:#ccc;padding:6px;-webkit-tap-highlight-color:transparent}
+.cart-total-linha{display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px}
+.cart-total-label{font-weight:900;font-size:15px}
+.cart-total-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--verde)}
 
-  .card {
-    background: var(--branco);
-    border-radius: 16px;
-    box-shadow: 0 2px 10px var(--sombra);
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.15s, box-shadow 0.15s;
-    border: 2.5px solid transparent;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-  }
-  .card:active { transform: scale(0.94); }
-  .card.selected {
-    border-color: var(--verde);
-    box-shadow: 0 0 0 3px rgba(0,156,59,0.2), 0 2px 10px var(--sombra);
-  }
-  .check-icon {
-    position: absolute;
-    top: 6px; right: 6px;
-    background: var(--verde);
-    color: white;
-    font-size: 10px;
-    font-weight: 900;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    display: none;
-    align-items: center; justify-content: center;
-    z-index: 2;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
-  .card.selected .check-icon { display: flex; }
+.btn-primary{background:linear-gradient(135deg,var(--verde) 0%,var(--verde-esc) 100%);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:1px;border:none;border-radius:14px;padding:15px;width:100%;cursor:pointer;box-shadow:0 5px 18px rgba(0,156,59,.38);margin-bottom:10px;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.btn-primary:active{transform:scale(.97)}
+.btn-ghost{background:none;border:2px solid #eee;border-radius:12px;padding:11px;width:100%;font-size:14px;font-weight:700;color:#aaa;cursor:pointer}
 
-  .card-img {
-    width: 100%;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 54px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-num {
-    position: absolute;
-    bottom: 4px; left: 7px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: rgba(0,39,118,0.28);
-    line-height: 1;
-  }
-  .card-bandeira {
-    position: absolute;
-    top: 5px; right: 5px;
-    font-size: 13px;
-  }
-  .card-pos {
-    position: absolute;
-    bottom: 5px; right: 6px;
-    font-size: 8px;
-    font-weight: 900;
-    color: rgba(0,39,118,0.35);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px}
+.form-input{width:100%;padding:13px 14px;border:2px solid var(--cinza2);border-radius:12px;font-size:15px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--azul);outline:none;transition:.2s;background:var(--branco)}
+.form-input:focus{border-color:var(--verde)}
+.resumo-box{background:var(--cinza);border-radius:14px;padding:14px;margin-bottom:16px}
+.resumo-linha{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#666;margin-bottom:5px}
+.resumo-total{display:flex;justify-content:space-between;font-size:17px;font-weight:900;color:var(--azul);border-top:1px solid #ddd;padding-top:10px;margin-top:8px}
+.resumo-total span:last-child{color:var(--verde)}
 
-  .card-info {
-    padding: 7px 8px 8px;
-    text-align: center;
-    background: var(--branco);
-  }
-  .card-nome {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 15px;
-    color: var(--azul);
-    line-height: 1.1;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .card-preco {
-    font-size: 11px;
-    font-weight: 900;
-    color: var(--verde);
-    margin-top: 2px;
-  }
+.pix-card{background:linear-gradient(135deg,#e8f5e9,#f0faf0);border:2px solid var(--verde);border-radius:16px;padding:20px;text-align:center;margin-bottom:16px}
+.pix-emoji{font-size:38px;margin-bottom:6px}
+.pix-titulo{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--verde);margin-bottom:10px}
+.pix-chave{background:var(--branco);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:900;color:var(--azul);margin-bottom:10px;word-break:break-all}
+.pix-valor{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--azul);line-height:1}
+.btn-copiar{background:var(--amarelo);color:var(--azul);border:none;border-radius:12px;padding:12px 20px;font-family:'Bebas Neue',sans-serif;font-size:19px;cursor:pointer;width:100%;margin-bottom:10px;-webkit-tap-highlight-color:transparent}
 
-  /* ── BOTTOM BAR ── */
-  .bottom-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--branco);
-    border-top: 3px solid var(--amarelo);
-    padding: 10px 14px 14px;
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.14);
-    z-index: 99;
-    transform: translateY(110%);
-    transition: transform 0.35s cubic-bezier(.34,1.4,.64,1);
-  }
-  .bottom-bar.show { transform: translateY(0); }
-  .bottom-resumo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 9px;
-  }
-  .bottom-resumo-txt { font-size: 12px; color: #888; font-weight: 700; }
-  .bottom-total {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: var(--verde);
-  }
-  .btn-levar {
-    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
-    color: var(--amarelo);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 1px;
-    border: none;
-    border-radius: 14px;
-    padding: 15px;
-    width: 100%;
-    cursor: pointer;
-    box-shadow: 0 5px 18px rgba(0,156,59,0.42);
-    transition: transform 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn-levar:active { transform: scale(0.97); }
+.sucesso-wrap{text-align:center;padding:24px 8px 10px}
+.sucesso-emoji{font-size:68px;margin-bottom:12px;display:block}
+.sucesso-titulo{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--verde);margin-bottom:6px}
+.sucesso-sub{font-size:14px;color:#777;font-weight:700;margin-bottom:24px}
+.btn-download{background:linear-gradient(135deg,var(--amarelo),#FFE840);color:var(--azul);border:none;border-radius:14px;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:24px;cursor:pointer;width:100%;box-shadow:0 5px 18px rgba(255,223,0,.5);margin-bottom:12px;-webkit-tap-highlight-color:transparent}
 
-  /* ── MODAIS ── */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.52);
-    z-index: 200;
-    display: none;
-    align-items: flex-end;
-    backdrop-filter: blur(2px);
-  }
-  .overlay.show { display: flex; }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-  .sheet {
-    background: var(--branco);
-    width: 100%;
-    max-height: 88vh;
-    border-radius: 22px 22px 0 0;
-    padding: 16px 16px 36px;
-    overflow-y: auto;
-    animation: slideUp 0.3s cubic-bezier(.34,1.4,.64,1);
-  }
-  .handle {
-    width: 38px; height: 4px;
-    background: #ddd;
-    border-radius: 2px;
-    margin: 0 auto 18px;
-  }
-  .sheet-titulo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    color: var(--azul);
-    margin-bottom: 4px;
-  }
-  .sheet-sub {
-    font-size: 12px;
-    color: #999;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: 0.3px;
-  }
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--azul);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:16px;padding:10px 22px;border-radius:100px;opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* CARRINHO */
-  .item-cart {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 10px 0;
-    border-bottom: 1px solid #f2f2f2;
-  }
-  .item-cart-emoji { font-size: 34px; }
-  .item-cart-info { flex: 1; }
-  .item-cart-nome { font-weight: 900; font-size: 14px; color: var(--azul); }
-  .item-cart-preco { font-size: 12px; color: var(--verde); font-weight: 700; margin-top: 2px; }
-  .item-cart-rm {
-    background: none; border: none;
-    font-size: 18px; cursor: pointer;
-    color: #ccc; padding: 6px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .cart-total-linha {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 0 6px;
-  }
-  .cart-total-label { font-weight: 900; font-size: 15px; }
-  .cart-total-val {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 30px; color: var(--verde);
-  }
-
-  /* BOTÕES GENÉRICOS */
-  .btn-primary {
-    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
-    color: var(--amarelo);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 21px; letter-spacing: 1px;
-    border: none; border-radius: 14px;
-    padding: 15px; width: 100%;
-    cursor: pointer;
-    box-shadow: 0 5px 18px rgba(0,156,59,0.38);
-    margin-bottom: 10px;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform 0.15s;
-  }
-  .btn-primary:active { transform: scale(0.97); }
-  .btn-ghost {
-    background: none; border: 2px solid #eee;
-    border-radius: 12px; padding: 11px;
-    width: 100%; font-size: 14px; font-weight: 700;
-    color: #aaa; cursor: pointer;
-  }
-
-  /* CHECKOUT FORM */
-  .form-group { margin-bottom: 14px; }
-  .form-label {
-    font-size: 11px; font-weight: 900; color: var(--azul);
-    text-transform: uppercase; letter-spacing: 0.8px;
-    display: block; margin-bottom: 5px;
-  }
-  .form-input {
-    width: 100%; padding: 13px 14px;
-    border: 2px solid var(--cinza2);
-    border-radius: 12px; font-size: 15px;
-    font-family: 'Nunito', sans-serif; font-weight: 700;
-    color: var(--azul); outline: none;
-    transition: border-color 0.2s;
-    background: var(--branco);
-  }
-  .form-input:focus { border-color: var(--verde); }
-
-  .resumo-box {
-    background: var(--cinza);
-    border-radius: 14px; padding: 14px; margin-bottom: 16px;
-  }
-  .resumo-linha {
-    display: flex; justify-content: space-between;
-    font-size: 13px; font-weight: 700; color: #666; margin-bottom: 5px;
-  }
-  .resumo-total {
-    display: flex; justify-content: space-between;
-    font-size: 17px; font-weight: 900; color: var(--azul);
-    border-top: 1px solid #ddd; padding-top: 10px; margin-top: 8px;
-  }
-  .resumo-total span:last-child { color: var(--verde); }
-
-  /* PIX */
-  .pix-card {
-    background: linear-gradient(135deg, #e8f5e9, #f0faf0);
-    border: 2px solid var(--verde);
-    border-radius: 16px; padding: 20px;
-    text-align: center; margin-bottom: 16px;
-  }
-  .pix-emoji { font-size: 38px; margin-bottom: 6px; }
-  .pix-titulo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px; color: var(--verde); margin-bottom: 10px;
-  }
-  .pix-chave {
-    background: var(--branco); border-radius: 10px;
-    padding: 10px 12px; font-size: 13px; font-weight: 900;
-    color: var(--azul); margin-bottom: 10px; word-break: break-all;
-  }
-  .pix-valor {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 38px; color: var(--azul); line-height: 1;
-  }
-  .btn-copiar {
-    background: var(--amarelo); color: var(--azul);
-    border: none; border-radius: 12px;
-    padding: 12px 20px; font-family: 'Bebas Neue', sans-serif;
-    font-size: 19px; cursor: pointer; width: 100%; margin-bottom: 10px;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* SUCESSO */
-  .sucesso-wrap { text-align: center; padding: 24px 8px 10px; }
-  .sucesso-emoji { font-size: 68px; margin-bottom: 12px; display: block; }
-  .sucesso-titulo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 34px; color: var(--verde); margin-bottom: 6px;
-  }
-  .sucesso-sub { font-size: 14px; color: #777; font-weight: 700; margin-bottom: 24px; }
-  .btn-download {
-    background: linear-gradient(135deg, var(--amarelo), #FFE840);
-    color: var(--azul); border: none; border-radius: 14px;
-    padding: 16px; font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px; cursor: pointer; width: 100%;
-    box-shadow: 0 5px 18px rgba(255,223,0,0.5); margin-bottom: 12px;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 96px; left: 50%;
-    transform: translateX(-50%) translateY(16px);
-    background: var(--azul); color: var(--amarelo);
-    font-family: 'Bebas Neue', sans-serif; font-size: 16px;
-    padding: 10px 22px; border-radius: 100px;
-    opacity: 0; transition: all 0.3s;
-    z-index: 500; white-space: nowrap; pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* LOADING GRID */
+.grid-loading{text-align:center;padding:40px;color:#bbb;font-weight:700;font-size:14px;grid-column:1/-1}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     Copa Craft
@@ -511,7 +131,6 @@
   </button>
 </header>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">🇧🇷 Copa do Mundo</div>
   <h1>LEVE SEU CRAQUE</h1>
@@ -521,22 +140,18 @@
   </div>
 </div>
 
-<!-- LISTA -->
 <div class="secao-titulo">Escolha seu(s) craque(s)</div>
-<div class="grid" id="grid"></div>
+<div class="grid" id="grid"><div class="grid-loading">Carregando craques...</div></div>
 
-<!-- BOTTOM BAR -->
 <div class="bottom-bar" id="bottomBar">
   <div class="bottom-resumo">
     <span class="bottom-resumo-txt" id="resumoTxt"></span>
     <span class="bottom-total" id="totalTxt"></span>
   </div>
-  <button class="btn-levar" onclick="irParaCheckout()">
-    ⚽ LEVAR MEUS CRAQUES →
-  </button>
+  <button class="btn-levar" onclick="irParaCheckout()">⚽ LEVAR MEUS CRAQUES →</button>
 </div>
 
-<!-- OVERLAY CARRINHO -->
+<!-- CARRINHO -->
 <div class="overlay" id="overlayCarrinho" onclick="fecharOverlay('overlayCarrinho',event)">
   <div class="sheet">
     <div class="handle"></div>
@@ -547,19 +162,16 @@
       <span class="cart-total-label">Total</span>
       <span class="cart-total-val" id="totalModal">R$0,00</span>
     </div>
-    <button class="btn-primary" onclick="fecharOverlay('overlayCarrinho'); irParaCheckout();">
-      LEVAR ESSES CRAQUES →
-    </button>
+    <button class="btn-primary" onclick="fecharOverlay('overlayCarrinho');irParaCheckout()">LEVAR ESSES CRAQUES →</button>
     <button class="btn-ghost" onclick="fecharOverlay('overlayCarrinho')">Escolher mais</button>
   </div>
 </div>
 
-<!-- OVERLAY CHECKOUT -->
+<!-- CHECKOUT -->
 <div class="overlay" id="overlayCheckout" onclick="fecharOverlay('overlayCheckout',event)">
-  <div class="sheet" id="sheetCheckout">
+  <div class="sheet">
     <div class="handle"></div>
 
-    <!-- ETAPA 1: DADOS -->
     <div id="etapaDados">
       <div class="sheet-titulo">📦 Onde entregar?</div>
       <div class="sheet-sub">Seu PDF chega no e-mail na hora</div>
@@ -580,95 +192,120 @@
       <button class="btn-ghost" onclick="fecharOverlay('overlayCheckout')">Voltar</button>
     </div>
 
-    <!-- ETAPA 2: PIX -->
     <div id="etapaPix" style="display:none">
       <div class="sheet-titulo">⚡ Pagar com PIX</div>
       <div class="sheet-sub">Instantâneo · Seguro · Sem taxas extras</div>
       <div class="pix-card">
         <div class="pix-emoji">📲</div>
         <div class="pix-titulo">Chave PIX (E-mail)</div>
-        <div class="pix-chave" id="pixChave">pagamentos@copaCraft.com.br</div>
+        <div class="pix-chave">pagamentos@copaCraft.com.br</div>
         <div class="pix-valor" id="pixValor">R$0,00</div>
       </div>
       <button class="btn-copiar" onclick="copiarPix()">📋 COPIAR CHAVE PIX</button>
       <button class="btn-primary" onclick="confirmarPix()">✅ JÁ TRANSFERI!</button>
-      <button class="btn-ghost" onclick="voltarDados()">Voltar</button>
+      <button class="btn-ghost" onclick="mostrarEtapa('etapaDados')">Voltar</button>
     </div>
 
-    <!-- ETAPA 3: SUCESSO -->
     <div id="etapaSucesso" style="display:none">
       <div class="sucesso-wrap">
         <span class="sucesso-emoji">🎉</span>
         <div class="sucesso-titulo">ARRASOU!</div>
         <div class="sucesso-sub" id="sucessoSub">Seu PDF está pronto. Baixe, imprima e monte!</div>
-        <button class="btn-download" onclick="baixarPDF()">⬇️ BAIXAR MEU PDF</button>
+        <button class="btn-download" id="btnDownload" onclick="baixarPDF()">⬇️ BAIXAR MEU PDF</button>
         <button class="btn-ghost" onclick="reiniciar()">Quero mais craques</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DADOS ──
-const JOGADORES = [
-  { id:1,  nome:'Vini Jr',     emoji:'🟡', num:7,  pos:'Atacante', grad:'#FFFDE7,#FFF9C4' },
-  { id:2,  nome:'Rodrygo',    emoji:'🟢', num:11, pos:'Atacante', grad:'#E8F5E9,#C8E6C9' },
-  { id:3,  nome:'Neymar',     emoji:'⭐', num:10, pos:'Atacante', grad:'#F3E5F5,#E1BEE7' },
-  { id:4,  nome:'Raphinha',   emoji:'🔴', num:22, pos:'Atacante', grad:'#FCE4EC,#F8BBD0' },
-  { id:5,  nome:'Endrick',    emoji:'🔵', num:9,  pos:'Atacante', grad:'#E3F2FD,#BBDEFB' },
-  { id:6,  nome:'Paquetá',    emoji:'🟣', num:8,  pos:'Meia',     grad:'#EDE7F6,#D1C4E9' },
-  { id:7,  nome:'Casemiro',   emoji:'🟤', num:5,  pos:'Volante',  grad:'#EFEBE9,#D7CCC8' },
-  { id:8,  nome:'Bruno G.',   emoji:'🟠', num:17, pos:'Meia',     grad:'#FFF3E0,#FFE0B2' },
-  { id:9,  nome:'Marquinhos', emoji:'🔷', num:4,  pos:'Zagueiro', grad:'#E1F5FE,#B3E5FC' },
-  { id:10, nome:'Militão',    emoji:'🔶', num:3,  pos:'Zagueiro', grad:'#FBE9E7,#FFCCBC' },
-  { id:11, nome:'Danilo',     emoji:'🟦', num:2,  pos:'Lateral',  grad:'#E8EAF6,#C5CAE9' },
-  { id:12, nome:'Alisson',    emoji:'🧤', num:1,  pos:'Goleiro',  grad:'#F1F8E9,#DCEDC8' },
-];
+// ── CONFIGURAÇÃO ──
 const P_UNIT  = 3.00;
 const P_COMBO = 14.99;
 const PIX_KEY = 'pagamentos@copaCraft.com.br';
+const LS_KEY  = 'cc_jogadores_loja'; // mesma chave que o admin grava
 
-let sel     = new Set();
-let isCombo = false;
-let nome_u  = '';
-let email_u = '';
-let tel_u   = '';
-let pedidoId = '';
+const JOGADORES_DEFAULT = [
+  {id:1,nome:'Vini Jr',emoji:'🟡',num:7,pos:'Atacante',preco:3,img:null,grad:'#FFFDE7,#FFF9C4'},
+  {id:2,nome:'Rodrygo',emoji:'🟢',num:11,pos:'Atacante',preco:3,img:null,grad:'#E8F5E9,#C8E6C9'},
+  {id:3,nome:'Neymar',emoji:'⭐',num:10,pos:'Atacante',preco:3,img:null,grad:'#F3E5F5,#E1BEE7'},
+  {id:4,nome:'Raphinha',emoji:'🔴',num:22,pos:'Atacante',preco:3,img:null,grad:'#FCE4EC,#F8BBD0'},
+  {id:5,nome:'Endrick',emoji:'🔵',num:9,pos:'Atacante',preco:3,img:null,grad:'#E3F2FD,#BBDEFB'},
+  {id:6,nome:'Paquetá',emoji:'🟣',num:8,pos:'Meia',preco:3,img:null,grad:'#EDE7F6,#D1C4E9'},
+  {id:7,nome:'Casemiro',emoji:'🟤',num:5,pos:'Volante',preco:3,img:null,grad:'#EFEBE9,#D7CCC8'},
+  {id:8,nome:'Bruno G.',emoji:'🟠',num:17,pos:'Meia',preco:3,img:null,grad:'#FFF3E0,#FFE0B2'},
+  {id:9,nome:'Marquinhos',emoji:'🔷',num:4,pos:'Zagueiro',preco:3,img:null,grad:'#E1F5FE,#B3E5FC'},
+  {id:10,nome:'Militão',emoji:'🔶',num:3,pos:'Zagueiro',preco:3,img:null,grad:'#FBE9E7,#FFCCBC'},
+  {id:11,nome:'Danilo',emoji:'🟦',num:2,pos:'Lateral',preco:3,img:null,grad:'#E8EAF6,#C5CAE9'},
+  {id:12,nome:'Alisson',emoji:'🧤',num:1,pos:'Goleiro',preco:3,img:null,grad:'#F1F8E9,#DCEDC8'},
+];
 
-// Carrega jogadores do admin (se existirem) ou usa default
-function carregarJogadores() {
+let JOGADORES = [];
+let sel       = new Set();
+let isCombo   = false;
+let nome_u='', email_u='', tel_u='', pedidoId='';
+let pedidosComPDF = []; // guarda {pedidoId, jogadorIds} para download
+
+// ── CARREGAR JOGADORES (lê do LS, usa default se vazio) ──
+function lerJogadores() {
   try {
-    const j = localStorage.getItem('cc_jogadores_loja');
-    if (j) return JSON.parse(j);
-  } catch(e) {}
-  return JOGADORES;
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch(e){}
+  return JSON.parse(JSON.stringify(JOGADORES_DEFAULT));
 }
 
-const JOGADORES_ATIVOS = carregarJogadores();
+// ── RENDER GRID (chamado sempre que dados mudam) ──
+function renderGrid() {
+  JOGADORES = lerJogadores();
+  const grid = document.getElementById('grid');
 
-// ── RENDER GRID ──
-const grid = document.getElementById('grid');
-JOGADORES_ATIVOS.forEach(j => {
-  const d = document.createElement('div');
-  d.className = 'card';
-  d.id = 'card-' + j.id;
-  d.innerHTML = `
-    <div class="check-icon">✓</div>
-    <div class="card-img" style="background:linear-gradient(160deg,${j.grad})">
-      ${j.emoji}
-      <div class="card-num">${j.num}</div>
-      <div class="card-bandeira">🇧🇷</div>
-      <div class="card-pos">${j.pos}</div>
-    </div>
-    <div class="card-info">
-      <div class="card-nome">${j.nome}</div>
-      <div class="card-preco">R$3,00</div>
-    </div>`;
-  d.onclick = () => toggleCard(j.id);
-  grid.appendChild(d);
+  // Limpa sem perder seleção
+  const selAntes = new Set(sel);
+  grid.innerHTML = '';
+  sel.clear();
+
+  JOGADORES.forEach(j => {
+    const d = document.createElement('div');
+    d.className = 'card' + (selAntes.has(j.id) ? ' selected' : '');
+    d.id = 'card-' + j.id;
+    if (selAntes.has(j.id)) sel.add(j.id);
+
+    const imgContent = j.img
+      ? `<img src="${j.img}" alt="${j.nome}" loading="lazy">`
+      : `<span style="font-size:54px;z-index:1">${j.emoji || '⚽'}</span>`;
+
+    d.innerHTML = `
+      <div class="check-icon">✓</div>
+      <div class="card-img" style="background:linear-gradient(160deg,${j.grad || '#e8f5e9,#c8e6c9'})">
+        ${imgContent}
+        <div class="card-num">${j.num}</div>
+        <div class="card-bandeira">🇧🇷</div>
+        <div class="card-pos">${j.pos}</div>
+      </div>
+      <div class="card-info">
+        <div class="card-nome">${j.nome}</div>
+        <div class="card-preco">R$${(j.preco||3).toFixed(2).replace('.',',')}</div>
+      </div>`;
+    d.onclick = () => toggleCard(j.id);
+    grid.appendChild(d);
+  });
+
+  atualizarUI();
+}
+
+// ── SINCRONIZAÇÃO EM TEMPO REAL ──
+// Quando o admin (em outra aba) salva, o index detecta e atualiza automaticamente
+window.addEventListener('storage', function(e) {
+  if (e.key === LS_KEY) {
+    renderGrid();
+    mostrarToast('🔄 Catálogo atualizado!');
+  }
 });
 
 // ── TOGGLE ──
@@ -684,33 +321,37 @@ function selecionarCombo() {
   isCombo = !isCombo;
   const badge = document.getElementById('badgeCombo');
   if (isCombo) {
-    sel = new Set(JOGADORES_ATIVOS.map(j => j.id));
-    JOGADORES_ATIVOS.forEach(j => document.getElementById('card-' + j.id).classList.add('selected'));
+    sel = new Set(JOGADORES.map(j => j.id));
+    JOGADORES.forEach(j => document.getElementById('card-'+j.id)?.classList.add('selected'));
     badge.classList.add('combo-selected');
     badge.textContent = '✅ TIME COMPLETO — R$14,99';
-    mostrarToast('🏆 Time completo selecionado!');
+    mostrarToast('🏆 Time completo!');
   } else {
     sel.clear();
-    JOGADORES_ATIVOS.forEach(j => document.getElementById('card-' + j.id).classList.remove('selected'));
+    JOGADORES.forEach(j => document.getElementById('card-'+j.id)?.classList.remove('selected'));
     badge.classList.remove('combo-selected');
     badge.textContent = '🏆 LEVE O TIME TODO — R$14,99';
   }
   atualizarUI();
 }
 
-function calcTotal() { return isCombo ? P_COMBO : sel.size * P_UNIT; }
-function fmt(v)      { return 'R$' + v.toFixed(2).replace('.', ','); }
+function calcTotal() {
+  if (isCombo) return P_COMBO;
+  // Soma preço real de cada jogador selecionado
+  return JOGADORES.filter(j => sel.has(j.id)).reduce((s,j) => s+(j.preco||P_UNIT), 0);
+}
+function fmt(v) { return 'R$'+v.toFixed(2).replace('.',','); }
 
 function atualizarUI() {
   const n = sel.size;
-  const txt = isCombo ? 'Time completo (12 craques)' : n === 0 ? '' : n + (n===1?' craque':' craques');
+  const txt = isCombo ? 'Time completo' : n===0?'':n+(n===1?' craque':' craques');
   document.getElementById('resumoTxt').textContent = txt;
-  document.getElementById('totalTxt').textContent  = (n > 0 || isCombo) ? fmt(calcTotal()) : '';
+  document.getElementById('totalTxt').textContent  = (n>0||isCombo) ? fmt(calcTotal()) : '';
   const bar = document.getElementById('bottomBar');
-  (n > 0 || isCombo) ? bar.classList.add('show') : bar.classList.remove('show');
+  (n>0||isCombo) ? bar.classList.add('show') : bar.classList.remove('show');
   const cc = document.getElementById('cartCount');
   cc.textContent = isCombo ? '★' : n;
-  (n > 0 || isCombo) ? cc.classList.add('show') : cc.classList.remove('show');
+  (n>0||isCombo) ? cc.classList.add('show') : cc.classList.remove('show');
 }
 
 // ── CARRINHO ──
@@ -721,16 +362,19 @@ function abrirCarrinho() {
     html = `<div class="item-cart">
       <div class="item-cart-emoji">🏆</div>
       <div class="item-cart-info">
-        <div class="item-cart-nome">Combo Completo — 12 Craques</div>
+        <div class="item-cart-nome">Combo Completo — ${JOGADORES.length} Craques</div>
         <div class="item-cart-preco">${fmt(P_COMBO)}</div>
       </div></div>`;
   } else {
-    JOGADORES_ATIVOS.filter(j => sel.has(j.id)).forEach(j => {
+    JOGADORES.filter(j => sel.has(j.id)).forEach(j => {
+      const media = j.img
+        ? `<img class="item-cart-img" src="${j.img}" alt="${j.nome}">`
+        : `<div class="item-cart-emoji">${j.emoji||'⚽'}</div>`;
       html += `<div class="item-cart">
-        <div class="item-cart-emoji">${j.emoji}</div>
+        ${media}
         <div class="item-cart-info">
           <div class="item-cart-nome">${j.nome} • #${j.num}</div>
-          <div class="item-cart-preco">${fmt(P_UNIT)}</div>
+          <div class="item-cart-preco">${fmt(j.preco||P_UNIT)}</div>
         </div>
         <button class="item-cart-rm" onclick="removerItem(${j.id})">✕</button>
       </div>`;
@@ -743,7 +387,7 @@ function abrirCarrinho() {
 
 function removerItem(id) {
   sel.delete(id);
-  document.getElementById('card-'+id).classList.remove('selected');
+  document.getElementById('card-'+id)?.classList.remove('selected');
   atualizarUI();
   if (!sel.size) fecharOverlay('overlayCarrinho');
   else abrirCarrinho();
@@ -756,8 +400,8 @@ function irParaCheckout() {
   if (isCombo) {
     linhas = `<div class="resumo-linha"><span>🏆 Combo Completo</span><span>${fmt(P_COMBO)}</span></div>`;
   } else {
-    JOGADORES_ATIVOS.filter(j => sel.has(j.id)).forEach(j => {
-      linhas += `<div class="resumo-linha"><span>${j.emoji} ${j.nome}</span><span>${fmt(P_UNIT)}</span></div>`;
+    JOGADORES.filter(j => sel.has(j.id)).forEach(j => {
+      linhas += `<div class="resumo-linha"><span>${j.emoji||'⚽'} ${j.nome}</span><span>${fmt(j.preco||P_UNIT)}</span></div>`;
     });
   }
   document.getElementById('resumoCheckout').innerHTML =
@@ -770,78 +414,84 @@ function irParaPix() {
   nome_u  = document.getElementById('nomeInput').value.trim();
   email_u = document.getElementById('emailInput').value.trim();
   tel_u   = document.getElementById('telInput').value.trim();
-  if (!nome_u)              { mostrarToast('Informe seu nome'); return; }
-  if (!/\S+@\S+\.\S+/.test(email_u)) { mostrarToast('E-mail inválido'); return; }
+  if (!nome_u)                          { mostrarToast('Informe seu nome'); return; }
+  if (!/\S+@\S+\.\S+/.test(email_u))   { mostrarToast('E-mail inválido'); return; }
   document.getElementById('pixValor').textContent = fmt(calcTotal());
   mostrarEtapa('etapaPix');
 }
 
-function voltarDados() { mostrarEtapa('etapaDados'); }
-
 function confirmarPix() {
   pedidoId = gerarId();
-  salvarPedido({ id:pedidoId, nome:nome_u, email:email_u, telefone:tel_u,
-    itens: isCombo ? ['COMBO'] : JOGADORES_ATIVOS.filter(j=>sel.has(j.id)).map(j=>j.nome),
-    total: calcTotal(), ts: Date.now(), status:'pago' });
-  document.getElementById('sucessoSub').textContent =
-    `PDF enviado para ${email_u}. Baixe, imprima e monte!`;
+  const jogsSel = isCombo ? JOGADORES : JOGADORES.filter(j => sel.has(j.id));
+  salvarPedido({
+    id: pedidoId, nome: nome_u, email: email_u, telefone: tel_u,
+    itens: isCombo ? ['COMBO'] : jogsSel.map(j => j.nome),
+    jogadorIds: jogsSel.map(j => j.id),
+    total: calcTotal(), ts: Date.now(), status: 'pago'
+  });
+  pedidosComPDF = jogsSel.filter(j => j.pdf);
+  document.getElementById('sucessoSub').textContent = `PDF pronto para ${email_u}. Baixe, imprima e monte!`;
+  // Mostra botão download por jogador ou único
+  const btn = document.getElementById('btnDownload');
+  btn.style.display = pedidosComPDF.length > 0 ? 'block' : 'none';
   mostrarEtapa('etapaSucesso');
 }
 
 function baixarPDF() {
-  mostrarToast('📄 Gerando seu PDF...');
-  // Aqui você conecta ao backend real para gerar/entregar o PDF
+  // Baixa PDFs disponíveis dos jogadores comprados
+  pedidosComPDF.forEach((j, i) => {
+    if (!j.pdf) return;
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = j.pdf;
+      a.download = `Copa-Craft-${j.nome.replace(/\s/g,'-')}.pdf`;
+      a.click();
+    }, i * 500);
+  });
+  mostrarToast('📄 Baixando seu(s) PDF(s)!');
 }
 
 function reiniciar() {
-  sel.clear(); isCombo = false;
-  JOGADORES_ATIVOS.forEach(j => document.getElementById('card-'+j.id).classList.remove('selected'));
+  sel.clear(); isCombo = false; pedidosComPDF = [];
+  JOGADORES.forEach(j => document.getElementById('card-'+j.id)?.classList.remove('selected'));
   document.getElementById('badgeCombo').classList.remove('combo-selected');
   document.getElementById('badgeCombo').textContent = '🏆 LEVE O TIME TODO — R$14,99';
-  document.getElementById('nomeInput').value = '';
-  document.getElementById('emailInput').value = '';
+  document.getElementById('nomeInput').value='';
+  document.getElementById('emailInput').value='';
+  document.getElementById('telInput').value='';
   fecharOverlay('overlayCheckout');
   atualizarUI();
 }
 
 function mostrarEtapa(id) {
   ['etapaDados','etapaPix','etapaSucesso'].forEach(e =>
-    document.getElementById(e).style.display = e===id ? 'block' : 'none');
+    document.getElementById(e).style.display = e===id?'block':'none');
 }
-
-// ── PIX ──
 function copiarPix() {
   navigator.clipboard?.writeText(PIX_KEY).catch(()=>{});
   mostrarToast('✅ Chave copiada!');
 }
-
-// ── HELPERS ──
-function fecharOverlay(id, e) {
-  if (!e || e.target.id === id)
-    document.getElementById(id).classList.remove('show');
+function fecharOverlay(id,e) {
+  if(!e||e.target.id===id) document.getElementById(id).classList.remove('show');
 }
-
 function mostrarToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);
 }
-
 function gerarId() {
-  return 'CC' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,5).toUpperCase();
+  return 'CC'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase();
+}
+function salvarPedido(p) {
+  try{
+    const lista=JSON.parse(localStorage.getItem('cc_pedidos')||'[]');
+    lista.unshift(p);
+    localStorage.setItem('cc_pedidos',JSON.stringify(lista.slice(0,500)));
+  }catch(e){}
 }
 
-// ── PERSISTÊNCIA (localStorage para o admin) ──
-function salvarPedido(p) {
-  try {
-    const k = 'cc_pedidos';
-    const lista = JSON.parse(localStorage.getItem(k) || '[]');
-    lista.unshift(p);
-    localStorage.setItem(k, JSON.stringify(lista.slice(0,500))); // max 500
-  } catch(e) {}
-}
+// ── INIT ──
+renderGrid();
 </script>
 </body>
 </html>
