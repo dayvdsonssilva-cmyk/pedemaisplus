@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>Painel · Copa Craft</title>
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="no-referrer">
@@ -156,6 +156,13 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
 /* CONFIRM INLINE */
 .confirm-box{background:#FFF3E0;border:2px solid var(--laranja);border-radius:12px;padding:14px;margin-top:12px;font-size:13px;font-weight:700;color:var(--laranja)}
 .confirm-box-acoes{display:flex;gap:8px;margin-top:10px}
+/* UPLOAD IMAGEM MOBILE-FRIENDLY */
+.img-placeholder-box{border:2px dashed var(--cinza2);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:.2s;background:#fafafa;-webkit-tap-highlight-color:transparent}
+.img-placeholder-box:hover,.img-placeholder-box:active{border-color:var(--verde);background:#F9FFF9}
+.img-preview-box{border-radius:12px;overflow:hidden;border:2px solid var(--cinza2)}
+.btn-trocar-img{width:100%;padding:10px;background:#f5f5f5;border:none;font-size:13px;font-weight:700;color:#666;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn-trocar-img:active{background:#eee}
+
 /* CROP MODAL */
 .crop-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:14px}
 .crop-overlay.show{display:flex}
@@ -274,14 +281,21 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
     <!-- Foto com Crop -->
     <div class="form-group">
       <label class="form-lbl">Foto do Craque</label>
-      <div class="img-upload-area" id="imgUploadArea">
-        <img id="imgPreview" style="display:none;width:100%;max-height:140px;object-fit:contain;border-radius:8px;margin-bottom:8px">
-        <div id="imgPlaceholder">
-          <div style="font-size:32px;margin-bottom:6px">🖼️</div>
-          <div class="img-preview-txt">Clique para enviar foto<br><small>PNG, JPG · será cortada em quadrado</small></div>
-        </div>
-        <input type="file" id="imgFileInput" accept="image/*" onchange="abrirCrop(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
+      <!-- Preview da imagem -->
+      <div class="img-preview-box" id="imgPreviewBox" style="display:none">
+        <img id="imgPreview" style="width:100%;height:120px;object-fit:cover;border-radius:10px;display:block">
+        <button type="button" class="btn-trocar-img" onclick="document.getElementById('imgFileInput').click()">🔄 Trocar foto</button>
       </div>
+      <!-- Placeholder quando não tem imagem -->
+      <div class="img-placeholder-box" id="imgPlaceholderBox" onclick="document.getElementById('imgFileInput').click()">
+        <div style="font-size:36px;margin-bottom:8px">🖼️</div>
+        <div style="font-size:13px;font-weight:700;color:#aaa">Toque para escolher foto</div>
+        <div style="font-size:11px;color:#ccc;margin-top:4px">PNG ou JPG · será recortada em quadrado</div>
+      </div>
+      <!-- Input oculto - chamado pelos botões acima -->
+      <input type="file" id="imgFileInput" accept="image/*" capture="environment"
+        onchange="abrirCrop(event)"
+        style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
     </div>
 
     <div class="form-row">
@@ -612,10 +626,12 @@ function abrirModalJogador(){
   document.getElementById('jPos').value='Atacante';
   document.getElementById('jPreco').value='3.00';
   document.getElementById('jEmoji').value='';
-  document.getElementById('imgPreview').style.display='none';
+  // Reset imagem
   document.getElementById('imgPreview').src='';
-  document.getElementById('imgPlaceholder').style.display='block';
+  document.getElementById('imgPreviewBox').style.display='none';
+  document.getElementById('imgPlaceholderBox').style.display='block';
   document.getElementById('imgFileInput').value='';
+  // Reset PDF
   document.getElementById('pdfFileInput').value='';
   document.getElementById('pdfStatus').textContent='Nenhum PDF enviado';
   document.getElementById('pdfStatus').className='pdf-status';
@@ -636,9 +652,15 @@ function editarJogador(id){
   document.getElementById('jPreco').value=(j.preco||3).toFixed(2);
   document.getElementById('jEmoji').value=j.emoji||'';
   const prev=document.getElementById('imgPreview');
-  const plh=document.getElementById('imgPlaceholder');
-  if(j.img){prev.src=j.img;prev.style.display='block';plh.style.display='none';}
-  else{prev.style.display='none';prev.src='';plh.style.display='block';}
+  if(j.img){
+    prev.src=j.img;
+    document.getElementById('imgPreviewBox').style.display='block';
+    document.getElementById('imgPlaceholderBox').style.display='none';
+  } else {
+    prev.src='';
+    document.getElementById('imgPreviewBox').style.display='none';
+    document.getElementById('imgPlaceholderBox').style.display='block';
+  }
   document.getElementById('pdfFileInput').value='';
   const ps=document.getElementById('pdfStatus');
   if(j.pdf){ps.textContent='✓ '+( j.pdfNome||'PDF salvo');ps.className='pdf-status ok';}
@@ -761,8 +783,8 @@ function confirmarCrop() {
   // Atualiza preview no modal do jogador
   const prev = document.getElementById('imgPreview');
   prev.src = imgBase64;
-  prev.style.display = 'block';
-  document.getElementById('imgPlaceholder').style.display = 'none';
+  document.getElementById('imgPreviewBox').style.display = 'block';
+  document.getElementById('imgPlaceholderBox').style.display = 'none';
 
   document.getElementById('cropOverlay').classList.remove('show');
   URL.revokeObjectURL(img.src);
@@ -861,6 +883,11 @@ function toast(msg){
   const tok=sessionStorage.getItem('_ccs');
   if(tok){_tok=tok;abrirPainel();}
   document.addEventListener('contextmenu',e=>e.preventDefault());
+  // Bloqueia zoom por gesto
+  document.addEventListener('touchstart',function(e){if(e.touches.length>1)e.preventDefault();},{passive:false});
+  document.addEventListener('touchmove',function(e){if(e.touches.length>1)e.preventDefault();},{passive:false});
+  let lt=0;
+  document.addEventListener('touchend',function(e){const n=Date.now();if(n-lt<300)e.preventDefault();lt=n;},{passive:false});
 })();
 </script>
 </body>
