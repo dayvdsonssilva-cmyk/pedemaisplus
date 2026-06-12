@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <title>Copa Craft 🇧🇷</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
@@ -670,7 +671,7 @@ function renderCompras() {
 
     const jogsSel = c.jogadorIds
       ? JOGADORES.filter(j => c.jogadorIds.includes(j.id))
-      : [];
+      : JOGADORES; // combo
 
     const itensHtml = jogsSel.length
       ? jogsSel.map(j => {
@@ -679,8 +680,8 @@ function renderCompras() {
         }).join('')
       : c.itens.map(i => `<div class="compra-item">⚽ ${i}</div>`).join('');
 
-    const temPdf = jogsSel.some(j => j.pdf) ||
-      (c.itens[0] === 'COMBO' && JOGADORES.some(j => j.pdf));
+    // Verifica se algum jogador da compra tem PDF disponível na loja
+    const temPdf = jogsSel.some(j => j.pdf && j.pdf.length > 10);
 
     return `<div class="compra-card">
       <div class="compra-header">
