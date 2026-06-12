@@ -2,12 +2,15 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>Copa Craft 🇧🇷</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Bloqueia zoom por gesto em iOS/Android */
+html{touch-action:pan-x pan-y;-ms-touch-action:pan-x pan-y}
+body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);min-height:100vh;overflow-x:hidden;touch-action:pan-x pan-y}
 :root{
   --verde:#009C3B;--verde-esc:#007a2e;--amarelo:#FFDF00;
   --azul:#002776;--branco:#fff;--cinza:#F0F0F0;--cinza2:#E4E4E4;
@@ -23,8 +26,7 @@ header{background:var(--verde);padding:12px 16px 10px;position:sticky;top:0;z-in
 .header-btns{display:flex;align-items:center;gap:8px}
 
 /* MINHAS COMPRAS BTN */
-.btn-minhas{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;padding:7px 12px;border-radius:10px;cursor:pointer;display:none;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;transition:.2s;white-space:nowrap}
-.btn-minhas.show{display:flex}
+.btn-minhas{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;padding:7px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;transition:.2s;white-space:nowrap}
 .btn-minhas:active{background:rgba(255,255,255,.25)}
 .btn-minhas .dot{width:7px;height:7px;background:var(--amarelo);border-radius:50%;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -696,6 +698,20 @@ function mostrarToast(msg){
   t.textContent=msg;t.classList.add('show');
   clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);
 }
+
+// ── BLOQUEIA ZOOM POR GESTO (iOS/Android) ──
+document.addEventListener('touchstart', function(e){
+  if(e.touches.length > 1) e.preventDefault();
+}, {passive:false});
+document.addEventListener('touchmove', function(e){
+  if(e.touches.length > 1) e.preventDefault();
+}, {passive:false});
+let lastTouch = 0;
+document.addEventListener('touchend', function(e){
+  const now = Date.now();
+  if(now - lastTouch < 300) e.preventDefault(); // bloqueia double-tap zoom
+  lastTouch = now;
+}, {passive:false});
 
 // ── INIT ──
 iniciarSessao();
