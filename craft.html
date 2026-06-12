@@ -157,6 +157,14 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
 /* CONFIRM INLINE */
 .confirm-box{background:#FFF3E0;border:2px solid var(--laranja);border-radius:12px;padding:14px;margin-top:12px;font-size:13px;font-weight:700;color:var(--laranja)}
 .confirm-box-acoes{display:flex;gap:8px;margin-top:10px}
+/* PDF UPLOAD */
+.pdf-placeholder-box{border:2px dashed #B3E5FC;border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;background:#F8FDFF;transition:.2s;-webkit-tap-highlight-color:transparent}
+.pdf-placeholder-box:hover,.pdf-placeholder-box:active{border-color:#1565C0;background:#EEF6FF}
+.pdf-ok-box{border:2px solid var(--verde);border-radius:12px;padding:12px 14px;background:#F1F8F4;display:flex;align-items:center;gap:12px}
+.btn-pdf-acao{border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn-pdf-trocar{background:#E3F2FD;color:#1565C0}
+.btn-pdf-remover{background:#FFEBEE;color:#C62828}
+
 /* UPLOAD IMAGEM MOBILE-FRIENDLY */
 .img-placeholder-box{border:2px dashed var(--cinza2);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:.2s;background:#fafafa;-webkit-tap-highlight-color:transparent}
 .img-placeholder-box:hover,.img-placeholder-box:active{border-color:var(--verde);background:#F9FFF9}
@@ -282,22 +290,24 @@ body.modal-aberto{overflow:hidden;position:fixed;width:100%}
 
     <!-- Foto com Crop -->
     <div class="form-group">
-      <label class="form-lbl">Foto do Craque</label>
+      <label class="form-lbl">Foto do Craque (1×1)</label>
       <!-- Preview da imagem -->
       <div class="img-preview-box" id="imgPreviewBox" style="display:none">
-        <img id="imgPreview" style="width:100%;height:120px;object-fit:cover;border-radius:10px;display:block">
-        <button type="button" class="btn-trocar-img" onclick="document.getElementById('imgFileInput').click()">🔄 Trocar foto</button>
+        <img id="imgPreview" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block">
+        <div style="display:flex;gap:6px;margin-top:0">
+          <button type="button" class="btn-trocar-img" style="flex:1" onclick="triggerImgInput()">🔄 Trocar foto</button>
+          <button type="button" class="btn-trocar-img" style="background:#FFEBEE;color:#C62828" onclick="removerImagem()">🗑</button>
+        </div>
       </div>
       <!-- Placeholder quando não tem imagem -->
-      <div class="img-placeholder-box" id="imgPlaceholderBox" onclick="document.getElementById('imgFileInput').click()">
+      <div class="img-placeholder-box" id="imgPlaceholderBox" onclick="triggerImgInput()">
         <div style="font-size:36px;margin-bottom:8px">🖼️</div>
         <div style="font-size:13px;font-weight:700;color:#aaa">Toque para escolher foto</div>
-        <div style="font-size:11px;color:#ccc;margin-top:4px">PNG ou JPG · será recortada em quadrado</div>
+        <div style="font-size:11px;color:#ccc;margin-top:4px">PNG ou JPG · recortada em quadrado 1×1</div>
       </div>
-      <!-- Input oculto - chamado pelos botões acima -->
-      <input type="file" id="imgFileInput" accept="image/*" capture="environment"
-        onchange="abrirCrop(event)"
-        style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px">
+      <!-- Input TOTALMENTE fora do fluxo — só chamado via JS -->
+      <input type="file" id="imgFileInput" accept="image/*"
+        style="position:fixed;top:-999px;left:-999px;width:1px;height:1px;opacity:0;pointer-events:none">
     </div>
 
     <div class="form-row">
@@ -337,12 +347,27 @@ body.modal-aberto{overflow:hidden;position:fixed;width:100%}
     <!-- PDF -->
     <div class="form-group">
       <label class="form-lbl">PDF para Download</label>
-      <div class="pdf-upload-area" onclick="document.getElementById('pdfFileInput').click()">
+      <!-- Sem PDF -->
+      <div class="pdf-placeholder-box" id="pdfPlaceholderBox" onclick="triggerPdfInput()">
         <div style="font-size:28px;margin-bottom:6px">📄</div>
-        <div style="font-size:12px;font-weight:700;color:#666">Clique para enviar o PDF deste craque</div>
-        <div class="pdf-status" id="pdfStatus">Nenhum PDF enviado</div>
-        <input type="file" id="pdfFileInput" accept=".pdf" onchange="handlePdfUpload(event)">
+        <div style="font-size:13px;font-weight:700;color:#aaa">Toque para enviar o PDF</div>
+        <div style="font-size:11px;color:#ccc;margin-top:4px">Arquivo .PDF</div>
       </div>
+      <!-- Com PDF -->
+      <div class="pdf-ok-box" id="pdfOkBox" style="display:none">
+        <div style="font-size:28px">📄</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:900;color:var(--verde)" id="pdfNomeLabel">arquivo.pdf</div>
+          <div style="font-size:11px;color:#aaa" id="pdfTamanhoLabel"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <button type="button" class="btn-pdf-acao btn-pdf-trocar" onclick="triggerPdfInput()">🔄 Trocar</button>
+          <button type="button" class="btn-pdf-acao btn-pdf-remover" onclick="removerPdf()">🗑 Remover</button>
+        </div>
+      </div>
+      <!-- Input PDF fora do fluxo -->
+      <input type="file" id="pdfFileInput" accept=".pdf"
+        style="position:fixed;top:-999px;left:-999px;width:1px;height:1px;opacity:0;pointer-events:none">
     </div>
 
     <div class="modal-acoes">
@@ -632,11 +657,9 @@ function abrirModalJogador(){
   document.getElementById('imgPreview').src='';
   document.getElementById('imgPreviewBox').style.display='none';
   document.getElementById('imgPlaceholderBox').style.display='block';
-  document.getElementById('imgFileInput').value='';
   // Reset PDF
-  document.getElementById('pdfFileInput').value='';
-  document.getElementById('pdfStatus').textContent='Nenhum PDF enviado';
-  document.getElementById('pdfStatus').className='pdf-status';
+  document.getElementById('pdfOkBox').style.display='none';
+  document.getElementById('pdfPlaceholderBox').style.display='block';
   abrirOverlay('ovJogador');
 }
 
@@ -664,55 +687,113 @@ function editarJogador(id){
     document.getElementById('imgPlaceholderBox').style.display='block';
   }
   document.getElementById('pdfFileInput').value='';
-  const ps=document.getElementById('pdfStatus');
-  if(j.pdf){ps.textContent='✓ '+(j.pdfNome||'PDF salvo');ps.className='pdf-status ok';}
-  else{ps.textContent='Nenhum PDF enviado';ps.className='pdf-status';}
+  if(j.pdf){
+    mostrarPdfOk(j.pdfNome||'PDF salvo', '');
+  } else {
+    document.getElementById('pdfOkBox').style.display='none';
+    document.getElementById('pdfPlaceholderBox').style.display='block';
+  }
   abrirOverlay('ovJogador');
 }
 
+// ════ TRIGGERS DE INPUT (evita reabrir modal) ════
+function triggerImgInput() {
+  const inp = document.getElementById('imgFileInput');
+  inp.value = ''; // reseta para detectar mesmo arquivo
+  inp.onchange = abrirCrop;
+  inp.click();
+}
+function triggerPdfInput() {
+  const inp = document.getElementById('pdfFileInput');
+  inp.value = '';
+  inp.onchange = handlePdfUpload;
+  inp.click();
+}
+
+function removerImagem() {
+  imgBase64 = null;
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('imgPreviewBox').style.display = 'none';
+  document.getElementById('imgPlaceholderBox').style.display = 'block';
+}
+
+function removerPdf() {
+  pdfBase64 = null;
+  pdfNome   = null;
+  document.getElementById('pdfOkBox').style.display = 'none';
+  document.getElementById('pdfPlaceholderBox').style.display = 'block';
+}
+
+function mostrarPdfOk(nome, tamanhoKB) {
+  document.getElementById('pdfNomeLabel').textContent    = nome;
+  document.getElementById('pdfTamanhoLabel').textContent = tamanhoKB ? `${tamanhoKB}KB` : '';
+  document.getElementById('pdfOkBox').style.display      = 'flex';
+  document.getElementById('pdfPlaceholderBox').style.display = 'none';
+}
+
 // ════ CROP DE IMAGEM ════
-let cropState = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0, lastX:0, lastY:0, imgW:0, imgH:0 };
+let cropState = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0 };
 
 function abrirCrop(e) {
-  const f = e.target.files[0];
+  const f = (e.target || e).files?.[0];
   if (!f) return;
-  if (f.size > 5*1024*1024) { toast('⚠️ Imagem muito grande (max 5MB)'); return; }
+  if (f.size > 8*1024*1024) { toast('⚠️ Imagem muito grande (max 8MB)'); return; }
+
   const url = URL.createObjectURL(f);
   const img  = document.getElementById('cropImg');
+
   img.onload = () => {
-    cropState = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0, lastX:0, lastY:0, imgW:img.naturalWidth, imgH:img.naturalHeight };
-    document.getElementById('cropZoom').value = 1;
-    // Auto-fit: escala para preencher o stage
-    const stage = document.getElementById('cropStage');
-    const stageSize = stage.offsetWidth || 340;
-    const fitScale = Math.max(stageSize/img.naturalWidth, stageSize/img.naturalHeight);
-    cropState.scale = fitScale;
-    document.getElementById('cropZoom').min = fitScale * 0.5;
-    document.getElementById('cropZoom').max = fitScale * 4;
-    document.getElementById('cropZoom').value = fitScale;
+    const stage    = document.getElementById('cropStage');
+    const stageSize = stage.getBoundingClientRect().width || stage.offsetWidth || 300;
+
+    // fit-cover: preenche o quadrado sem distorcer
+    const fitScale = Math.max(stageSize / img.naturalWidth, stageSize / img.naturalHeight);
+
+    cropState = { scale: fitScale, x: 0, y: 0, dragging: false, startX: 0, startY: 0 };
+
+    const zInput = document.getElementById('cropZoom');
+    zInput.min   = (fitScale * 0.9).toFixed(3);   // mínimo = fit (não deixa bordas)
+    zInput.max   = (fitScale * 4).toFixed(3);
+    zInput.value = fitScale.toFixed(3);
+    zInput.step  = (fitScale * 0.01).toFixed(4);
+
     aplicarTransform();
     abrirOverlay('cropOverlay');
   };
   img.src = url;
-  document.getElementById('imgFileInput').value = '';
 }
 
 function aplicarTransform() {
-  const img   = document.getElementById('cropImg');
-  const scale = parseFloat(document.getElementById('cropZoom').value);
+  const img    = document.getElementById('cropImg');
+  const scale  = parseFloat(document.getElementById('cropZoom').value);
   cropState.scale = scale;
+
+  // Limita o arraste para não mostrar borda branca
+  const stage     = document.getElementById('cropStage');
+  const stageSize = stage.getBoundingClientRect().width || stage.offsetWidth || 300;
+  const imgW = img.naturalWidth  * scale;
+  const imgH = img.naturalHeight * scale;
+  const maxX = Math.max(0, (imgW - stageSize) / 2);
+  const maxY = Math.max(0, (imgH - stageSize) / 2);
+  cropState.x = Math.max(-maxX, Math.min(maxX, cropState.x));
+  cropState.y = Math.max(-maxY, Math.min(maxY, cropState.y));
+
+  img.style.position  = 'absolute';
+  img.style.left      = '50%';
+  img.style.top       = '50%';
   img.style.transform = `translate(calc(-50% + ${cropState.x}px), calc(-50% + ${cropState.y}px)) scale(${scale})`;
-  img.style.left = '50%';
-  img.style.top  = '50%';
+  img.style.transformOrigin = 'center center';
+  img.style.maxWidth  = 'none';
+  img.style.maxHeight = 'none';
 }
 
-// Touch & Mouse drag
+// ── DRAG ──
 const stage = document.getElementById('cropStage');
 
 function onDragStart(ex, ey) {
   cropState.dragging = true;
-  cropState.startX = ex - cropState.x;
-  cropState.startY = ey - cropState.y;
+  cropState.startX   = ex - cropState.x;
+  cropState.startY   = ey - cropState.y;
 }
 function onDragMove(ex, ey) {
   if (!cropState.dragging) return;
@@ -722,7 +803,7 @@ function onDragMove(ex, ey) {
 }
 function onDragEnd() { cropState.dragging = false; }
 
-stage.addEventListener('mousedown',  e => onDragStart(e.clientX, e.clientY));
+stage.addEventListener('mousedown',  e => { e.preventDefault(); onDragStart(e.clientX, e.clientY); });
 stage.addEventListener('mousemove',  e => onDragMove(e.clientX, e.clientY));
 stage.addEventListener('mouseup',    onDragEnd);
 stage.addEventListener('mouseleave', onDragEnd);
@@ -731,22 +812,20 @@ stage.addEventListener('touchstart', e => { e.preventDefault(); onDragStart(e.to
 stage.addEventListener('touchmove',  e => { e.preventDefault(); onDragMove(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
 stage.addEventListener('touchend',   onDragEnd);
 
-// Pinch-to-zoom
+// ── PINCH ZOOM ──
 let lastPinchDist = 0;
 stage.addEventListener('touchstart', e => {
-  if (e.touches.length === 2) {
+  if (e.touches.length === 2)
     lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-  }
 }, {passive:true});
 stage.addEventListener('touchmove', e => {
-  if (e.touches.length === 2) {
-    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-    const delta = dist / lastPinchDist;
-    lastPinchDist = dist;
-    const zInput = document.getElementById('cropZoom');
-    zInput.value = Math.min(Math.max(parseFloat(zInput.value) * delta, parseFloat(zInput.min)), parseFloat(zInput.max));
-    aplicarTransform();
-  }
+  if (e.touches.length !== 2) return;
+  const dist  = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  const delta = dist / lastPinchDist;
+  lastPinchDist = dist;
+  const zi = document.getElementById('cropZoom');
+  zi.value = Math.min(Math.max(parseFloat(zi.value) * delta, parseFloat(zi.min)), parseFloat(zi.max));
+  aplicarTransform();
 }, {passive:true});
 
 function cancelarCrop() {
@@ -755,37 +834,32 @@ function cancelarCrop() {
 }
 
 function confirmarCrop() {
-  const stageEl = document.getElementById('cropStage');
-  const stageSize = stageEl.offsetWidth || 340;
-  const outputSize = 600; // px do canvas final
-  const scale = cropState.scale;
-  const img   = document.getElementById('cropImg');
+  const stageEl   = document.getElementById('cropStage');
+  const stageSize = stageEl.getBoundingClientRect().width || stageEl.offsetWidth || 300;
+  const OUTPUT    = 600; // quadrado final 600×600
+  const img       = document.getElementById('cropImg');
+  const scale     = cropState.scale;
 
   const canvas = document.createElement('canvas');
-  canvas.width  = outputSize;
-  canvas.height = outputSize;
+  canvas.width  = OUTPUT;
+  canvas.height = OUTPUT;
   const ctx = canvas.getContext('2d');
 
-  // Centro do stage em coordenadas da imagem original
   const imgDrawW = img.naturalWidth  * scale;
   const imgDrawH = img.naturalHeight * scale;
-  const imgLeft  = (stageSize/2) + cropState.x - imgDrawW/2;
-  const imgTop   = (stageSize/2) + cropState.y - imgDrawH/2;
+  const imgLeft  = stageSize/2 + cropState.x - imgDrawW/2;
+  const imgTop   = stageSize/2 + cropState.y - imgDrawH/2;
 
-  // Região visível do stage em pixels de imagem original
-  const srcX = (0 - imgLeft) / scale;
-  const srcY = (0 - imgTop)  / scale;
+  const srcX = -imgLeft / scale;
+  const srcY = -imgTop  / scale;
   const srcW = stageSize / scale;
   const srcH = stageSize / scale;
 
-  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, outputSize, outputSize);
-
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUTPUT, OUTPUT);
   imgBase64 = canvas.toDataURL('image/jpeg', 0.88);
 
-  // Atualiza preview no modal do jogador
-  const prev = document.getElementById('imgPreview');
-  prev.src = imgBase64;
-  document.getElementById('imgPreviewBox').style.display = 'block';
+  document.getElementById('imgPreview').src               = imgBase64;
+  document.getElementById('imgPreviewBox').style.display  = 'block';
   document.getElementById('imgPlaceholderBox').style.display = 'none';
 
   fecharOverlay('cropOverlay');
@@ -793,17 +867,16 @@ function confirmarCrop() {
   toast('✅ Imagem ajustada!');
 }
 
-function handlePdfUpload(e){
-  const f=e.target.files[0];
-  if(!f)return;
-  if(f.size>5*1024*1024){toast('⚠️ PDF muito grande (max 5MB)');return;}
-  pdfNome=f.name;
-  const r=new FileReader();
-  r.onload=ev=>{
-    pdfBase64=ev.target.result;
-    const ps=document.getElementById('pdfStatus');
-    ps.textContent='✓ '+f.name+' ('+Math.round(f.size/1024)+'KB)';
-    ps.className='pdf-status ok';
+// ════ PDF ════
+function handlePdfUpload(e) {
+  const f = (e.target || e).files?.[0];
+  if (!f) return;
+  if (f.size > 8*1024*1024) { toast('⚠️ PDF muito grande (max 8MB)'); return; }
+  pdfNome = f.name;
+  const r = new FileReader();
+  r.onload = ev => {
+    pdfBase64 = ev.target.result;
+    mostrarPdfOk(f.name, Math.round(f.size / 1024));
     toast('📄 PDF carregado!');
   };
   r.readAsDataURL(f);
