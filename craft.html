@@ -156,6 +156,27 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
 /* CONFIRM INLINE */
 .confirm-box{background:#FFF3E0;border:2px solid var(--laranja);border-radius:12px;padding:14px;margin-top:12px;font-size:13px;font-weight:700;color:var(--laranja)}
 .confirm-box-acoes{display:flex;gap:8px;margin-top:10px}
+/* CROP MODAL */
+.crop-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:14px}
+.crop-overlay.show{display:flex}
+.crop-titulo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+.crop-instrucao{font-size:12px;color:rgba(255,255,255,.6);font-weight:700;text-align:center}
+.crop-stage{position:relative;width:100%;max-width:340px;aspect-ratio:1;overflow:hidden;border-radius:16px;background:#111;touch-action:none;cursor:grab}
+.crop-stage:active{cursor:grabbing}
+.crop-stage img{position:absolute;transform-origin:center center;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.crop-mask{position:absolute;inset:0;box-shadow:inset 0 0 0 3px var(--amarelo);border-radius:16px;pointer-events:none;z-index:2}
+.crop-grid{position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:
+    linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px);
+  background-size:33.33% 33.33%}
+.crop-acoes{display:flex;gap:10px;width:100%;max-width:340px}
+.crop-btn{flex:1;padding:12px;border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:18px;cursor:pointer}
+.crop-btn-cancel{background:rgba(255,255,255,.15);color:#fff}
+.crop-btn-ok{background:var(--verde);color:var(--amarelo)}
+.crop-zoom{display:flex;align-items:center;gap:10px;width:100%;max-width:340px}
+.crop-zoom-lbl{font-size:12px;color:rgba(255,255,255,.5);font-weight:700;white-space:nowrap}
+.crop-zoom input{flex:1;accent-color:var(--amarelo)}
 </style>
 </head>
 <body>
@@ -250,16 +271,16 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
   <div class="modal">
     <div class="modal-titulo" id="jModalTitulo">➕ Novo Craque</div>
 
-    <!-- Foto -->
+    <!-- Foto com Crop -->
     <div class="form-group">
       <label class="form-lbl">Foto do Craque</label>
-      <div class="img-upload-area" id="imgUploadArea" onclick="document.getElementById('imgFileInput').click()">
-        <img id="imgPreview" style="display:none">
+      <div class="img-upload-area" id="imgUploadArea">
+        <img id="imgPreview" style="display:none;width:100%;max-height:140px;object-fit:contain;border-radius:8px;margin-bottom:8px">
         <div id="imgPlaceholder">
           <div style="font-size:32px;margin-bottom:6px">🖼️</div>
-          <div class="img-preview-txt">Clique para enviar foto<br><small>PNG, JPG · Recomendado 400×400px</small></div>
+          <div class="img-preview-txt">Clique para enviar foto<br><small>PNG, JPG · será cortada em quadrado</small></div>
         </div>
-        <input type="file" id="imgFileInput" accept="image/*" onchange="handleImgUpload(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+        <input type="file" id="imgFileInput" accept="image/*" onchange="abrirCrop(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
       </div>
     </div>
 
@@ -312,6 +333,25 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
       <button class="btn btn-verde" style="flex:1" onclick="salvarJogador()">SALVAR CRAQUE</button>
       <button class="btn btn-cinza" onclick="fecharOverlay('ovJogador')">Cancelar</button>
     </div>
+  </div>
+</div>
+
+<!-- CROP MODAL -->
+<div class="crop-overlay" id="cropOverlay">
+  <div class="crop-titulo">✂️ Ajustar Imagem</div>
+  <div class="crop-instrucao">Arraste para reposicionar · Use o zoom para ajustar</div>
+  <div class="crop-stage" id="cropStage">
+    <img id="cropImg" draggable="false">
+    <div class="crop-mask"></div>
+    <div class="crop-grid"></div>
+  </div>
+  <div class="crop-zoom">
+    <span class="crop-zoom-lbl">🔍 Zoom</span>
+    <input type="range" id="cropZoom" min="0.5" max="3" step="0.01" value="1" oninput="aplicarTransform()">
+  </div>
+  <div class="crop-acoes">
+    <button class="crop-btn crop-btn-cancel" onclick="cancelarCrop()">CANCELAR</button>
+    <button class="crop-btn crop-btn-ok" onclick="confirmarCrop()">✓ USAR ESSA</button>
   </div>
 </div>
 
@@ -606,18 +646,127 @@ function editarJogador(id){
   document.getElementById('ovJogador').classList.add('show');
 }
 
-function handleImgUpload(e){
-  const f=e.target.files[0];
-  if(!f)return;
-  if(f.size>2*1024*1024){toast('⚠️ Imagem muito grande (max 2MB)');return;}
-  const r=new FileReader();
-  r.onload=ev=>{
-    imgBase64=ev.target.result;
-    const prev=document.getElementById('imgPreview');
-    prev.src=imgBase64;prev.style.display='block';
-    document.getElementById('imgPlaceholder').style.display='none';
+// ════ CROP DE IMAGEM ════
+let cropState = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0, lastX:0, lastY:0, imgW:0, imgH:0 };
+
+function abrirCrop(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  if (f.size > 5*1024*1024) { toast('⚠️ Imagem muito grande (max 5MB)'); return; }
+  const url = URL.createObjectURL(f);
+  const img  = document.getElementById('cropImg');
+  img.onload = () => {
+    cropState = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0, lastX:0, lastY:0, imgW:img.naturalWidth, imgH:img.naturalHeight };
+    document.getElementById('cropZoom').value = 1;
+    // Auto-fit: escala para preencher o stage
+    const stage = document.getElementById('cropStage');
+    const stageSize = stage.offsetWidth || 340;
+    const fitScale = Math.max(stageSize/img.naturalWidth, stageSize/img.naturalHeight);
+    cropState.scale = fitScale;
+    document.getElementById('cropZoom').min = fitScale * 0.5;
+    document.getElementById('cropZoom').max = fitScale * 4;
+    document.getElementById('cropZoom').value = fitScale;
+    aplicarTransform();
+    document.getElementById('cropOverlay').classList.add('show');
   };
-  r.readAsDataURL(f);
+  img.src = url;
+  document.getElementById('imgFileInput').value = '';
+}
+
+function aplicarTransform() {
+  const img   = document.getElementById('cropImg');
+  const scale = parseFloat(document.getElementById('cropZoom').value);
+  cropState.scale = scale;
+  img.style.transform = `translate(calc(-50% + ${cropState.x}px), calc(-50% + ${cropState.y}px)) scale(${scale})`;
+  img.style.left = '50%';
+  img.style.top  = '50%';
+}
+
+// Touch & Mouse drag
+const stage = document.getElementById('cropStage');
+
+function onDragStart(ex, ey) {
+  cropState.dragging = true;
+  cropState.startX = ex - cropState.x;
+  cropState.startY = ey - cropState.y;
+}
+function onDragMove(ex, ey) {
+  if (!cropState.dragging) return;
+  cropState.x = ex - cropState.startX;
+  cropState.y = ey - cropState.startY;
+  aplicarTransform();
+}
+function onDragEnd() { cropState.dragging = false; }
+
+stage.addEventListener('mousedown',  e => onDragStart(e.clientX, e.clientY));
+stage.addEventListener('mousemove',  e => onDragMove(e.clientX, e.clientY));
+stage.addEventListener('mouseup',    onDragEnd);
+stage.addEventListener('mouseleave', onDragEnd);
+
+stage.addEventListener('touchstart', e => { e.preventDefault(); onDragStart(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+stage.addEventListener('touchmove',  e => { e.preventDefault(); onDragMove(e.touches[0].clientX, e.touches[0].clientY); }, {passive:false});
+stage.addEventListener('touchend',   onDragEnd);
+
+// Pinch-to-zoom
+let lastPinchDist = 0;
+stage.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+}, {passive:true});
+stage.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    const delta = dist / lastPinchDist;
+    lastPinchDist = dist;
+    const zInput = document.getElementById('cropZoom');
+    zInput.value = Math.min(Math.max(parseFloat(zInput.value) * delta, parseFloat(zInput.min)), parseFloat(zInput.max));
+    aplicarTransform();
+  }
+}, {passive:true});
+
+function cancelarCrop() {
+  document.getElementById('cropOverlay').classList.remove('show');
+  URL.revokeObjectURL(document.getElementById('cropImg').src);
+}
+
+function confirmarCrop() {
+  const stageEl = document.getElementById('cropStage');
+  const stageSize = stageEl.offsetWidth || 340;
+  const outputSize = 600; // px do canvas final
+  const scale = cropState.scale;
+  const img   = document.getElementById('cropImg');
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = outputSize;
+  canvas.height = outputSize;
+  const ctx = canvas.getContext('2d');
+
+  // Centro do stage em coordenadas da imagem original
+  const imgDrawW = img.naturalWidth  * scale;
+  const imgDrawH = img.naturalHeight * scale;
+  const imgLeft  = (stageSize/2) + cropState.x - imgDrawW/2;
+  const imgTop   = (stageSize/2) + cropState.y - imgDrawH/2;
+
+  // Região visível do stage em pixels de imagem original
+  const srcX = (0 - imgLeft) / scale;
+  const srcY = (0 - imgTop)  / scale;
+  const srcW = stageSize / scale;
+  const srcH = stageSize / scale;
+
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, outputSize, outputSize);
+
+  imgBase64 = canvas.toDataURL('image/jpeg', 0.88);
+
+  // Atualiza preview no modal do jogador
+  const prev = document.getElementById('imgPreview');
+  prev.src = imgBase64;
+  prev.style.display = 'block';
+  document.getElementById('imgPlaceholder').style.display = 'none';
+
+  document.getElementById('cropOverlay').classList.remove('show');
+  URL.revokeObjectURL(img.src);
+  toast('✅ Imagem ajustada!');
 }
 
 function handlePdfUpload(e){
