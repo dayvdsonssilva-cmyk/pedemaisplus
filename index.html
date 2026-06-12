@@ -2,1471 +2,828 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#6B0000">
-<title>Falas Matadoras</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Copa Craft 🇧🇷</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://fonts.cdnfonts.com/css/the-seasons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --red:#C1121F;
-  --red2:#E63946;
-  --salmon:#C9A84C;
-  --dark:#3D0000;
-  --darker:#1A0000;
-  --overlay:rgba(100,0,0,.72);
-  --W:#FFFFFF;
-  --WA:rgba(255,255,255,.75);
-  --WB:rgba(255,255,255,.45);
-  --WC:rgba(255,255,255,.12);
-  --WD:rgba(255,255,255,.07);
-  --sh:0 4px 24px rgba(0,0,0,.35);
-}
-html,body{
-  background:var(--darker);color:var(--W);
-  font-family:'Inter',sans-serif;
-  min-height:100vh;overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-.scr{
-  display:flex;flex-direction:column;align-items:center;
-  width:100%;max-width:430px;margin:0 auto;min-height:100svh;
-  position:relative;
-}
-.scr.off{display:none!important}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ══ BG IMAGE ══ */
-.bg-img{
-  position:fixed;top:0;left:0;z-index:0;
-  width:100%;height:100%;
-  object-fit:cover;object-position:center top;
-  display:block;
-}
-.bg-overlay{
-  position:fixed;inset:0;z-index:1;
-  background:linear-gradient(180deg,rgba(60,0,0,.45) 0%,rgba(30,0,0,.60) 50%,rgba(10,0,0,.75) 100%);
-}
-.scr>*{position:relative;z-index:2}
+  :root {
+    --verde: #009C3B;
+    --verde-esc: #007a2e;
+    --amarelo: #FFDF00;
+    --azul: #002776;
+    --branco: #FFFFFF;
+    --cinza: #F0F0F0;
+    --cinza2: #E4E4E4;
+    --sombra: rgba(0,39,118,0.12);
+  }
 
-/* ══ PILL BADGE ══ */
-.pill{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--W);border-radius:99px;
-  padding:6px 16px;
-  font-size:11px;font-weight:700;letter-spacing:.06em;
-  color:#3D0000;text-transform:none;
-  box-shadow:0 2px 12px rgba(0,0,0,.3);
-}
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cinza);
+    color: var(--azul);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* ══ P1 HOME ══ */
-#p1{justify-content:center;min-height:100svh;padding:0 24px 48px;}
-.home-inner{
-  width:100%;display:flex;flex-direction:column;
-  align-items:center;gap:0;
-  padding-top:56px;
-}
-.h1-badge{margin-bottom:32px}
-.h1-headline{
-  font-family:'The Seasons',serif;
-  font-size:13.5vw;font-weight:400;
-  line-height:.94;letter-spacing:.03em;
-  color:var(--W);text-align:center;
-  text-transform:uppercase;
-  margin-bottom:20px;
-  width:100%;
-}
-.h1-sub{
-  font-size:15px;font-weight:400;line-height:1.65;
-  color:var(--WA);text-align:center;
-  max-width:300px;margin:0 auto 32px;
-}
-.h1-sub strong{color:var(--W);font-weight:700}
+  /* ── HEADER ── */
+  header {
+    background: var(--verde);
+    padding: 12px 16px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.22);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--amarelo);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .logo span {
+    color: rgba(255,255,255,0.75);
+    font-size: 11px;
+    display: block;
+    letter-spacing: 2.5px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
 
-/* CTA button */
-.btn-main{
-  width:100%;padding:20px;
-  background:linear-gradient(135deg,#C9A84C,#E8CC7A,#B8922E);
-  color:#3D2800;
-  font-family:'Inter',sans-serif;
-  font-size:16px;font-weight:800;letter-spacing:.04em;
-  border:none;border-radius:99px;cursor:pointer;
-  box-shadow:0 6px 28px rgba(201,168,76,.35);
-  transition:transform .12s,box-shadow .18s;
-  text-transform:uppercase;
-}
-.btn-main:active{transform:scale(.97);box-shadow:0 2px 12px rgba(201,168,76,.2)}
+  /* BOLA CARRINHO */
+  .cart-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ball {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--branco);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+    transition: transform 0.15s;
+  }
+  .cart-btn:active .ball { transform: scale(0.88); }
+  .cart-count {
+    position: absolute;
+    top: -3px; right: -3px;
+    background: var(--amarelo);
+    color: var(--azul);
+    font-size: 11px;
+    font-weight: 900;
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    display: none;
+    align-items: center; justify-content: center;
+    border: 2px solid var(--verde);
+  }
+  .cart-count.show { display: flex; }
 
-/* Online bar */
-.online-bar{
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  font-size:12px;color:var(--WB);font-weight:500;
-  margin-top:14px;
-}
-.online-bar strong{color:var(--W)}
-.online-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:#4ADE80;flex-shrink:0;
-  box-shadow:0 0 0 3px rgba(74,222,128,.2);
-  animation:pulse 1.8s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(150deg, var(--amarelo) 0%, #FFEE55 100%);
+    padding: 20px 16px 16px;
+    text-align: center;
+    border-bottom: 4px solid var(--verde);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '🇧🇷';
+    position: absolute;
+    font-size: 120px;
+    opacity: 0.07;
+    top: -20px; right: -20px;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--verde);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--azul);
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: rgba(0,39,118,0.65);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .badge-combo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--verde);
+    color: var(--amarelo);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px;
+    letter-spacing: 0.8px;
+    border-radius: 100px;
+    padding: 8px 20px;
+    box-shadow: 0 4px 14px rgba(0,150,59,0.45);
+    cursor: pointer;
+    transition: transform 0.15s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .badge-combo:active { transform: scale(0.95); }
+  .badge-combo.combo-selected {
+    background: var(--azul);
+    box-shadow: 0 4px 14px rgba(0,39,118,0.4);
+  }
 
-/* Depoimentos */
-.dep-section{width:100%;margin-top:28px}
-.dep-label{
-  font-size:10px;font-weight:800;letter-spacing:.14em;
-  color:var(--WB);text-transform:uppercase;
-  text-align:center;margin-bottom:14px;
-}
-.deps{display:flex;flex-direction:column;gap:10px}
-.dep{
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:16px;padding:15px;
-}
-.dep-top{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-.dep-avatar{
-  width:36px;height:36px;border-radius:50%;
-  background:var(--red);color:var(--W);
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:800;flex-shrink:0;
-}
-.dep-name{font-size:13px;font-weight:700;color:var(--W);line-height:1.2}
-.dep-stars{font-size:11px;color:#FBBF24;letter-spacing:.05em;margin-top:1px}
-.dep-txt{font-size:13px;color:var(--WA);line-height:1.65;font-style:italic}
+  /* ── SEÇÃO TÍTULO ── */
+  .secao-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--azul);
+    letter-spacing: 1px;
+    padding: 14px 14px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .secao-titulo::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--amarelo);
+    border-radius: 2px;
+  }
 
-/* ══ NAV COMPARTILHADA ══ */
-.pg-nav{
-  width:100%;padding:20px 22px 0;
-  display:flex;align-items:center;gap:12px;flex-shrink:0;
-}
-.back-btn{
-  width:40px;height:40px;border-radius:12px;
-  background:var(--WD);border:1px solid var(--WC);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:18px;color:var(--WA);
-  flex-shrink:0;transition:background .14s;
-}
-.back-btn:active{background:var(--WC)}
-.prog-wrap{flex:1}
-.prog-row{
-  display:flex;justify-content:space-between;
-  font-size:10px;font-weight:700;color:var(--WB);
-  letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px;
-}
-.prog-row em{font-style:normal;color:var(--salmon)}
-.prog-track{height:2px;background:var(--WC);border-radius:99px;overflow:hidden}
-.prog-fill{
-  height:100%;border-radius:99px;
-  background:linear-gradient(90deg,var(--red),var(--salmon));
-  transition:width .5s cubic-bezier(.4,0,.2,1);
-}
+  /* ── GRID CRAQUES ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 4px 12px 110px;
+  }
 
-/* ══ P2 QUIZ ══ */
-.qbody{
-  width:100%;padding:26px 22px 64px;
-  display:flex;flex-direction:column;flex:1;
-}
-.q-chip{
-  display:inline-flex;align-items:center;gap:5px;
-  background:var(--WC);border:1px solid var(--WC);
-  border-radius:99px;padding:5px 13px;
-  font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--WA);
-  text-transform:uppercase;margin-bottom:16px;align-self:flex-start;
-}
-.q-title{
-  font-family:'The Seasons',serif;
-  font-size:9.5vw;font-weight:400;
-  line-height:1;letter-spacing:.03em;
-  color:var(--W);margin-bottom:8px;text-transform:uppercase;
-}
-.q-sub{font-size:13px;color:var(--WB);line-height:1.55;margin-bottom:24px}
+  .card {
+    background: var(--branco);
+    border-radius: 16px;
+    box-shadow: 0 2px 10px var(--sombra);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 2.5px solid transparent;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .card:active { transform: scale(0.94); }
+  .card.selected {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(0,156,59,0.2), 0 2px 10px var(--sombra);
+  }
+  .check-icon {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: var(--verde);
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 2;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .card.selected .check-icon { display: flex; }
 
-/* Opções */
-.opts{display:flex;flex-direction:column;gap:10px}
-.opt{
-  width:100%;
-  background:var(--WD);border:1.5px solid var(--WC);
-  border-radius:16px;padding:15px;
-  display:flex;align-items:center;gap:12px;
-  cursor:pointer;text-align:left;
-  font-family:'Inter',sans-serif;color:var(--W);
-  transition:border-color .15s,background .15s,box-shadow .15s,transform .1s;
-  animation:fadeUp .26s both;
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.opt:active{transform:scale(.988)}
-.opt.sel{
-  border-color:var(--salmon);
-  background:rgba(224,90,101,.15);
-  box-shadow:0 0 0 3px rgba(224,90,101,.2);
-}
-.opt-ico{
-  width:44px;height:44px;border-radius:12px;
-  background:var(--WC);
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;transition:background .15s;
-}
-.opt.sel .opt-ico{background:rgba(224,90,101,.25)}
-.opt-body{flex:1}
-.opt-body p{font-size:14px;font-weight:700;line-height:1.2;color:var(--W)}
-.opt-body span{font-size:12px;color:var(--WB);margin-top:3px;display:block}
-.chk{
-  width:22px;height:22px;border-radius:50%;
-  border:1.5px solid var(--WC);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;transition:all .15s;color:var(--W);
-}
-.opt.sel .chk{background:var(--salmon);border-color:var(--salmon)}
+  .card-img {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 54px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-num {
+    position: absolute;
+    bottom: 4px; left: 7px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: rgba(0,39,118,0.28);
+    line-height: 1;
+  }
+  .card-bandeira {
+    position: absolute;
+    top: 5px; right: 5px;
+    font-size: 13px;
+  }
+  .card-pos {
+    position: absolute;
+    bottom: 5px; right: 6px;
+    font-size: 8px;
+    font-weight: 900;
+    color: rgba(0,39,118,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-.btn-next{
-  width:100%;padding:18px;
-  background:linear-gradient(135deg,#C9A84C,#E8CC7A,#B8922E);
-  color:#3D2800;
-  font-family:'Inter',sans-serif;font-size:15px;font-weight:800;
-  border:none;border-radius:99px;cursor:pointer;
-  margin-top:24px;text-transform:uppercase;letter-spacing:.04em;
-  opacity:.2;pointer-events:none;
-  box-shadow:0 4px 20px rgba(201,168,76,.3);
-  transition:opacity .25s,transform .12s;
-}
-.btn-next.on{opacity:1;pointer-events:all}
-.btn-next:active{transform:scale(.97)}
+  .card-info {
+    padding: 7px 8px 8px;
+    text-align: center;
+    background: var(--branco);
+  }
+  .card-nome {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: var(--azul);
+    line-height: 1.1;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-preco {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--verde);
+    margin-top: 2px;
+  }
 
-/* ══ P3 UPLOAD/FORM ══ */
-.p3body{
-  width:100%;padding:22px 22px 64px;
-  display:flex;flex-direction:column;gap:16px;
-}
-.sec-title{
-  font-family:'The Seasons',serif;
-  font-size:9.5vw;font-weight:400;
-  letter-spacing:.03em;color:var(--W);line-height:1;
-  text-transform:uppercase;
-}
-.sec-sub{font-size:13px;color:var(--WB);line-height:1.55}
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--branco);
+    border-top: 3px solid var(--amarelo);
+    padding: 10px 14px 14px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.14);
+    z-index: 99;
+    transform: translateY(110%);
+    transition: transform 0.35s cubic-bezier(.34,1.4,.64,1);
+  }
+  .bottom-bar.show { transform: translateY(0); }
+  .bottom-resumo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 9px;
+  }
+  .bottom-resumo-txt { font-size: 12px; color: #888; font-weight: 700; }
+  .bottom-total {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--verde);
+  }
+  .btn-levar {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
+    color: var(--amarelo);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(0,156,59,0.42);
+    transition: transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-levar:active { transform: scale(0.97); }
 
-.upload-zone{
-  width:100%;
-  background:var(--WD);border:1.5px dashed var(--WC);
-  border-radius:18px;padding:28px 18px;
-  display:flex;flex-direction:column;align-items:center;gap:9px;
-  cursor:pointer;position:relative;overflow:hidden;
-  transition:border-color .2s,background .2s;
-}
-.upload-zone.hover{border-color:var(--salmon);background:rgba(224,90,101,.1)}
-.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
-.u-ico-wrap{
-  width:52px;height:52px;border-radius:12px;
-  background:var(--WC);
-  display:flex;align-items:center;justify-content:center;font-size:24px;
-}
-.u-title{font-size:14px;font-weight:700;color:var(--W)}
-.u-sub{font-size:12px;color:var(--WB);text-align:center;line-height:1.5}
-.fmt-row{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
-.fmt{
-  background:var(--WC);border:1px solid var(--WC);
-  border-radius:4px;padding:2px 7px;
-  font-size:10px;font-weight:700;color:var(--WB);letter-spacing:.04em;
-}
-.prev-box{
-  display:none;width:100%;
-  background:rgba(34,197,94,.08);border:1.5px solid rgba(34,197,94,.3);
-  border-radius:12px;padding:12px 14px;
-  align-items:center;gap:10px;
-}
-.prev-box.show{display:flex}
-.prev-ico-w{
-  width:36px;height:36px;border-radius:8px;
-  background:rgba(34,197,94,.15);
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
-}
-.prev-name{font-size:13px;font-weight:700;color:var(--W);flex:1}
-.prev-ok{font-size:11px;color:#4ADE80;font-weight:700;display:block;margin-top:1px}
-.prev-rm{background:transparent;border:none;font-size:17px;color:var(--WB);cursor:pointer}
+  /* ── MODAIS ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.52);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    backdrop-filter: blur(2px);
+  }
+  .overlay.show { display: flex; }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .sheet {
+    background: var(--branco);
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 22px 22px 0 0;
+    padding: 16px 16px 36px;
+    overflow-y: auto;
+    animation: slideUp 0.3s cubic-bezier(.34,1.4,.64,1);
+  }
+  .handle {
+    width: 38px; height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    margin: 0 auto 18px;
+  }
+  .sheet-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--azul);
+    margin-bottom: 4px;
+  }
+  .sheet-sub {
+    font-size: 12px;
+    color: #999;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+  }
 
-.priv-box{
-  width:100%;background:var(--WD);border:1px solid var(--WC);
-  border-radius:12px;padding:13px 14px;
-  display:flex;align-items:flex-start;gap:10px;
-}
-.priv-ico{font-size:17px;flex-shrink:0;margin-top:1px}
-.priv-txt p{font-size:13px;color:var(--W);font-weight:700;margin-bottom:2px}
-.priv-txt span{font-size:12px;color:var(--WB);line-height:1.5}
+  /* CARRINHO */
+  .item-cart {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .item-cart-emoji { font-size: 34px; }
+  .item-cart-info { flex: 1; }
+  .item-cart-nome { font-weight: 900; font-size: 14px; color: var(--azul); }
+  .item-cart-preco { font-size: 12px; color: var(--verde); font-weight: 700; margin-top: 2px; }
+  .item-cart-rm {
+    background: none; border: none;
+    font-size: 18px; cursor: pointer;
+    color: #ccc; padding: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cart-total-linha {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0 6px;
+  }
+  .cart-total-label { font-weight: 900; font-size: 15px; }
+  .cart-total-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px; color: var(--verde);
+  }
 
-.or-div{display:flex;align-items:center;gap:10px}
-.or-line{flex:1;height:1px;background:var(--WC)}
-.or-txt{font-size:10px;font-weight:700;color:var(--WB);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  /* BOTÕES GENÉRICOS */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-esc) 100%);
+    color: var(--amarelo);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 21px; letter-spacing: 1px;
+    border: none; border-radius: 14px;
+    padding: 15px; width: 100%;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(0,156,59,0.38);
+    margin-bottom: 10px;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s;
+  }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-ghost {
+    background: none; border: 2px solid #eee;
+    border-radius: 12px; padding: 11px;
+    width: 100%; font-size: 14px; font-weight: 700;
+    color: #aaa; cursor: pointer;
+  }
 
-.f-group{display:flex;flex-direction:column;gap:6px}
-.f-lbl{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--WB);text-transform:uppercase}
-textarea,select{
-  width:100%;
-  background:var(--WD);border:1.5px solid var(--WC);
-  border-radius:12px;color:var(--W);
-  font-family:'Inter',sans-serif;font-size:15px;
-  padding:12px 13px;outline:none;
-  transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;
-}
-textarea{resize:none;line-height:1.55}
-textarea::placeholder{color:var(--WB)}
-textarea:focus,select:focus{border-color:var(--salmon);box-shadow:0 0 0 3px rgba(224,90,101,.2)}
-select{cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(255,255,255,.4)' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 13px center;
-}
-select option{background:#3D0000;color:var(--W)}
-.btn-ghost{
-  width:100%;padding:15px;
-  background:var(--WD);border:1.5px solid var(--WC);
-  border-radius:99px;color:var(--WB);
-  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
-  cursor:pointer;transition:background .15s;text-transform:uppercase;letter-spacing:.04em;
-}
-.btn-ghost:active{background:var(--WC)}
+  /* CHECKOUT FORM */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    font-size: 11px; font-weight: 900; color: var(--azul);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    display: block; margin-bottom: 5px;
+  }
+  .form-input {
+    width: 100%; padding: 13px 14px;
+    border: 2px solid var(--cinza2);
+    border-radius: 12px; font-size: 15px;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    color: var(--azul); outline: none;
+    transition: border-color 0.2s;
+    background: var(--branco);
+  }
+  .form-input:focus { border-color: var(--verde); }
 
-/* ══ P4 RESULTADO ══ */
-.r4-hero{
-  width:100%;padding:32px 24px 24px;
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-}
-.r-crown{font-size:36px;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes crDrop{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:scale(1)}}
-.r-eye{font-size:9px;font-weight:600;letter-spacing:.25em;color:var(--WB);text-transform:uppercase}
-.r-title{
-  width:100%;
-  font-family:'The Seasons',serif;
-  font-size:10.5vw;font-weight:400;
-  letter-spacing:.04em;line-height:.95;text-align:center;
-  color:var(--W);text-transform:uppercase;
-  word-break:normal;padding:0 8px;
-}
-.r-title span{color:var(--salmon)}
+  .resumo-box {
+    background: var(--cinza);
+    border-radius: 14px; padding: 14px; margin-bottom: 16px;
+  }
+  .resumo-linha {
+    display: flex; justify-content: space-between;
+    font-size: 13px; font-weight: 700; color: #666; margin-bottom: 5px;
+  }
+  .resumo-total {
+    display: flex; justify-content: space-between;
+    font-size: 17px; font-weight: 900; color: var(--azul);
+    border-top: 1px solid #ddd; padding-top: 10px; margin-top: 8px;
+  }
+  .resumo-total span:last-child { color: var(--verde); }
 
-.r4-body{width:100%;padding:20px 22px 80px;display:flex;flex-direction:column;gap:20px}
+  /* PIX */
+  .pix-card {
+    background: linear-gradient(135deg, #e8f5e9, #f0faf0);
+    border: 2px solid var(--verde);
+    border-radius: 16px; padding: 20px;
+    text-align: center; margin-bottom: 16px;
+  }
+  .pix-emoji { font-size: 38px; margin-bottom: 6px; }
+  .pix-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; color: var(--verde); margin-bottom: 10px;
+  }
+  .pix-chave {
+    background: var(--branco); border-radius: 10px;
+    padding: 10px 12px; font-size: 13px; font-weight: 900;
+    color: var(--azul); margin-bottom: 10px; word-break: break-all;
+  }
+  .pix-valor {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px; color: var(--azul); line-height: 1;
+  }
+  .btn-copiar {
+    background: var(--amarelo); color: var(--azul);
+    border: none; border-radius: 12px;
+    padding: 12px 20px; font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px; cursor: pointer; width: 100%; margin-bottom: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-.gauge{
-  background:var(--WD);border:1px solid var(--WC);border-radius:18px;
-  padding:20px;position:relative;overflow:hidden;
-}
-.gauge::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--red),var(--salmon));
-}
-.g-lbl{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--WB);
-  text-transform:uppercase;margin-bottom:14px}
-.g-track{height:7px;border-radius:99px;background:var(--WC);overflow:hidden;margin-bottom:10px}
-.g-fill{height:100%;border-radius:99px;width:0;
-  background:linear-gradient(90deg,var(--red),var(--salmon));
-  transition:width 1.4s cubic-bezier(.4,0,.2,1)}
-.g-row{display:flex;align-items:flex-end;justify-content:space-between}
-.g-pct{font-size:50px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--salmon)}
-.g-sub{font-size:12px;color:var(--WB);text-align:right;max-width:140px;line-height:1.5}
+  /* SUCESSO */
+  .sucesso-wrap { text-align: center; padding: 24px 8px 10px; }
+  .sucesso-emoji { font-size: 68px; margin-bottom: 12px; display: block; }
+  .sucesso-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px; color: var(--verde); margin-bottom: 6px;
+  }
+  .sucesso-sub { font-size: 14px; color: #777; font-weight: 700; margin-bottom: 24px; }
+  .btn-download {
+    background: linear-gradient(135deg, var(--amarelo), #FFE840);
+    color: var(--azul); border: none; border-radius: 14px;
+    padding: 16px; font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px; cursor: pointer; width: 100%;
+    box-shadow: 0 5px 18px rgba(255,223,0,0.5); margin-bottom: 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-.arq-card{
-  background:var(--WD);border:1px solid var(--WC);border-radius:18px;
-  padding:18px;backdrop-filter:blur(8px);
-}
-.arq-badge{
-  display:inline-flex;align-items:center;gap:4px;
-  background:var(--WC);border:1px solid var(--WC);
-  border-radius:99px;padding:4px 11px;
-  font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--WA);
-  text-transform:uppercase;margin-bottom:10px;
-}
-.arq-name{font-size:24px;font-weight:900;letter-spacing:-.025em;color:var(--W);margin-bottom:6px;text-transform:uppercase}
-.arq-desc{font-size:13px;color:var(--WA);line-height:1.65}
-
-.traits{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.trait{background:var(--WD);border:1px solid var(--WC);border-radius:14px;padding:14px;backdrop-filter:blur(6px)}
-.tr-lbl{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--WB);text-transform:uppercase;margin-bottom:8px}
-.tr-track{height:4px;border-radius:99px;background:var(--WC);overflow:hidden}
-.tr-fill{height:100%;border-radius:99px;width:0;transition:width 1s .4s}
-.tr-r{background:linear-gradient(90deg,var(--red),var(--salmon))}
-.tr-b{background:linear-gradient(90deg,#C1121F,#E05A65)}
-.tr-t{background:linear-gradient(90deg,#9B2226,#E9C46A)}
-.tr-val{font-size:22px;font-weight:900;letter-spacing:-.02em;margin-top:7px;line-height:1;color:var(--W)}
-
-.tatica{
-  background:var(--WD);border:1px solid var(--WC);border-radius:18px;
-  padding:18px;backdrop-filter:blur(8px);
-  display:flex;flex-direction:column;gap:14px;
-  position:relative;overflow:hidden;
-}
-.tatica::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,var(--red),var(--salmon));
-}
-.tc-head{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--WB);text-transform:uppercase;padding-left:12px}
-.tc-step{display:flex;gap:12px;align-items:flex-start}
-.tc-num{
-  width:30px;height:30px;border-radius:8px;background:var(--salmon);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:var(--W);flex-shrink:0;
-}
-.tc-b p{font-size:14px;font-weight:700;color:var(--W);line-height:1.25}
-.tc-b span{font-size:12px;color:var(--WB);margin-top:3px;display:block;line-height:1.45}
-
-/* ══ P5 CHECKOUT ══ */
-.ck-hero{
-  width:100%;padding:36px 22px 32px;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-}
-.ck-ico{font-size:52px;animation:crDrop .5s cubic-bezier(.34,1.56,.64,1) both}
-.ck-title{
-  font-family:'The Seasons',serif;
-  font-size:11vw;font-weight:400;
-  letter-spacing:.03em;line-height:.9;text-align:center;
-  color:var(--W);text-transform:uppercase;
-}
-.ck-sub{font-size:13px;color:var(--WB);text-align:center;line-height:1.6;max-width:260px}
-
-.ck-body{width:100%;padding:16px 22px 64px;display:flex;flex-direction:column;gap:12px}
-
-.price-card{
-  background:var(--WD);border:1px solid var(--WC);border-radius:18px;
-  padding:20px;position:relative;overflow:hidden;
-}
-.price-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--red),var(--salmon));
-}
-.pc-lbl{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--WB);text-transform:uppercase;margin-bottom:12px}
-.pc-main{display:flex;align-items:flex-end;justify-content:space-between}
-.pc-price{font-size:54px;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--W)}
-.pc-right{text-align:right}
-.pc-period{font-size:11px;color:var(--WB);margin-bottom:4px;font-weight:500}
-.pc-old{font-size:13px;color:var(--WB);text-decoration:line-through}
-.pc-save{
-  display:inline-block;margin-top:10px;
-  background:rgba(224,90,101,.2);border:1px solid rgba(224,90,101,.3);
-  border-radius:6px;padding:4px 10px;
-  font-size:11px;font-weight:800;color:var(--salmon);letter-spacing:.05em;
-}
-.incl-list{display:flex;flex-direction:column;gap:9px}
-.incl-row{
-  display:flex;align-items:flex-start;gap:10px;
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:12px;padding:12px 13px;backdrop-filter:blur(6px);
-}
-.incl-ico{
-  width:34px;height:34px;border-radius:8px;background:rgba(224,90,101,.15);
-  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
-}
-.incl-txt p{font-size:13px;font-weight:700;color:var(--W);line-height:1.2}
-.incl-txt span{font-size:12px;color:var(--WB);margin-top:2px;display:block}
-.trust-row{display:flex;gap:6px}
-.tr-chip{
-  flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
-  background:var(--WD);border:1px solid var(--WC);border-radius:10px;
-  padding:10px;font-size:11px;font-weight:600;color:var(--WA);
-}
-.urgency-bar{
-  background:rgba(224,90,101,.1);border:1px solid rgba(224,90,101,.2);
-  border-radius:12px;padding:12px 14px;
-  display:flex;align-items:flex-start;gap:8px;
-}
-.u-dot{width:7px;height:7px;border-radius:50%;background:var(--salmon);
-  flex-shrink:0;margin-top:5px;animation:pulse 1.6s ease-in-out infinite}
-.urgency-bar p{font-size:12px;color:var(--WA);font-weight:500;line-height:1.55}
-.urgency-bar strong{color:var(--salmon)}
-
-/* ══ P4 NOVO ══ */
-.arq-desc-hero{
-  font-size:12px;color:var(--WB);line-height:1.6;
-  text-align:center;max-width:260px;margin-top:4px;
-}
-.urgency-card{
-  background:rgba(224,90,101,.1);border:1px solid rgba(224,90,101,.25);
-  border-radius:16px;padding:18px;
-  display:flex;gap:12px;align-items:flex-start;
-}
-.urg-icon{font-size:22px;flex-shrink:0;margin-top:1px}
-.urg-txt{font-size:13px;color:var(--WA);line-height:1.7}
-.urg-txt strong{color:var(--salmon)}
-.urg-txt span{display:block;margin-top:6px;color:var(--WB);font-size:12px}
-
-.guru-card{
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:20px;padding:22px;
-  display:flex;flex-direction:column;gap:18px;
-  position:relative;overflow:hidden;
-}
-.guru-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--red),var(--salmon));
-}
-.guru-pill{
-  display:inline-flex;align-self:flex-start;
-  background:rgba(224,90,101,.15);border:1px solid rgba(224,90,101,.3);
-  border-radius:99px;padding:4px 13px;
-  font-size:10px;font-weight:800;letter-spacing:.14em;
-  color:var(--salmon);text-transform:uppercase;
-}
-.guru-cta{
-  font-size:15px;line-height:1.7;color:var(--WA);
-}
-.guru-cta strong{color:var(--W);font-weight:800}
-
-.guru-features{display:flex;flex-direction:column;gap:12px}
-.gf-row{display:flex;align-items:flex-start;gap:12px}
-.gf-ico{
-  width:40px;height:40px;border-radius:10px;
-  background:rgba(224,90,101,.15);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
-.gf-txt p{font-size:14px;font-weight:700;color:var(--W);line-height:1.2}
-.gf-txt span{font-size:12px;color:var(--WB);margin-top:2px;display:block}
-
-/* ══ DIAGNÓSTICO ══ */
-.diag-card{
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:16px;padding:18px;
-  display:flex;flex-direction:column;gap:10px;
-}
-.diag-head{font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--WB);text-transform:uppercase}
-.diag-txt{font-size:14px;color:var(--WA);line-height:1.7}
-
-/* ══ FRASES MATADORAS ══ */
-.matadoras-card{
-  background:var(--WD);border:1px solid rgba(201,168,76,.25);
-  border-radius:20px;padding:22px;
-  display:flex;flex-direction:column;gap:20px;
-  position:relative;overflow:hidden;
-}
-.matadoras-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,#C9A84C,#E8CC7A,#C9A84C);
-}
-.mata-head{
-  font-size:11px;font-weight:800;letter-spacing:.14em;
-  color:#E8CC7A;text-transform:uppercase;
-}
-.mata-sub{font-size:12px;color:var(--WB);margin-top:-8px}
-.mata-item{display:flex;flex-direction:column;gap:10px;padding-bottom:20px;border-bottom:1px solid var(--WC);}
-.mata-item:last-child{border-bottom:none;padding-bottom:0}
-.mata-ctx{
-  font-size:10px;font-weight:700;letter-spacing:.08em;
-  color:var(--WB);text-transform:uppercase;
-  margin-bottom:2px;
-}
-
-.mata-bubble{
-  background:#1F5C37;border-radius:14px 14px 2px 14px;
-  padding:12px 14px;font-size:14px;color:#E8F5ED;
-  line-height:1.6;position:relative;
-}
-.mata-bubble::after{
-  content:'✓✓';font-size:10px;color:rgba(255,255,255,.45);
-  display:block;text-align:right;margin-top:4px;
-}
-.btn-wpp{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:13px;
-  background:linear-gradient(135deg,#25D366,#128C7E);
-  color:#fff;font-family:'Inter',sans-serif;
-  font-size:13px;font-weight:800;letter-spacing:.03em;
-  border:none;border-radius:99px;cursor:pointer;
-  box-shadow:0 4px 16px rgba(37,211,102,.25);
-  transition:transform .12s;
-}
-.btn-wpp:active{transform:scale(.97)}
-
-/* ══ BALÕES WHATSAPP ══ */
-.wpp-card{
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:20px;padding:20px;
-  display:flex;flex-direction:column;gap:10px;
-  position:relative;overflow:hidden;
-}
-.wpp-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,#C9A84C,#E8CC7A);
-}
-.wpp-head{
-  font-size:10px;font-weight:800;letter-spacing:.14em;
-  color:var(--WB);text-transform:uppercase;margin-bottom:4px;
-}
-.wpp-item{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
-.wpp-item:last-child{margin-bottom:0}
-
-/* Balão enviado (mensagem ruim do usuário) */
-.bubble-sent{
-  align-self:flex-end;
-  background:#1F5C37;
-  color:#E8F5ED;
-  border-radius:14px 14px 2px 14px;
-  padding:9px 13px;
-  font-size:13px;line-height:1.5;
-  max-width:82%;position:relative;
-  box-shadow:0 2px 6px rgba(0,0,0,.25);
-}
-.bubble-sent::after{
-  content:'✓✓';
-  font-size:10px;color:rgba(255,255,255,.4);
-  display:block;text-align:right;margin-top:3px;
-}
-
-/* Badge de erro */
-.bubble-erro{
-  align-self:flex-end;
-  background:rgba(224,90,101,.15);border:1px solid rgba(224,90,101,.3);
-  border-radius:8px;padding:5px 10px;
-  font-size:11px;font-weight:700;color:#E05A65;
-  max-width:82%;
-}
-
-/* Balão recebido (versão correta — resposta do guru) */
-.bubble-fix{
-  align-self:flex-start;
-  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);
-  border-radius:14px 14px 14px 2px;
-  padding:9px 13px;
-  font-size:13px;line-height:1.5;color:#E8CC7A;
-  max-width:82%;
-  box-shadow:0 2px 6px rgba(0,0,0,.2);
-}
-.bubble-fix-label{
-  font-size:10px;font-weight:800;letter-spacing:.08em;
-  color:rgba(232,204,122,.5);text-transform:uppercase;margin-bottom:3px;
-}
-
-/* ══ FRASES RUINS ══ */
-.frases-card{
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:20px;padding:20px;
-  display:flex;flex-direction:column;gap:14px;
-  position:relative;overflow:hidden;
-}
-.frases-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,#C9A84C,#E8CC7A);
-}
-.fr-head{
-  font-size:10px;font-weight:800;letter-spacing:.14em;
-  color:var(--WB);text-transform:uppercase;
-}
-.fr-item{
-  background:rgba(0,0,0,.2);border:1px solid var(--WC);
-  border-radius:14px;padding:14px;
-  display:flex;flex-direction:column;gap:8px;
-}
-.fr-frase{
-  font-size:13px;font-style:italic;color:var(--WA);
-  border-left:2px solid rgba(201,168,76,.4);padding-left:10px;
-  line-height:1.5;
-}
-.fr-problema{
-  font-size:11px;font-weight:700;color:#E05A65;
-  display:flex;align-items:center;gap:5px;
-}
-.fr-correto{
-  background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);
-  border-radius:8px;padding:8px 10px;
-  font-size:12px;color:#E8CC7A;font-weight:600;line-height:1.5;
-}
-.fr-correto span{
-  font-size:10px;font-weight:700;letter-spacing:.08em;
-  color:rgba(232,204,122,.6);text-transform:uppercase;
-  display:block;margin-bottom:3px;
-}
-
-/* Loading overlay */
-.loading-overlay{
-  position:fixed;inset:0;z-index:999;
-  background:rgba(10,0,0,.85);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:16px;
-}
-.loading-overlay.hide{display:none}
-.loading-spinner{
-  width:44px;height:44px;border-radius:50%;
-  border:3px solid rgba(201,168,76,.2);
-  border-top-color:#C9A84C;
-  animation:spin .9s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-txt{
-  font-size:14px;font-weight:600;color:var(--WA);
-  letter-spacing:.04em;text-align:center;max-width:220px;line-height:1.6;
-}
-
-/* ══ GURU CHAT SCREEN ══ */
-#p_guru{justify-content:flex-start}
-.guru-header{
-  width:100%;padding:18px 22px 14px;
-  display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid var(--WC);flex-shrink:0;
-}
-.guru-avatar{
-  width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,#C9A84C,#E8CC7A);
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;
-}
-.guru-info{flex:1}
-.guru-nome{font-size:15px;font-weight:800;color:var(--W);letter-spacing:.01em}
-.guru-status{font-size:11px;color:#4ADE80;display:flex;align-items:center;gap:5px}
-.guru-status::before{content:'';width:6px;height:6px;border-radius:50%;background:#4ADE80;display:inline-block}
-
-.chat-area{
-  flex:1;width:100%;padding:16px 16px 0;
-  overflow-y:auto;
-  display:flex;flex-direction:column;gap:12px;
-}
-.msg{display:flex;flex-direction:column;gap:3px;max-width:82%}
-.msg.user{align-self:flex-end;align-items:flex-end}
-.msg.guru{align-self:flex-start;align-items:flex-start}
-.msg-bubble{
-  padding:10px 14px;font-size:14px;line-height:1.6;
-  border-radius:18px;
-}
-.msg.user .msg-bubble{
-  background:linear-gradient(135deg,#C9A84C,#B8922E);
-  color:#1A0000;border-radius:18px 18px 4px 18px;
-  font-weight:500;
-}
-.msg.guru .msg-bubble{
-  background:var(--WD);border:1px solid var(--WC);
-  color:var(--WA);border-radius:18px 18px 18px 4px;
-}
-.msg-hora{font-size:10px;color:var(--WB);padding:0 4px}
-
-.chat-input-wrap{
-  width:100%;padding:12px 16px 28px;
-  display:flex;align-items:center;gap:10px;
-  border-top:1px solid var(--WC);flex-shrink:0;
-}
-.chat-input{
-  flex:1;background:var(--WD);border:1.5px solid var(--WC);
-  border-radius:24px;color:var(--W);
-  font-family:'Inter',sans-serif;font-size:14px;
-  padding:11px 16px;outline:none;resize:none;
-  max-height:100px;line-height:1.4;
-  transition:border-color .2s;
-}
-.chat-input:focus{border-color:var(--salmon)}
-.chat-input::placeholder{color:var(--WB)}
-.chat-send{
-  width:44px;height:44px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,#C9A84C,#E8CC7A);
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;transition:transform .12s;
-}
-.chat-send:active{transform:scale(.93)}
-.guru-typing{
-  display:none;align-self:flex-start;
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:18px 18px 18px 4px;
-  padding:10px 16px;
-}
-.guru-typing span{
-  display:inline-block;width:7px;height:7px;border-radius:50%;
-  background:var(--WB);margin:0 2px;
-  animation:typing .9s ease-in-out infinite;
-}
-.guru-typing span:nth-child(2){animation-delay:.2s}
-.guru-typing span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-
-.leis-pills{
-  display:flex;gap:6px;flex-wrap:wrap;
-  padding:0 16px 10px;
-}
-.lei-pill{
-  background:var(--WD);border:1px solid var(--WC);
-  border-radius:99px;padding:5px 12px;
-  font-size:11px;font-weight:600;color:var(--WB);
-  cursor:pointer;white-space:nowrap;
-  transition:background .15s,color .15s;
-}
-.lei-pill:active{background:rgba(201,168,76,.15);color:#E8CC7A;border-color:rgba(201,168,76,.3)}
-
-/* note */
-.cta-note{
-  text-align:center;font-size:11px;color:var(--WB);letter-spacing:.01em;
-}
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 96px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: var(--azul); color: var(--amarelo);
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px;
+    padding: 10px 22px; border-radius: 100px;
+    opacity: 0; transition: all 0.3s;
+    z-index: 500; white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- BG global -->
-<img class="bg-img" src="assets/cover.png" alt="" onerror="this.style.display='none'">
-<div class="bg-overlay"></div>
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    Copa Craft
+    <span>⚽ Imprime · Monta · Coleciona</span>
+  </div>
+  <button class="cart-btn" onclick="abrirCarrinho()" aria-label="Ver seleção">
+    <div class="ball">⚽</div>
+    <div class="cart-count" id="cartCount">0</div>
+  </button>
+</header>
 
-<!-- Loading overlay -->
-<div class="loading-overlay hide" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-txt">Analisando a conversa...<br>Identificando os erros 🔍</div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">🇧🇷 Copa do Mundo</div>
+  <h1>LEVE SEU CRAQUE</h1>
+  <div class="hero-sub">Papercraft dos jogadores · Imprime em casa</div>
+  <div class="badge-combo" id="badgeCombo" onclick="selecionarCombo()">
+    🏆 LEVE O TIME TODO — R$14,99
+  </div>
 </div>
 
-<!-- ══════════════ P1 HOME ══════════════ -->
-<section class="scr" id="p1">
-  <div class="home-inner" style="padding-top:36vh">
+<!-- LISTA -->
+<div class="secao-titulo">Escolha seu(s) craque(s)</div>
+<div class="grid" id="grid"></div>
 
-    <div class="pill h1-badge">Os 12 mandamentos do sexo</div>
-
-    <h1 class="h1-headline">CHEGA DE<br>C# DOCE!</h1>
-
-    <p class="h1-sub">
-      Descubra as palavras certas para que sua
-      <strong>TORA tenha as aventuras</strong> que merece
-      nesse teste rápido.
-    </p>
-
-    <button class="btn-main" onclick="go('p2')">INICIAR FALAS MATADORAS</button>
-
-    <!-- Online now -->
-    <div class="online-bar" style="margin-top:16px">
-      <div class="online-dot"></div>
-      <span><strong id="onlineCount">347</strong> homens online agora</span>
-    </div>
-
-    <!-- Depoimentos -->
-    <div class="dep-section">
-      <div class="dep-label">O que dizem quem já usou</div>
-      <div class="deps">
-        <div class="dep">
-          <div class="dep-top">
-            <div class="dep-avatar">R</div>
-            <div>
-              <div class="dep-name">Rafael M.</div>
-              <div class="dep-stars">★★★★★</div>
-            </div>
-          </div>
-          <p class="dep-txt">"Tava travado nas mensagens, sem saber o que falar. Peguei o guia, segui o passo 2 e consegui chamar ela pra sair na mesma semana."</p>
-        </div>
-        <div class="dep">
-          <div class="dep-top">
-            <div class="dep-avatar">L</div>
-            <div>
-              <div class="dep-name">Lucas T.</div>
-              <div class="dep-stars">★★★★★</div>
-            </div>
-          </div>
-          <p class="dep-txt">"Ela tava me deixando no vácuo há dias. Aprendi a parar de perseguir e em 3 dias ela me mandou mensagem primeiro."</p>
-        </div>
-        <div class="dep">
-          <div class="dep-top">
-            <div class="dep-avatar">G</div>
-            <div>
-              <div class="dep-name">Gabriel S.</div>
-              <div class="dep-stars">★★★★★</div>
-            </div>
-          </div>
-          <p class="dep-txt">"Achei que tava na friendzone pra sempre. O plano me mostrou exatamente o que fazer. Mudou o jogo."</p>
-        </div>
-      </div>
-    </div>
-
+<!-- BOTTOM BAR -->
+<div class="bottom-bar" id="bottomBar">
+  <div class="bottom-resumo">
+    <span class="bottom-resumo-txt" id="resumoTxt"></span>
+    <span class="bottom-total" id="totalTxt"></span>
   </div>
-</section>
+  <button class="btn-levar" onclick="irParaCheckout()">
+    ⚽ LEVAR MEUS CRAQUES →
+  </button>
+</div>
 
-<!-- ══════════ P2 QUIZ ══════════ -->
-<section class="scr off" id="p2">
-  <div class="pg-nav">
-    <button class="back-btn" onclick="go('p1')">←</button>
-    <div class="prog-wrap">
-      <div class="prog-row">
-        <span>Pergunta <em id="qNum">1</em> de 2</span>
-        <em id="qPct">50%</em>
-      </div>
-      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:50%"></div></div>
+<!-- OVERLAY CARRINHO -->
+<div class="overlay" id="overlayCarrinho" onclick="fecharOverlay('overlayCarrinho',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-titulo">⚽ Minha Seleção</div>
+    <div class="sheet-sub">Revise e confirme seus craques</div>
+    <div id="listaCarrinho"></div>
+    <div class="cart-total-linha">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-val" id="totalModal">R$0,00</span>
     </div>
-  </div>
-
-  <div id="qB1" class="qbody">
-    <div class="q-chip">📍 Status</div>
-    <h2 class="q-title">Qual é a situação?</h2>
-    <p class="q-sub">Seja honesto — isso define a estratégia inteira.</p>
-    <div class="opts">
-      <button class="opt" style="animation-delay:.04s" onclick="selQ1(this,'chegando')">
-        <div class="opt-ico">🎯</div>
-        <div class="opt-body"><p>Vou chegar</p><span>Ainda não rolou nada, mas quero conquistar</span></div>
-        <div class="chk"></div>
-      </button>
-      <button class="opt" style="animation-delay:.1s" onclick="selQ1(this,'ficando')">
-        <div class="opt-ico">🔥</div>
-        <div class="opt-body"><p>Já estou ficando</p><span>Já aconteceu algo entre nós</span></div>
-        <div class="chk"></div>
-      </button>
-    </div>
-    <button class="btn-next" id="bnQ1" onclick="showQ2()">Próxima pergunta →</button>
-  </div>
-
-  <div id="qB2" class="qbody" style="display:none">
-    <div class="q-chip">💬 Comportamento</div>
-    <h2 class="q-title">Como ela age com você?</h2>
-    <p class="q-sub">Analise o padrão — não só o último episódio.</p>
-    <div class="opts">
-      <button class="opt" style="animation-delay:.04s" onclick="selQ2(this,'quente')">
-        <div class="opt-ico">😍</div>
-        <div class="opt-body"><p>Demonstra interesse</p><span>Inicia conversa, manda meme, fica animada</span></div>
-        <div class="chk"></div>
-      </button>
-      <button class="opt" style="animation-delay:.1s" onclick="selQ2(this,'morno')">
-        <div class="opt-ico">🌡️</div>
-        <div class="opt-body"><p>Quente e frio</p><span>Às vezes empolgada, às vezes some</span></div>
-        <div class="chk"></div>
-      </button>
-      <button class="opt" style="animation-delay:.16s" onclick="selQ2(this,'frio')">
-        <div class="opt-ico">🧊</div>
-        <div class="opt-body"><p>É distante</p><span>Responde pouco, sem iniciativa</span></div>
-        <div class="chk"></div>
-      </button>
-      <button class="opt" style="animation-delay:.22s" onclick="selQ2(this,'amizade')">
-        <div class="opt-ico">🤝</div>
-        <div class="opt-body"><p>Me trata como amigo</p><span>Fala de outros caras, friendzone claro</span></div>
-        <div class="chk"></div>
-      </button>
-    </div>
-    <button class="btn-next" id="bnQ2" onclick="go('p3')">Continuar →</button>
-  </div>
-</section>
-
-<!-- ══════════ P3 UPLOAD/FORM ══════════ -->
-<section class="scr off" id="p3">
-  <div class="pg-nav">
-    <button class="back-btn" onclick="backToQ2()">←</button>
-    <div class="prog-wrap">
-      <div class="prog-row"><span>Contexto</span><em>+precisão</em></div>
-      <div class="prog-track"><div class="prog-fill" style="width:75%"></div></div>
-    </div>
-  </div>
-
-  <!-- BLOCO UPLOAD -->
-  <div class="p3body" id="p3Upload">
-    <div class="pill" style="align-self:flex-start">📱 Conversa</div>
-    <h2 class="sec-title">Envie a conversa.</h2>
-    <p class="sec-sub">Quanto mais contexto, mais preciso o seu plano.</p>
-
-    <div class="upload-zone" id="upZone"
-      ondragover="event.preventDefault();this.classList.add('hover')"
-      ondragleave="this.classList.remove('hover')"
-      ondrop="dropFile(event)">
-      <input type="file" id="fileIn" accept=".txt,.png,.jpg,.jpeg,.pdf" onchange="pickFile(event)">
-      <div class="u-ico-wrap">📲</div>
-      <div class="u-title">Toque para enviar</div>
-      <p class="u-sub">Print ou arquivo .txt da conversa</p>
-      <div class="fmt-row">
-        <span class="fmt">PNG</span><span class="fmt">JPG</span>
-        <span class="fmt">TXT</span><span class="fmt">PDF</span>
-      </div>
-    </div>
-
-    <div class="prev-box" id="prevBox">
-      <div class="prev-ico-w" id="prevIco">📄</div>
-      <div style="flex:1">
-        <div class="prev-name" id="prevName">arquivo</div>
-        <span class="prev-ok">✓ Pronto para análise</span>
-      </div>
-      <button class="prev-rm" onclick="rmFile()">✕</button>
-    </div>
-
-    <!-- Privacidade -->
-    <div class="priv-box">
-      <div class="priv-ico">🔒</div>
-      <div class="priv-txt">
-        <p>Fique tranquilo</p>
-        <span>Dados não são armazenados — some após gerar o resultado.</span>
-      </div>
-    </div>
-
-    <!-- Botão continuar (aparece após upload) -->
-    <div id="btnComArq" style="display:none">
-      <button class="btn-main" onclick="go('p4')">Gerar frases matadoras ⚡</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ P4 RESULTADO ══════════ -->
-<section class="scr off" id="p4">
-
-  <div class="r4-hero">
-    <div class="r-crown" id="rCrown">🎯</div>
-    <p class="r-eye">Arquétipo identificado</p>
-    <h2 class="r-title"><span id="rTitle">CAÇADORA</span></h2>
-  </div>
-
-  <div class="r4-body">
-
-    <!-- DIAGNÓSTICO DA IA -->
-    <div class="diag-card" id="diagCard" style="display:none">
-      <div class="diag-head">🔍 Diagnóstico da conversa</div>
-      <p class="diag-txt" id="diagTxt"></p>
-    </div>
-
-    <!-- FRASES MATADORAS -->
-    <div class="matadoras-card" id="mataCard" style="display:none">
-      <div class="mata-head">⚡ Suas 3 frases matadoras</div>
-      <p class="mata-sub">Prontas para enviar. 1 clique manda no WhatsApp.</p>
-      <div id="mataLista"></div>
-    </div>
-
-    <!-- ERRO / SEM RESULTADO -->
-    <div class="diag-card" id="erroCard" style="display:none">
-      <div class="diag-head">⚠️ Não conseguimos analisar</div>
-      <p class="diag-txt" id="erroTxt">Tente subir a imagem novamente com melhor qualidade.</p>
-      <button class="btn-main" onclick="go('p3')" style="margin-top:8px">Tentar novamente</button>
-    </div>
-
-    <button class="btn-ghost" onclick="restart()" style="margin-top:8px">↺ Refazer o quiz</button>
-  </div>
-</section>
-
-<!-- ══════════ P5 CHECKOUT ══════════ -->
-<section class="scr off" id="p5">
-  <div class="pg-nav" style="padding-top:20px">
-    <button class="back-btn" onclick="go('p4')">←</button>
-    <span style="font-size:12px;font-weight:700;color:var(--WB);letter-spacing:.06em;text-transform:uppercase">Finalizar</span>
-  </div>
-  <div class="ck-hero">
-    <div class="ck-ico">⚔️</div>
-    <h2 class="ck-title">Ative seu<br>Agente X</h2>
-    <p class="ck-sub">Uma única vez. Acesso vitalício ao plano completo.</p>
-  </div>
-  <div class="ck-body">
-    <div class="price-card">
-      <div class="pc-lbl">Investimento único</div>
-      <div class="pc-main">
-        <div class="pc-price">R$9<span style="font-size:28px;font-weight:800">,90</span></div>
-        <div class="pc-right">
-          <div class="pc-period">acesso vitalício</div>
-          <div class="pc-old">De R$47,00</div>
-        </div>
-      </div>
-      <div class="pc-save">🔥 Economize 79%</div>
-    </div>
-    <div class="incl-list">
-      <div class="incl-row"><div class="incl-ico">⚡</div><div class="incl-txt"><p>As 12 Leis completas</p><span>Desbloqueadas para o seu perfil</span></div></div>
-      <div class="incl-row"><div class="incl-ico">💬</div><div class="incl-txt"><p>Mensagens prontas com IA</p><span>Link direto para o WhatsApp dela</span></div></div>
-      <div class="incl-row"><div class="incl-ico">🎯</div><div class="incl-txt"><p>Plano tático personalizado</p><span>Baseado no arquétipo dela</span></div></div>
-      <div class="incl-row"><div class="incl-ico">🔄</div><div class="incl-txt"><p>Acesso vitalício</p><span>Use para quantas situações quiser</span></div></div>
-    </div>
-    <button class="btn-main" style="font-size:16px;padding:20px" onclick="alert('Integrar Mercado Pago aqui!')">
-      🔒 Pagar R$9,90 e ativar agora
+    <button class="btn-primary" onclick="fecharOverlay('overlayCarrinho'); irParaCheckout();">
+      LEVAR ESSES CRAQUES →
     </button>
-    <p class="cta-note">Pix ou Cartão · Acesso imediato após pagamento</p>
-    <div class="trust-row">
-      <div class="tr-chip">🔒 Pix</div>
-      <div class="tr-chip">💳 Cartão</div>
-      <div class="tr-chip">⚡ Imediato</div>
-    </div>
-    <div class="urgency-bar">
-      <div class="u-dot"></div>
-      <p>Oferta por tempo limitado. Depois volta para <strong>R$47,00.</strong></p>
-    </div>
-    <button class="btn-ghost" onclick="restart()">← Voltar ao início</button>
+    <button class="btn-ghost" onclick="fecharOverlay('overlayCarrinho')">Escolher mais</button>
   </div>
-</section>
+</div>
 
-<!-- ══════════ P_GURU — CHAT ══════════ -->
-<section class="scr off" id="p_guru">
+<!-- OVERLAY CHECKOUT -->
+<div class="overlay" id="overlayCheckout" onclick="fecharOverlay('overlayCheckout',event)">
+  <div class="sheet" id="sheetCheckout">
+    <div class="handle"></div>
 
-  <div class="guru-header">
-    <button class="back-btn" onclick="go('p4')" style="flex-shrink:0">←</button>
-    <div class="guru-avatar">🔱</div>
-    <div class="guru-info">
-      <div class="guru-nome">Guru Tora Aventureira</div>
-      <div class="guru-status">online agora</div>
-    </div>
-  </div>
-
-  <!-- Atalhos das 12 Leis -->
-  <div class="leis-pills" id="leisPills">
-    <div class="lei-pill" onclick="perguntarLei('Lei da Escassez')">⚡ Escassez</div>
-    <div class="lei-pill" onclick="perguntarLei('Lei do Mistério')">🌑 Mistério</div>
-    <div class="lei-pill" onclick="perguntarLei('Lei da Tensão')">🔥 Tensão</div>
-    <div class="lei-pill" onclick="perguntarLei('Lei do Silêncio')">🤫 Silêncio</div>
-    <div class="lei-pill" onclick="perguntarLei('Lei da Imprevisibilidade')">🎲 Imprevisível</div>
-    <div class="lei-pill" onclick="perguntarLei('Lei da Abundância')">♾️ Abundância</div>
-  </div>
-
-  <div class="chat-area" id="chatArea">
-    <!-- Mensagem inicial do Guru -->
-    <div class="msg guru">
-      <div class="msg-bubble">
-        Analisei sua conversa. Vejo os padrões.<br><br>
-        Me pergunta qualquer coisa — sobre ela, sobre a próxima mensagem, sobre o que fazer agora. Ou clica nas Leis acima para entender como aplicar cada uma na sua situação. 🔱
+    <!-- ETAPA 1: DADOS -->
+    <div id="etapaDados">
+      <div class="sheet-titulo">📦 Onde entregar?</div>
+      <div class="sheet-sub">Seu PDF chega no e-mail na hora</div>
+      <div class="resumo-box" id="resumoCheckout"></div>
+      <div class="form-group">
+        <label class="form-label">Seu Nome</label>
+        <input class="form-input" id="nomeInput" type="text" placeholder="Ex: João Silva" maxlength="60" autocomplete="name">
       </div>
-      <div class="msg-hora">Guru</div>
+      <div class="form-group">
+        <label class="form-label">Seu E-mail</label>
+        <input class="form-input" id="emailInput" type="email" placeholder="joao@email.com" autocomplete="email">
+      </div>
+      <button class="btn-primary" onclick="irParaPix()">VER PIX PARA FECHAR →</button>
+      <button class="btn-ghost" onclick="fecharOverlay('overlayCheckout')">Voltar</button>
     </div>
-    <!-- Typing indicator -->
-    <div class="guru-typing" id="guruTyping">
-      <span></span><span></span><span></span>
+
+    <!-- ETAPA 2: PIX -->
+    <div id="etapaPix" style="display:none">
+      <div class="sheet-titulo">⚡ Pagar com PIX</div>
+      <div class="sheet-sub">Instantâneo · Seguro · Sem taxas extras</div>
+      <div class="pix-card">
+        <div class="pix-emoji">📲</div>
+        <div class="pix-titulo">Chave PIX (E-mail)</div>
+        <div class="pix-chave" id="pixChave">pagamentos@copaCraft.com.br</div>
+        <div class="pix-valor" id="pixValor">R$0,00</div>
+      </div>
+      <button class="btn-copiar" onclick="copiarPix()">📋 COPIAR CHAVE PIX</button>
+      <button class="btn-primary" onclick="confirmarPix()">✅ JÁ TRANSFERI!</button>
+      <button class="btn-ghost" onclick="voltarDados()">Voltar</button>
+    </div>
+
+    <!-- ETAPA 3: SUCESSO -->
+    <div id="etapaSucesso" style="display:none">
+      <div class="sucesso-wrap">
+        <span class="sucesso-emoji">🎉</span>
+        <div class="sucesso-titulo">ARRASOU!</div>
+        <div class="sucesso-sub" id="sucessoSub">Seu PDF está pronto. Baixe, imprima e monte!</div>
+        <button class="btn-download" onclick="baixarPDF()">⬇️ BAIXAR MEU PDF</button>
+        <button class="btn-ghost" onclick="reiniciar()">Quero mais craques</button>
+      </div>
     </div>
   </div>
+</div>
 
-  <div class="chat-input-wrap">
-    <textarea
-      class="chat-input"
-      id="chatInput"
-      rows="1"
-      placeholder="Pergunte ao Guru..."
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensagem()}"
-      oninput="autoResize(this)"
-    ></textarea>
-    <button class="chat-send" onclick="enviarMensagem()">➤</button>
-  </div>
-
-</section>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-// Online counter flutuante
-(function(){
-  var base=347,el;
-  function upd(){
-    el=el||document.getElementById('onlineCount');
-    if(!el)return;
-    base+=Math.floor(Math.random()*7)-3;
-    if(base<310)base=310;if(base>420)base=420;
-    el.textContent=base;
-  }
-  setInterval(upd,4000);
-})();
+// ── DADOS ──
+const JOGADORES = [
+  { id:1,  nome:'Vini Jr',     emoji:'🟡', num:7,  pos:'Atacante', grad:'#FFFDE7,#FFF9C4' },
+  { id:2,  nome:'Rodrygo',    emoji:'🟢', num:11, pos:'Atacante', grad:'#E8F5E9,#C8E6C9' },
+  { id:3,  nome:'Neymar',     emoji:'⭐', num:10, pos:'Atacante', grad:'#F3E5F5,#E1BEE7' },
+  { id:4,  nome:'Raphinha',   emoji:'🔴', num:22, pos:'Atacante', grad:'#FCE4EC,#F8BBD0' },
+  { id:5,  nome:'Endrick',    emoji:'🔵', num:9,  pos:'Atacante', grad:'#E3F2FD,#BBDEFB' },
+  { id:6,  nome:'Paquetá',    emoji:'🟣', num:8,  pos:'Meia',     grad:'#EDE7F6,#D1C4E9' },
+  { id:7,  nome:'Casemiro',   emoji:'🟤', num:5,  pos:'Volante',  grad:'#EFEBE9,#D7CCC8' },
+  { id:8,  nome:'Bruno G.',   emoji:'🟠', num:17, pos:'Meia',     grad:'#FFF3E0,#FFE0B2' },
+  { id:9,  nome:'Marquinhos', emoji:'🔷', num:4,  pos:'Zagueiro', grad:'#E1F5FE,#B3E5FC' },
+  { id:10, nome:'Militão',    emoji:'🔶', num:3,  pos:'Zagueiro', grad:'#FBE9E7,#FFCCBC' },
+  { id:11, nome:'Danilo',     emoji:'🟦', num:2,  pos:'Lateral',  grad:'#E8EAF6,#C5CAE9' },
+  { id:12, nome:'Alisson',    emoji:'🧤', num:1,  pos:'Goleiro',  grad:'#F1F8E9,#DCEDC8' },
+];
+const P_UNIT  = 3.00;
+const P_COMBO = 14.99;
+const PIX_KEY = 'pagamentos@copaCraft.com.br';
 
-var A={q1:null,q2:null,conversaTexto:null,conversaImagem:null,aiResult:null};
-function go(id){
-  var temConteudo=(A.conversaTexto && A.conversaTexto.length>30) || A.conversaImagem;
-  if(id==='p4' && temConteudo && !A.aiResult){
-    analisarConversa(function(){ mostrarTela('p4'); });
+let sel     = new Set();
+let isCombo = false;
+let nome_u  = '';
+let email_u = '';
+let pedidoId = '';
+
+// ── RENDER GRID ──
+const grid = document.getElementById('grid');
+JOGADORES.forEach(j => {
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.id = 'card-' + j.id;
+  d.innerHTML = `
+    <div class="check-icon">✓</div>
+    <div class="card-img" style="background:linear-gradient(160deg,${j.grad})">
+      ${j.emoji}
+      <div class="card-num">${j.num}</div>
+      <div class="card-bandeira">🇧🇷</div>
+      <div class="card-pos">${j.pos}</div>
+    </div>
+    <div class="card-info">
+      <div class="card-nome">${j.nome}</div>
+      <div class="card-preco">R$3,00</div>
+    </div>`;
+  d.onclick = () => toggleCard(j.id);
+  grid.appendChild(d);
+});
+
+// ── TOGGLE ──
+function toggleCard(id) {
+  if (isCombo) { mostrarToast('Deselecione o combo primeiro'); return; }
+  const card = document.getElementById('card-' + id);
+  if (sel.has(id)) { sel.delete(id); card.classList.remove('selected'); }
+  else             { sel.add(id);    card.classList.add('selected'); }
+  atualizarUI();
+}
+
+function selecionarCombo() {
+  isCombo = !isCombo;
+  const badge = document.getElementById('badgeCombo');
+  if (isCombo) {
+    sel = new Set(JOGADORES.map(j => j.id));
+    JOGADORES.forEach(j => document.getElementById('card-' + j.id).classList.add('selected'));
+    badge.classList.add('combo-selected');
+    badge.textContent = '✅ TIME COMPLETO — R$14,99';
+    mostrarToast('🏆 Time completo selecionado!');
   } else {
-    mostrarTela(id);
+    sel.clear();
+    JOGADORES.forEach(j => document.getElementById('card-' + j.id).classList.remove('selected'));
+    badge.classList.remove('combo-selected');
+    badge.textContent = '🏆 LEVE O TIME TODO — R$14,99';
   }
-}
-function mostrarTela(id){
-  document.querySelectorAll('.scr').forEach(function(s){s.classList.add('off')});
-  document.getElementById(id).classList.remove('off');
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(id==='p4')buildResult();
-}
-function analisarConversa(cb){
-  var overlay=document.getElementById('loadingOverlay');
-  overlay.classList.remove('hide');
-
-  // Verifica tamanho da imagem antes de enviar
-  var payload={
-    conversation: A.conversaTexto||null,
-    imagem: A.conversaImagem||null,
-    q1:A.q1,
-    q2:A.q2
-  };
-  var payloadStr=JSON.stringify(payload);
-  var tamanhoMB=(payloadStr.length/1024/1024).toFixed(2);
-  console.log('Payload tamanho:', tamanhoMB+'MB');
-
-  if(parseFloat(tamanhoMB)>4){
-    console.warn('Imagem muito grande:', tamanhoMB+'MB — comprimindo mais');
-    // Recomprime com qualidade menor
-    if(A.conversaImagem){
-      var img=new Image();
-      img.onload=function(){
-        var canvas=document.createElement('canvas');
-        var maxW=900;
-        var scale=Math.min(1,maxW/img.width);
-        canvas.width=img.width*scale;
-        canvas.height=img.height*scale;
-        canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
-        A.conversaImagem=canvas.toDataURL('image/jpeg',0.65);
-        payload.imagem=A.conversaImagem;
-        payloadStr=JSON.stringify(payload);
-        console.log('Recomprimido para:', (payloadStr.length/1024/1024).toFixed(2)+'MB');
-        enviarParaAPI(payload,overlay,cb);
-      };
-      img.src=A.conversaImagem;
-      return;
-    }
-  }
-  enviarParaAPI(payload,overlay,cb);
+  atualizarUI();
 }
 
-function enviarParaAPI(payload,overlay,cb){
-  fetch('/api/analyze',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  })
-  .then(function(r){
-    console.log('Status da API:', r.status);
-    return r.json();
-  })
-  .then(function(data){
-    console.log('Resposta da API:', JSON.stringify(data));
-    if(data && data.frases_matadoras){
-      A.aiResult=data;
-    } else if(data && data.error){
-      console.error('Erro da API:', data.error);
-      A.aiErro=data.error;
-    }
-    overlay.classList.add('hide');
-    cb();
-  })
-  .catch(function(err){
-    console.error('Fetch error:', err);
-    overlay.classList.add('hide');
-    cb();
-  });
-}
-function backToQ2(){
-  document.getElementById('qB2').style.display='flex';
-  document.getElementById('qB2').style.flexDirection='column';
-  document.getElementById('qB1').style.display='none';
-  document.getElementById('qNum').textContent='2';
-  document.getElementById('qPct').textContent='100%';
-  document.getElementById('progFill').style.width='100%';
-  go('p2');
-}
-function selQ1(btn,val){
-  document.querySelectorAll('#qB1 .opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
-  btn.classList.add('sel');btn.querySelector('.chk').textContent='✓';
-  A.q1=val;document.getElementById('bnQ1').classList.add('on');
-}
-function showQ2(){
-  if(!A.q1)return;
-  document.getElementById('qB1').style.display='none';
-  var b2=document.getElementById('qB2');
-  b2.style.display='flex';b2.style.flexDirection='column';
-  document.getElementById('qNum').textContent='2';
-  document.getElementById('qPct').textContent='100%';
-  document.getElementById('progFill').style.width='100%';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function selQ2(btn,val){
-  document.querySelectorAll('#qB2 .opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
-  btn.classList.add('sel');btn.querySelector('.chk').textContent='✓';
-  A.q2=val;document.getElementById('bnQ2').classList.add('on');
-}
-function showManual(){
-  document.getElementById('p3Upload').style.display='none';
-  document.getElementById('p3Manual').style.display='flex';
-  document.getElementById('p3Manual').style.flexDirection='column';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function hideManual(){
-  document.getElementById('p3Manual').style.display='none';
-  document.getElementById('p3Upload').style.display='flex';
-  document.getElementById('p3Upload').style.flexDirection='column';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function pickFile(e){if(e.target.files[0])showPrev(e.target.files[0]);}
-function dropFile(e){
-  e.preventDefault();document.getElementById('upZone').classList.remove('hover');
-  if(e.dataTransfer.files[0])showPrev(e.dataTransfer.files[0]);
-}
-function showPrev(f){
-  var ext=f.name.split('.').pop().toLowerCase();
-  var ic={png:'🖼️',jpg:'🖼️',jpeg:'🖼️',pdf:'📕',txt:'📝'};
-  document.getElementById('prevIco').textContent=ic[ext]||'📄';
-  document.getElementById('prevName').textContent=f.name;
-  document.getElementById('prevBox').classList.add('show');
-  document.getElementById('btnComArq').style.display='block';
-  // Esconde botão até carregar
-  document.getElementById('btnComArq').style.display='none';
+function calcTotal() { return isCombo ? P_COMBO : sel.size * P_UNIT; }
+function fmt(v)      { return 'R$' + v.toFixed(2).replace('.', ','); }
 
-  if(ext==='txt'){
-    var rd=new FileReader();
-    rd.onload=function(ev){
-      A.conversaTexto=ev.target.result;
-      A.conversaImagem=null;
-      document.getElementById('btnComArq').style.display='block';
-    };
-    rd.readAsText(f);
-  } else if(['png','jpg','jpeg'].includes(ext)){
-    var rd2=new FileReader();
-    rd2.onload=function(ev){
-      // Comprime a imagem antes de enviar (max 1200px, qualidade 0.82)
-      var img=new Image();
-      img.onload=function(){
-        var canvas=document.createElement('canvas');
-        var maxW=1200;
-        var scale=Math.min(1, maxW/img.width);
-        canvas.width=img.width*scale;
-        canvas.height=img.height*scale;
-        var ctx=canvas.getContext('2d');
-        ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        A.conversaImagem=canvas.toDataURL('image/jpeg',0.82);
-        A.conversaTexto=null;
-        document.getElementById('btnComArq').style.display='block';
-      };
-      img.src=ev.target.result;
-    };
-    rd2.readAsDataURL(f);
-  }
+function atualizarUI() {
+  const n = sel.size;
+  const txt = isCombo ? 'Time completo (12 craques)' : n === 0 ? '' : n + (n===1?' craque':' craques');
+  document.getElementById('resumoTxt').textContent = txt;
+  document.getElementById('totalTxt').textContent  = (n > 0 || isCombo) ? fmt(calcTotal()) : '';
+  const bar = document.getElementById('bottomBar');
+  (n > 0 || isCombo) ? bar.classList.add('show') : bar.classList.remove('show');
+  const cc = document.getElementById('cartCount');
+  cc.textContent = isCombo ? '★' : n;
+  (n > 0 || isCombo) ? cc.classList.add('show') : cc.classList.remove('show');
 }
-function rmFile(){
-  document.getElementById('prevBox').classList.remove('show');
-  document.getElementById('fileIn').value='';
-  document.getElementById('btnComArq').style.display='none';
-}
-var PRF={
-  chegando_quente:{crown:'🦅',title:'ENTREGADORA',name:'A Entregadora',desc:'Ela já quer — o perigo é você parecer fraco agora. Ela precisa sentir que conquistou algo difícil.',pct:78,sub:'Alta. Um erro agora pode zerar tudo.',traits:[{l:'Interesse',v:85,c:'r'},{l:'Teste',v:70,c:'b'},{l:'Paciência',v:40,c:'t'},{l:'Ego',v:75,c:'r'}],passos:[{n:'01',t:'Desacelere agora',d:'Ela já demonstrou. Quem corre, espanta.'},{n:'02',t:'Crie resistência leve',d:'Discorde de algo pequeno. Mostre que tem opinião.'},{n:'03',t:'Marque, não pergunte',d:'"Quinta você tá livre" — não "o que acha?"'}]},
-  chegando_morno:{crown:'🎯',title:'CALCULISTA',name:'A Calculista',desc:'Ela está te avaliando. Cada ação sua é informação. Ela nota padrões.',pct:54,sub:'Mediana. Depende do seu próximo passo.',traits:[{l:'Interesse',v:45,c:'b'},{l:'Teste',v:88,c:'r'},{l:'Paciência',v:70,c:'t'},{l:'Ego',v:65,c:'b'}],passos:[{n:'01',t:'Pare de perseguir',d:'Todo dia que você aparece, ela some mais.'},{n:'02',t:'Mude o padrão',d:'Suma 5 dias. Quando voltar, o jogo mudou.'},{n:'03',t:'Mostre vida social',d:'Stories de rolê. Prove que tem vida além dela.'}]},
-  chegando_frio:{crown:'🔥',title:'DESAFIADORA',name:'A Desafiadora',desc:'Ela é distante porque ainda não viu motivo pra não ser. Você precisa ser algo novo.',pct:36,sub:'Difícil, mas viável com a jogada exata.',traits:[{l:'Interesse',v:20,c:'r'},{l:'Teste',v:90,c:'r'},{l:'Paciência',v:80,c:'t'},{l:'Ego',v:85,c:'r'}],passos:[{n:'01',t:'Para de chegar direto',d:'Abordagem direta confirma que você é previsível.'},{n:'02',t:'Construa presença',d:'Ela precisa ouvir sobre você antes de você chegar.'},{n:'03',t:'Contato indireto',d:'Reagir no story. Um comentário. Nada mais agora.'}]},
-  chegando_amizade:{crown:'⚠️',title:'CÚMPLICE',name:'A Cúmplice',desc:'Friendzone real. A conexão existe — falta tensão. Ela precisa te ver como homem.',pct:29,sub:'Zona de perigo. Precisa de reset urgente.',traits:[{l:'Conforto',v:90,c:'t'},{l:'Atração',v:15,c:'r'},{l:'Respeito',v:60,c:'b'},{l:'Tensão',v:5,c:'r'}],passos:[{n:'01',t:'Pare de ser confidente',d:'Ouvir problema de ex dela cava você mais fundo.'},{n:'02',t:'Introduza tensão',d:'Discorde. Provoque. Para de concordar com tudo.'},{n:'03',t:'Distância estratégica',d:'Suma 2 semanas. Ela vai sentir — ou não.'}]},
-  ficando_quente:{crown:'👑',title:'APAIXONADA',name:'A Apaixonada',desc:'Ela já caiu. O risco é ser previsível demais e ela perder o tesão por te ter fácil.',pct:82,sub:'Alta. É aqui que os caras mais erram.',traits:[{l:'Atração',v:92,c:'r'},{l:'Segurança',v:75,c:'t'},{l:'Intensidade',v:80,c:'r'},{l:'Ciúme',v:60,c:'b'}],passos:[{n:'01',t:'Mantenha o mistério',d:'Não explique tudo. Deixe perguntas sem resposta.'},{n:'02',t:'Preserve sua vida',d:'Continue com seus planos. Não some neles por ela.'},{n:'03',t:'Escalone a intensidade',d:'Cada encontro tem que ser melhor que o anterior.'}]},
-  ficando_morno:{crown:'⚔️',title:'TESTADORA',name:'A Testadora',desc:'Ficou, mas está avaliando se você é fraco. Cada teste que você passa aumenta a atração.',pct:61,sub:'Boa, desde que não passe nos testes errados.',traits:[{l:'Atração',v:65,c:'r'},{l:'Teste',v:95,c:'r'},{l:'Interesse',v:60,c:'b'},{l:'Paciência',v:35,c:'t'}],passos:[{n:'01',t:'Não justifique nada',d:'Ela some e volta. Não pergunte por quê.'},{n:'02',t:'Reaja pouco',d:'Ela espera reação emocional. Dê o contrário: calma.'},{n:'03',t:'Seja imprevisível',d:'Quebre o padrão. Apareça diferente.'}]},
-  ficando_frio:{crown:'🧊',title:'ARREPENDIDA',name:'A Arrependida',desc:'Algo aconteceu pra ela refriar. Pode ser erro seu, pode ser teste. Descobre antes de agir.',pct:41,sub:'Incerta. O próximo passo define tudo.',traits:[{l:'Interesse',v:30,c:'r'},{l:'Confusão',v:75,c:'b'},{l:'Distância',v:80,c:'r'},{l:'Respeito',v:45,c:'b'}],passos:[{n:'01',t:'Para tudo por 7 dias',d:'Qualquer mensagem agora parece desespero.'},{n:'02',t:'Avalie o que mudou',d:'O que aconteceu antes do esfriamento?'},{n:'03',t:'Contato cirúrgico',d:'Após 7 dias: uma mensagem engraçada, sem expectativa.'}]},
-  ficando_amizade:{crown:'🚪',title:'ESCAPISTA',name:'A Escapista',desc:'Ficou, mas está recuando pro lado amigo. Criando distância pra não se comprometer.',pct:33,sub:'Complicado. Precisa de ação não convencional.',traits:[{l:'Atração',v:40,c:'b'},{l:'Medo',v:70,c:'r'},{l:'Conforto',v:85,c:'t'},{l:'Tensão',v:20,c:'r'}],passos:[{n:'01',t:'Nomeie a situação',d:'"Tô sentindo que você tá evitando o assunto."'},{n:'02',t:'Declare sem implorar',d:'"Gosto de você, mas não vou ficar nessa zona."'},{n:'03',t:'Prazo interno',d:'2 semanas sem mudança = corta e segue em frente.'}]}
-};
-function buildResult(){
-  // Arquétipo pelo quiz
-  var k=(A.q1||'chegando')+'_'+(A.q2||'morno');
-  var p=PRF[k]||PRF['chegando_morno'];
 
-  // Sobrescreve arquétipo se a IA identificou
-  if(A.aiResult && A.aiResult.arquetipo){
-    var aiKey=Object.keys(PRF).find(function(chave){
-      return PRF[chave].title===A.aiResult.arquetipo;
+// ── CARRINHO ──
+function abrirCarrinho() {
+  if (!sel.size && !isCombo) { mostrarToast('Toque em um craque!'); return; }
+  let html = '';
+  if (isCombo) {
+    html = `<div class="item-cart">
+      <div class="item-cart-emoji">🏆</div>
+      <div class="item-cart-info">
+        <div class="item-cart-nome">Combo Completo — 12 Craques</div>
+        <div class="item-cart-preco">${fmt(P_COMBO)}</div>
+      </div></div>`;
+  } else {
+    JOGADORES.filter(j => sel.has(j.id)).forEach(j => {
+      html += `<div class="item-cart">
+        <div class="item-cart-emoji">${j.emoji}</div>
+        <div class="item-cart-info">
+          <div class="item-cart-nome">${j.nome} • #${j.num}</div>
+          <div class="item-cart-preco">${fmt(P_UNIT)}</div>
+        </div>
+        <button class="item-cart-rm" onclick="removerItem(${j.id})">✕</button>
+      </div>`;
     });
-    if(aiKey) p=PRF[aiKey];
   }
+  document.getElementById('listaCarrinho').innerHTML = html;
+  document.getElementById('totalModal').textContent = fmt(calcTotal());
+  document.getElementById('overlayCarrinho').classList.add('show');
+}
 
-  // Hero
-  document.getElementById('rCrown').textContent=p.crown;
-  document.getElementById('rTitle').textContent=p.title;
+function removerItem(id) {
+  sel.delete(id);
+  document.getElementById('card-'+id).classList.remove('selected');
+  atualizarUI();
+  if (!sel.size) fecharOverlay('overlayCarrinho');
+  else abrirCarrinho();
+}
 
-  // Diagnóstico
-  var diagCard=document.getElementById('diagCard');
-  if(A.aiResult && A.aiResult.diagnostico){
-    document.getElementById('diagTxt').textContent=A.aiResult.diagnostico;
-    diagCard.style.cssText='display:flex;flex-direction:column';
+// ── CHECKOUT ──
+function irParaCheckout() {
+  if (!sel.size && !isCombo) { mostrarToast('Selecione um craque!'); return; }
+  let linhas = '';
+  if (isCombo) {
+    linhas = `<div class="resumo-linha"><span>🏆 Combo Completo</span><span>${fmt(P_COMBO)}</span></div>`;
   } else {
-    diagCard.style.display='none';
-  }
-
-  // Frases matadoras
-  var mataCard=document.getElementById('mataCard');
-  var mataLista=document.getElementById('mataLista');
-  var erroCard=document.getElementById('erroCard');
-
-  if(A.aiResult && A.aiResult.frases_matadoras && A.aiResult.frases_matadoras.length){
-    mataLista.innerHTML='';
-    A.aiResult.frases_matadoras.forEach(function(fm,i){
-      var item=document.createElement('div');
-      item.className='mata-item';
-      var wppUrl='https://wa.me/?text='+encodeURIComponent(fm.frase);
-      item.innerHTML=
-        '<div class="mata-ctx">'+(i+1)+'. '+escapeHtml(fm.contexto)+'</div>'+
-        '<div class="mata-bubble">'+escapeHtml(fm.frase)+'</div>'+
-        '<a class="btn-wpp" href="'+wppUrl+'" target="_blank" rel="noopener">📲 Enviar no WhatsApp</a>';
-      mataLista.appendChild(item);
+    JOGADORES.filter(j => sel.has(j.id)).forEach(j => {
+      linhas += `<div class="resumo-linha"><span>${j.emoji} ${j.nome}</span><span>${fmt(P_UNIT)}</span></div>`;
     });
-    mataCard.style.cssText='display:flex;flex-direction:column';
-    erroCard.style.display='none';
-  } else if(A.conversaImagem || A.conversaTexto){
-    mataCard.style.display='none';
-    document.getElementById('erroTxt').textContent=
-      A.aiErro || 'Não conseguimos ler a imagem. Tente um print com o texto mais legível.';
-    erroCard.style.cssText='display:flex;flex-direction:column';
-  } else {
-    // Sem conversa — nunca chegou aqui normalmente
-    mataCard.style.display='none';
-    erroCard.style.display='none';
   }
-}
-function escapeHtml(t){
-  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-/* ── GURU CHAT ── */
-var guruMessages=[];
-var guruContexto='';
-
-function buildGuruContexto(){
-  var ctx='';
-  if(A.q1) ctx+='Situação: '+(A.q1==='chegando'?'Quer conquistar':'Já ficou com ela')+'. ';
-  if(A.q2) ctx+='Comportamento dela: '+A.q2+'. ';
-  if(A.aiResult){
-    ctx+='Arquétipo: '+A.aiResult.arquetipo+'. ';
-    ctx+='Chances estimadas: '+A.aiResult.pct+'%. ';
-    if(A.aiResult.frases_ruins){
-      ctx+='Frases ruins identificadas: ';
-      A.aiResult.frases_ruins.forEach(function(f,i){
-        ctx+=(i+1)+') "'+f.frase+'" — problema: '+f.problema+'. ';
-      });
-    }
-  }
-  if(A.conversaTexto && A.conversaTexto.length>20){
-    ctx+='\n\nTrecho da conversa analisada:\n'+A.conversaTexto.substring(0,800);
-  }
-  return ctx;
+  document.getElementById('resumoCheckout').innerHTML =
+    linhas + `<div class="resumo-total"><span>Total</span><span>${fmt(calcTotal())}</span></div>`;
+  mostrarEtapa('etapaDados');
+  document.getElementById('overlayCheckout').classList.add('show');
 }
 
-function enviarMensagem(){
-  var inp=document.getElementById('chatInput');
-  var txt=inp.value.trim();
-  if(!txt)return;
-  inp.value='';inp.style.height='auto';
-
-  adicionarMsg('user',txt);
-  guruMessages.push({role:'user',content:txt});
-  mostrarTyping(true);
-
-  if(!guruContexto) guruContexto=buildGuruContexto();
-
-  fetch('/api/guru',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({messages:guruMessages,contexto:guruContexto})
-  })
-  .then(function(r){return r.json();})
-  .then(function(data){
-    mostrarTyping(false);
-    var reply=data.reply||'Desculpa, tive um problema. Tente novamente.';
-    guruMessages.push({role:'assistant',content:reply});
-    adicionarMsg('guru',reply);
-  })
-  .catch(function(){
-    mostrarTyping(false);
-    adicionarMsg('guru','Conexão falhou. Tente novamente.');
-  });
+function irParaPix() {
+  nome_u  = document.getElementById('nomeInput').value.trim();
+  email_u = document.getElementById('emailInput').value.trim();
+  if (!nome_u)              { mostrarToast('Informe seu nome'); return; }
+  if (!/\S+@\S+\.\S+/.test(email_u)) { mostrarToast('E-mail inválido'); return; }
+  document.getElementById('pixValor').textContent = fmt(calcTotal());
+  mostrarEtapa('etapaPix');
 }
 
-function perguntarLei(lei){
-  document.getElementById('chatInput').value='Me explica a '+lei+' e como aplicar na minha situação.';
-  enviarMensagem();
-  // Esconde pills após usar
-  document.getElementById('leisPills').style.display='none';
+function voltarDados() { mostrarEtapa('etapaDados'); }
+
+function confirmarPix() {
+  pedidoId = gerarId();
+  salvarPedido({ id:pedidoId, nome:nome_u, email:email_u,
+    itens: isCombo ? ['COMBO'] : JOGADORES.filter(j=>sel.has(j.id)).map(j=>j.nome),
+    total: calcTotal(), ts: Date.now(), status:'pago' });
+  document.getElementById('sucessoSub').textContent =
+    `PDF enviado para ${email_u}. Baixe, imprima e monte!`;
+  mostrarEtapa('etapaSucesso');
 }
 
-function adicionarMsg(tipo,txt){
-  var area=document.getElementById('chatArea');
-  var typing=document.getElementById('guruTyping');
-  var div=document.createElement('div');
-  div.className='msg '+tipo;
-  var hora=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  div.innerHTML='<div class="msg-bubble">'+txt.replace(/\n/g,'<br>')+'</div><div class="msg-hora">'+hora+'</div>';
-  area.insertBefore(div,typing);
-  area.scrollTop=area.scrollHeight;
+function baixarPDF() {
+  mostrarToast('📄 Gerando seu PDF...');
+  // Aqui você conecta ao backend real para gerar/entregar o PDF
 }
 
-function mostrarTyping(show){
-  var t=document.getElementById('guruTyping');
-  t.style.display=show?'flex':'none';
-  if(show) document.getElementById('chatArea').scrollTop=9999;
+function reiniciar() {
+  sel.clear(); isCombo = false;
+  JOGADORES.forEach(j => document.getElementById('card-'+j.id).classList.remove('selected'));
+  document.getElementById('badgeCombo').classList.remove('combo-selected');
+  document.getElementById('badgeCombo').textContent = '🏆 LEVE O TIME TODO — R$14,99';
+  document.getElementById('nomeInput').value = '';
+  document.getElementById('emailInput').value = '';
+  fecharOverlay('overlayCheckout');
+  atualizarUI();
 }
 
-function autoResize(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,100)+'px';
+function mostrarEtapa(id) {
+  ['etapaDados','etapaPix','etapaSucesso'].forEach(e =>
+    document.getElementById(e).style.display = e===id ? 'block' : 'none');
 }
 
-function restart(){
-  A={q1:null,q2:null,conversaTexto:null,conversaImagem:null,aiResult:null};
-  guruMessages=[];guruContexto='';
-  document.getElementById('qB1').style.display='flex';
-  document.getElementById('qB2').style.display='none';
-  document.getElementById('qNum').textContent='1';
-  document.getElementById('qPct').textContent='50%';
-  document.getElementById('progFill').style.width='50%';
-  document.getElementById('bnQ1').classList.remove('on');
-  document.getElementById('bnQ2').classList.remove('on');
-  document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel');o.querySelector('.chk').textContent='';});
-  rmFile();go('p1');
+// ── PIX ──
+function copiarPix() {
+  navigator.clipboard?.writeText(PIX_KEY).catch(()=>{});
+  mostrarToast('✅ Chave copiada!');
+}
+
+// ── HELPERS ──
+function fecharOverlay(id, e) {
+  if (!e || e.target.id === id)
+    document.getElementById(id).classList.remove('show');
+}
+
+function mostrarToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function gerarId() {
+  return 'CC' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,5).toUpperCase();
+}
+
+// ── PERSISTÊNCIA (localStorage para o admin) ──
+function salvarPedido(p) {
+  try {
+    const k = 'cc_pedidos';
+    const lista = JSON.parse(localStorage.getItem(k) || '[]');
+    lista.unshift(p);
+    localStorage.setItem(k, JSON.stringify(lista.slice(0,500))); // max 500
+  } catch(e) {}
 }
 </script>
 </body>
