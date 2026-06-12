@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel · Copa Craft</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --verde:#009C3B;--verde2:#007a2e;--amarelo:#FFDF00;
+  --azul:#002776;--branco:#fff;--cinza:#F0F2F5;--cinza2:#E4E7ED;
+  --vermelho:#D32F2F;--laranja:#E65100;--roxo:#6A1B9A;
+  --sombra:rgba(0,39,118,0.10);
+}
+body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);min-height:100vh}
+
+/* ════ LOGIN ════ */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--branco);border-radius:22px;padding:38px 28px;width:100%;max-width:380px;box-shadow:0 10px 40px var(--sombra);text-align:center}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--verde);margin-bottom:2px}
+.login-sub{font-size:11px;font-weight:700;color:#bbb;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:30px}
+.lbl{font-size:11px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;display:block;text-align:left;margin:14px 0 5px}
+.inp{width:100%;padding:13px 14px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--azul);outline:none;transition:border-color .2s;background:#fafafa}
+.inp:focus{border-color:var(--verde);background:#fff}
+.btn-login{margin-top:20px;background:var(--verde);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;border:none;border-radius:12px;padding:14px;width:100%;cursor:pointer}
+.login-erro{margin-top:12px;font-size:13px;font-weight:700;color:var(--vermelho);min-height:18px}
+.login-aviso{margin-top:14px;font-size:11px;color:#ccc;font-weight:700}
+
+/* ════ LAYOUT PAINEL ════ */
+#painelScreen{display:none}
+.topo{background:var(--azul);padding:0 20px;display:flex;align-items:stretch;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.22)}
+.topo-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--amarelo);letter-spacing:1px;padding:14px 20px 14px 0;border-right:1px solid rgba(255,255,255,.12);margin-right:16px;white-space:nowrap}
+.topo-logo small{font-family:'Nunito',sans-serif;font-size:10px;color:rgba(255,255,255,.45);letter-spacing:2px;display:block;font-weight:700;text-transform:uppercase}
+.tabs{display:flex;gap:2px;align-items:center;flex:1;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:0 16px;height:52px;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
+.tab:hover{color:rgba(255,255,255,.8)}
+.tab.ativo{color:var(--amarelo);border-bottom-color:var(--amarelo)}
+.btn-sair{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.6);font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.2s}
+.btn-sair:hover{background:rgba(255,255,255,.2)}
+
+.painel-body{padding:20px;max-width:1100px;margin:0 auto}
+.aba{display:none}.aba.ativa{display:block}
+
+/* ════ MÉTRICAS ════ */
+.metricas{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+@media(min-width:600px){.metricas{grid-template-columns:repeat(4,1fr)}}
+.met{background:var(--branco);border-radius:16px;padding:16px 14px;box-shadow:0 2px 8px var(--sombra)}
+.met-icon{font-size:22px;margin-bottom:6px}
+.met-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--azul);line-height:1;margin-bottom:2px}
+.met-lbl{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.5px}
+
+/* ════ SEÇÃO ════ */
+.sec-topo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.sec-titulo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--azul);letter-spacing:.5px}
+.spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:900;border:none;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn:hover{opacity:.85}
+.btn:active{transform:scale(.97)}
+.btn-verde{background:var(--verde);color:var(--amarelo)}
+.btn-azul{background:var(--azul);color:var(--branco)}
+.btn-vermelho{background:var(--vermelho);color:var(--branco)}
+.btn-cinza{background:#ddd;color:#555}
+.btn-roxo{background:var(--roxo);color:var(--branco)}
+
+/* FILTRO */
+.filtro-inp{padding:9px 14px;border:2px solid var(--cinza2);border-radius:10px;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--azul);outline:none;transition:.2s;min-width:200px}
+.filtro-inp:focus{border-color:var(--verde)}
+
+/* ════ TABELA PEDIDOS ════ */
+.tabela-wrap{background:var(--branco);border-radius:16px;box-shadow:0 2px 8px var(--sombra);overflow:hidden}
+.t-head,.t-row{display:grid;grid-template-columns:110px 1fr 150px 70px 90px 90px;padding:11px 16px;align-items:center;gap:6px}
+.t-head{background:#F8F9FC;border-bottom:2px solid #eee;font-size:10px;font-weight:900;color:#aaa;text-transform:uppercase;letter-spacing:.5px}
+.t-row{border-bottom:1px solid #F5F5F5;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.t-row:hover{background:#FAFBFF}
+.t-row:last-child{border-bottom:none}
+.t-id{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--azul)}
+.t-nome{color:var(--azul)}
+.t-contato{color:#666;font-size:11px;line-height:1.5}
+.t-total{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--verde)}
+.t-data{color:#bbb;font-size:11px}
+.badge{font-size:10px;font-weight:900;padding:4px 10px;border-radius:100px}
+.badge-pago{background:#E8F5E9;color:var(--verde)}
+.badge-ag{background:#FFF3E0;color:var(--laranja)}
+.badge-canc{background:#FFEBEE;color:var(--vermelho)}
+.vazio{text-align:center;padding:48px 20px;color:#ccc;font-size:14px;font-weight:700}
+.vazio-ico{font-size:40px;margin-bottom:10px;display:block}
+@media(max-width:640px){
+  .t-head,.t-row{grid-template-columns:1fr 1fr 60px 80px}
+  .t-head .t-id,.t-head .t-contato,.t-row .t-id,.t-row .t-contato{display:none}
+}
+
+/* ════ GRID JOGADORES ════ */
+.jogadores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.j-card{background:var(--branco);border-radius:16px;box-shadow:0 2px 8px var(--sombra);overflow:hidden;position:relative;transition:box-shadow .2s}
+.j-card:hover{box-shadow:0 4px 16px rgba(0,39,118,.16)}
+.j-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#f5f5f5;position:relative}
+.j-img-inner{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:50px;background:linear-gradient(160deg,#e8f5e9,#c8e6c9);position:relative;overflow:hidden}
+.j-img-inner img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.j-num{position:absolute;bottom:4px;left:7px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:rgba(0,39,118,.28)}
+.j-pos{position:absolute;bottom:5px;right:6px;font-size:8px;font-weight:900;color:rgba(0,39,118,.35);text-transform:uppercase;letter-spacing:.5px}
+.j-info{padding:8px 10px 10px}
+.j-nome{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--azul);letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.j-preco{font-size:11px;font-weight:900;color:var(--verde);margin-top:1px}
+.j-acoes{display:flex;gap:5px;margin-top:8px}
+.j-btn{flex:1;padding:6px;border:none;border-radius:8px;font-size:11px;font-weight:900;cursor:pointer;transition:.15s}
+.j-btn:hover{opacity:.85}
+.j-btn-edit{background:#EDE7F6;color:var(--roxo)}
+.j-btn-del{background:#FFEBEE;color:var(--vermelho)}
+.j-badge-pdf{position:absolute;top:6px;left:6px;background:var(--amarelo);color:var(--azul);font-size:9px;font-weight:900;padding:2px 6px;border-radius:4px;letter-spacing:.3px}
+.j-badge-nopdf{position:absolute;top:6px;left:6px;background:#eee;color:#aaa;font-size:9px;font-weight:900;padding:2px 6px;border-radius:4px;letter-spacing:.3px}
+.adicionar-card{background:var(--branco);border-radius:16px;box-shadow:0 2px 8px var(--sombra);border:2px dashed var(--cinza2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;min-height:200px;transition:.2s;color:#ccc;font-weight:700;font-size:13px}
+.adicionar-card:hover{border-color:var(--verde);color:var(--verde);background:#F9FFF9}
+.adicionar-card span{font-size:32px}
+
+/* ════ MODAL ════ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:400;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.overlay.show{display:flex}
+.modal{background:var(--branco);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;box-shadow:0 16px 60px rgba(0,0,0,.22)}
+.modal-titulo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--azul);margin-bottom:18px}
+.form-group{margin-bottom:14px}
+.form-lbl{font-size:11px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px}
+.form-inp{width:100%;padding:12px 14px;border:2px solid var(--cinza2);border-radius:12px;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--azul);outline:none;transition:.2s}
+.form-inp:focus{border-color:var(--verde)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.img-upload-area{border:2px dashed var(--cinza2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.img-upload-area:hover{border-color:var(--verde);background:#F9FFF9}
+.img-upload-area img{width:100%;max-height:140px;object-fit:contain;border-radius:8px;margin-bottom:8px}
+.img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-preview-txt{font-size:12px;font-weight:700;color:#bbb}
+.pdf-upload-area{border:2px dashed #E3F2FD;border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;background:#F8FDFF}
+.pdf-upload-area:hover{border-color:#1565C0;background:#EEF6FF}
+.pdf-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pdf-status{font-size:12px;font-weight:700;color:#888;margin-top:4px}
+.pdf-status.ok{color:var(--verde)}
+.modal-acoes{display:flex;gap:10px;margin-top:20px}
+
+/* DETALHE PEDIDO */
+.det-linha{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.det-linha:last-child{border-bottom:none}
+.det-key{color:#aaa;font-weight:700}
+.det-val{color:var(--azul);font-weight:900;text-align:right;max-width:60%}
+.det-itens{background:#F8F9FC;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;font-weight:700;color:var(--azul);line-height:1.8}
+.det-acoes{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--azul);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:16px;padding:10px 22px;border-radius:100px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* CONFIRM INLINE */
+.confirm-box{background:#FFF3E0;border:2px solid var(--laranja);border-radius:12px;padding:14px;margin-top:12px;font-size:13px;font-weight:700;color:var(--laranja)}
+.confirm-box-acoes{display:flex;gap:8px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- ════════ LOGIN ════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">⚽ Copa Craft</div>
+    <div class="login-sub">Área Restrita</div>
+    <label class="lbl">Usuário</label>
+    <input class="inp" id="lu" type="text" placeholder="admin" autocomplete="username" onkeydown="if(event.key==='Enter')login()">
+    <label class="lbl">Senha</label>
+    <input class="inp" id="lp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">ENTRAR →</button>
+    <div class="login-erro" id="loginErro"></div>
+    <div class="login-aviso">🔒 Acesso monitorado · Área restrita</div>
+  </div>
+</div>
+
+<!-- ════════ PAINEL ════════ -->
+<div id="painelScreen">
+
+  <!-- TOPO -->
+  <div class="topo">
+    <div class="topo-logo">Copa Craft<small>Painel ADM</small></div>
+    <div class="tabs">
+      <div class="tab ativo" onclick="irAba('pedidos',this)">📦 Pedidos</div>
+      <div class="tab" onclick="irAba('jogadores',this)">⚽ Craques</div>
+    </div>
+    <button class="btn-sair" onclick="sair()">← Sair</button>
+  </div>
+
+  <div class="painel-body">
+
+    <!-- ── ABA PEDIDOS ── -->
+    <div class="aba ativa" id="aba-pedidos">
+
+      <!-- Métricas -->
+      <div class="metricas">
+        <div class="met"><div class="met-icon">📦</div><div class="met-val" id="mPed">0</div><div class="met-lbl">Pedidos</div></div>
+        <div class="met"><div class="met-icon">💰</div><div class="met-val" id="mRec">R$0</div><div class="met-lbl">Receita</div></div>
+        <div class="met"><div class="met-icon">✅</div><div class="met-val" id="mPag">0</div><div class="met-lbl">Pagos</div></div>
+        <div class="met"><div class="met-icon">⏳</div><div class="met-val" id="mAg">0</div><div class="met-lbl">Aguardando</div></div>
+      </div>
+
+      <!-- Ações -->
+      <div class="sec-topo">
+        <input class="filtro-inp" id="filtroP" placeholder="🔍 Nome, e-mail, telefone ou ID..." oninput="renderPedidos()">
+        <div class="spacer"></div>
+        <button class="btn btn-azul" onclick="carregarTudo()">↺ Atualizar</button>
+        <button class="btn btn-verde" onclick="exportarCSV()">⬇ CSV</button>
+      </div>
+
+      <!-- Tabela -->
+      <div class="tabela-wrap">
+        <div class="t-head">
+          <div class="t-id">ID</div>
+          <div class="t-nome">Cliente</div>
+          <div class="t-contato">Contato</div>
+          <div class="t-total">Total</div>
+          <div class="t-data">Data</div>
+          <div>Status</div>
+        </div>
+        <div id="tabelaPedidos"></div>
+      </div>
+    </div>
+
+    <!-- ── ABA CRAQUES ── -->
+    <div class="aba" id="aba-jogadores">
+      <div class="sec-topo">
+        <div class="sec-titulo">Gerenciar Craques</div>
+        <div class="spacer"></div>
+        <button class="btn btn-verde" onclick="abrirModalJogador()">+ Adicionar Craque</button>
+      </div>
+      <div class="jogadores-grid" id="jogadoresGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════ MODAL DETALHE PEDIDO ════ -->
+<div class="overlay" id="ovPedido" onclick="fecharOverlay('ovPedido',event)">
+  <div class="modal">
+    <div class="modal-titulo">📋 Pedido <span id="detId"></span></div>
+    <div id="detConteudo"></div>
+    <div class="det-acoes" id="detAcoes"></div>
+  </div>
+</div>
+
+<!-- ════ MODAL JOGADOR ════ -->
+<div class="overlay" id="ovJogador" onclick="fecharOverlay('ovJogador',event)">
+  <div class="modal">
+    <div class="modal-titulo" id="jModalTitulo">➕ Novo Craque</div>
+
+    <!-- Foto -->
+    <div class="form-group">
+      <label class="form-lbl">Foto do Craque</label>
+      <div class="img-upload-area" id="imgUploadArea" onclick="document.getElementById('imgFileInput').click()">
+        <img id="imgPreview" style="display:none">
+        <div id="imgPlaceholder">
+          <div style="font-size:32px;margin-bottom:6px">🖼️</div>
+          <div class="img-preview-txt">Clique para enviar foto<br><small>PNG, JPG · Recomendado 400×400px</small></div>
+        </div>
+        <input type="file" id="imgFileInput" accept="image/*" onchange="handleImgUpload(event)" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-lbl">Nome</label>
+        <input class="form-inp" id="jNome" type="text" placeholder="Ex: Vini Jr" maxlength="30">
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Nº Camisa</label>
+        <input class="form-inp" id="jNum" type="number" placeholder="7" min="1" max="99">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-lbl">Posição</label>
+        <select class="form-inp" id="jPos">
+          <option>Atacante</option>
+          <option>Meia</option>
+          <option>Volante</option>
+          <option>Zagueiro</option>
+          <option>Lateral</option>
+          <option>Goleiro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-lbl">Preço (R$)</label>
+        <input class="form-inp" id="jPreco" type="number" placeholder="3.00" step="0.01" min="0.01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-lbl">Emoji (opcional)</label>
+      <input class="form-inp" id="jEmoji" type="text" placeholder="🟡" maxlength="4">
+    </div>
+
+    <!-- PDF -->
+    <div class="form-group">
+      <label class="form-lbl">PDF para Download</label>
+      <div class="pdf-upload-area" onclick="document.getElementById('pdfFileInput').click()">
+        <div style="font-size:28px;margin-bottom:6px">📄</div>
+        <div style="font-size:12px;font-weight:700;color:#666">Clique para enviar o PDF deste craque</div>
+        <div class="pdf-status" id="pdfStatus">Nenhum PDF enviado</div>
+        <input type="file" id="pdfFileInput" accept=".pdf" onchange="handlePdfUpload(event)">
+      </div>
+    </div>
+
+    <div class="modal-acoes">
+      <button class="btn btn-verde" style="flex:1" onclick="salvarJogador()">SALVAR CRAQUE</button>
+      <button class="btn btn-cinza" onclick="fecharOverlay('ovJogador')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════ AUTH ════
+const CREDS = { user:'admin', passHash:'a3b5c2d1e4f6a8b9c0d2e3f5a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6' };
+const RL_KEY='_ccrl';
+let _tok=null;
+
+function rlGet(){try{return JSON.parse(sessionStorage.getItem(RL_KEY)||'{"n":0,"t":0}')}catch(e){return{n:0,t:0}}}
+function rlSet(v){try{sessionStorage.setItem(RL_KEY,JSON.stringify(v))}catch(e){}}
+
+async function sha256(s){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function login(){
+  const rl=rlGet();
+  if(rl.n>=5&&(Date.now()-rl.t)<15*60*1000){
+    document.getElementById('loginErro').textContent='🔒 Bloqueado por 15 min.';return;
+  }
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  if(!u||!p){document.getElementById('loginErro').textContent='Preencha todos os campos.';return;}
+  const h=await sha256(p);
+  if(u===CREDS.user&&h===CREDS.passHash){
+    rlSet({n:0,t:0});
+    _tok=await sha256(Date.now()+Math.random().toString());
+    sessionStorage.setItem('_ccs',_tok);
+    abrirPainel();
+  } else {
+    const novo={n:rl.n+1,t:Date.now()};rlSet(novo);
+    const r=Math.max(0,5-novo.n);
+    document.getElementById('loginErro').textContent=r>0?`Credenciais inválidas. ${r} tentativas restantes.`:'🔒 Bloqueado por 15 min.';
+    document.getElementById('lp').value='';
+  }
+}
+
+function sair(){
+  _tok=null;sessionStorage.removeItem('_ccs');
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('painelScreen').style.display='none';
+  document.getElementById('lp').value='';
+  document.getElementById('loginErro').textContent='';
+}
+
+function abrirPainel(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('painelScreen').style.display='block';
+  carregarTudo();
+}
+
+// ════ DADOS ════
+let pedidos=[];
+let jogadores=[];
+let editandoJId=null;
+let imgBase64=null;
+let pdfBase64=null;
+let pdfNome=null;
+
+const JOGADORES_DEFAULT=[
+  {id:1,nome:'Vini Jr',emoji:'🟡',num:7,pos:'Atacante',preco:3,img:null,pdf:null,pdfNome:null,grad:'#FFFDE7,#FFF9C4'},
+  {id:2,nome:'Rodrygo',emoji:'🟢',num:11,pos:'Atacante',preco:3,img:null,pdf:null,pdfNome:null,grad:'#E8F5E9,#C8E6C9'},
+  {id:3,nome:'Neymar',emoji:'⭐',num:10,pos:'Atacante',preco:3,img:null,pdf:null,pdfNome:null,grad:'#F3E5F5,#E1BEE7'},
+  {id:4,nome:'Raphinha',emoji:'🔴',num:22,pos:'Atacante',preco:3,img:null,pdf:null,pdfNome:null,grad:'#FCE4EC,#F8BBD0'},
+  {id:5,nome:'Endrick',emoji:'🔵',num:9,pos:'Atacante',preco:3,img:null,pdf:null,pdfNome:null,grad:'#E3F2FD,#BBDEFB'},
+  {id:6,nome:'Paquetá',emoji:'🟣',num:8,pos:'Meia',preco:3,img:null,pdf:null,pdfNome:null,grad:'#EDE7F6,#D1C4E9'},
+  {id:7,nome:'Casemiro',emoji:'🟤',num:5,pos:'Volante',preco:3,img:null,pdf:null,pdfNome:null,grad:'#EFEBE9,#D7CCC8'},
+  {id:8,nome:'Bruno G.',emoji:'🟠',num:17,pos:'Meia',preco:3,img:null,pdf:null,pdfNome:null,grad:'#FFF3E0,#FFE0B2'},
+  {id:9,nome:'Marquinhos',emoji:'🔷',num:4,pos:'Zagueiro',preco:3,img:null,pdf:null,pdfNome:null,grad:'#E1F5FE,#B3E5FC'},
+  {id:10,nome:'Militão',emoji:'🔶',num:3,pos:'Zagueiro',preco:3,img:null,pdf:null,pdfNome:null,grad:'#FBE9E7,#FFCCBC'},
+  {id:11,nome:'Danilo',emoji:'🟦',num:2,pos:'Lateral',preco:3,img:null,pdf:null,pdfNome:null,grad:'#E8EAF6,#C5CAE9'},
+  {id:12,nome:'Alisson',emoji:'🧤',num:1,pos:'Goleiro',preco:3,img:null,pdf:null,pdfNome:null,grad:'#F1F8E9,#DCEDC8'},
+];
+
+function carregarTudo(){
+  try{pedidos=JSON.parse(localStorage.getItem('cc_pedidos')||'[]')}catch(e){pedidos=[]}
+  try{
+    const j=localStorage.getItem('cc_jogadores');
+    jogadores=j?JSON.parse(j):JSON.parse(JSON.stringify(JOGADORES_DEFAULT));
+  }catch(e){jogadores=JSON.parse(JSON.stringify(JOGADORES_DEFAULT))}
+  atualizarMetricas();
+  renderPedidos();
+  renderJogadores();
+}
+
+function salvarJogadoresLS(){
+  // Salva sem as imagens grandes (só referência)
+  try{localStorage.setItem('cc_jogadores',JSON.stringify(jogadores))}catch(e){
+    toast('⚠️ Storage cheio! Imagens muito grandes.');
+  }
+}
+
+// ════ MÉTRICAS ════
+function atualizarMetricas(){
+  const pagos=pedidos.filter(p=>p.status==='pago');
+  const ag=pedidos.filter(p=>p.status!=='pago'&&p.status!=='cancelado');
+  const rec=pagos.reduce((s,p)=>s+(p.total||0),0);
+  document.getElementById('mPed').textContent=pedidos.length;
+  document.getElementById('mRec').textContent='R$'+rec.toFixed(2).replace('.',',');
+  document.getElementById('mPag').textContent=pagos.length;
+  document.getElementById('mAg').textContent=ag.length;
+}
+
+// ════ TABELA PEDIDOS ════
+function renderPedidos(){
+  const q=(document.getElementById('filtroP').value||'').toLowerCase();
+  const lista=q?pedidos.filter(p=>
+    (p.nome||'').toLowerCase().includes(q)||
+    (p.email||'').toLowerCase().includes(q)||
+    (p.telefone||'').toLowerCase().includes(q)||
+    (p.id||'').toLowerCase().includes(q)
+  ):pedidos;
+
+  const body=document.getElementById('tabelaPedidos');
+  if(!lista.length){
+    body.innerHTML=`<div class="vazio"><span class="vazio-ico">📭</span>${q?'Nenhum resultado':'Nenhum pedido ainda'}</div>`;
+    return;
+  }
+  body.innerHTML=lista.map(p=>{
+    const dt=p.ts?new Date(p.ts).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+    const badge=p.status==='pago'?'<span class="badge badge-pago">Pago</span>':p.status==='cancelado'?'<span class="badge badge-canc">Cancelado</span>':'<span class="badge badge-ag">Aguardando</span>';
+    const tot=p.total?'R$'+(p.total).toFixed(2).replace('.',','):'—';
+    return `<div class="t-row" onclick="abrirPedido('${esc(p.id||'')}')">
+      <div class="t-id">${esc(p.id||'—')}</div>
+      <div class="t-nome">${esc(p.nome||'—')}</div>
+      <div class="t-contato">${esc(p.email||'—')}<br>${esc(p.telefone||'—')}</div>
+      <div class="t-total">${tot}</div>
+      <div class="t-data">${dt}</div>
+      <div>${badge}</div>
+    </div>`;
+  }).join('');
+}
+
+// ════ DETALHE PEDIDO ════
+let pedidoAtual=null;
+function abrirPedido(id){
+  pedidoAtual=pedidos.find(p=>p.id===id);
+  if(!pedidoAtual)return;
+  const p=pedidoAtual;
+  const dt=p.ts?new Date(p.ts).toLocaleString('pt-BR'):'—';
+  const itens=Array.isArray(p.itens)?p.itens.join(' · '):'—';
+  const tot=p.total?'R$'+(p.total).toFixed(2).replace('.',','):'—';
+  document.getElementById('detId').textContent=p.id||'';
+  document.getElementById('detConteudo').innerHTML=`
+    <div class="det-linha"><span class="det-key">Nome</span><span class="det-val">${esc(p.nome||'—')}</span></div>
+    <div class="det-linha"><span class="det-key">E-mail</span><span class="det-val">${esc(p.email||'—')}</span></div>
+    <div class="det-linha"><span class="det-key">Telefone</span><span class="det-val">${esc(p.telefone||'Não informado')}</span></div>
+    <div class="det-linha"><span class="det-key">Total</span><span class="det-val">${tot}</span></div>
+    <div class="det-linha"><span class="det-key">Data</span><span class="det-val">${dt}</span></div>
+    <div class="det-linha"><span class="det-key">Status</span><span class="det-val">${esc(p.status||'—')}</span></div>
+    <div class="det-itens">🎮 Itens adquiridos:<br>${esc(itens)}</div>`;
+  const acoes=document.getElementById('detAcoes');
+  acoes.innerHTML='';
+  if(p.status!=='pago'){
+    const b=document.createElement('button');
+    b.className='btn btn-verde';b.style.flex='1';
+    b.textContent='✅ MARCAR COMO PAGO';
+    b.onclick=()=>marcarPago();
+    acoes.appendChild(b);
+  }
+  const bc=document.createElement('button');
+  bc.className='btn btn-vermelho';
+  bc.textContent='🗑 Excluir';
+  bc.onclick=()=>excluirPedido();
+  acoes.appendChild(bc);
+  const bf=document.createElement('button');
+  bf.className='btn btn-cinza';
+  bf.textContent='Fechar';
+  bf.onclick=()=>fecharOverlay('ovPedido');
+  acoes.appendChild(bf);
+  document.getElementById('ovPedido').classList.add('show');
+}
+
+function marcarPago(){
+  if(!pedidoAtual)return;
+  const idx=pedidos.findIndex(p=>p.id===pedidoAtual.id);
+  if(idx<0)return;
+  pedidos[idx].status='pago';
+  salvarPedidosLS();
+  carregarTudo();
+  fecharOverlay('ovPedido');
+  toast('✅ Marcado como pago!');
+}
+
+function excluirPedido(){
+  if(!pedidoAtual||!confirm('Excluir este pedido?'))return;
+  pedidos=pedidos.filter(p=>p.id!==pedidoAtual.id);
+  salvarPedidosLS();
+  carregarTudo();
+  fecharOverlay('ovPedido');
+  toast('🗑 Pedido excluído');
+}
+
+function salvarPedidosLS(){
+  try{localStorage.setItem('cc_pedidos',JSON.stringify(pedidos))}catch(e){}
+}
+
+// ════ EXPORT CSV ════
+function exportarCSV(){
+  if(!pedidos.length){toast('Nenhum pedido');return}
+  const head=['ID','Nome','Email','Telefone','Total','Itens','Data','Status'];
+  const rows=pedidos.map(p=>[
+    p.id||'',p.nome||'',p.email||'',p.telefone||'',
+    p.total?(p.total).toFixed(2):'0',
+    Array.isArray(p.itens)?p.itens.join('|'):'',
+    p.ts?new Date(p.ts).toLocaleString('pt-BR'):'',p.status||''
+  ].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
+  const csv=[head.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='copaCraft-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('📊 CSV exportado!');
+}
+
+// ════ GRID JOGADORES ════
+function renderJogadores(){
+  const grid=document.getElementById('jogadoresGrid');
+  let html=jogadores.map(j=>{
+    const hasPdf=j.pdf?true:false;
+    const badgePdf=hasPdf?'<div class="j-badge-pdf">PDF ✓</div>':'<div class="j-badge-nopdf">Sem PDF</div>';
+    const imgContent=j.img
+      ?`<img src="${j.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
+      :`<span style="font-size:48px">${j.emoji||'⚽'}</span>`;
+    return `<div class="j-card">
+      ${badgePdf}
+      <div class="j-img-inner" style="background:linear-gradient(160deg,${j.grad||'#e8f5e9,#c8e6c9'})">
+        ${imgContent}
+        <div class="j-num">${j.num||''}</div>
+        <div class="j-pos">${j.pos||''}</div>
+      </div>
+      <div class="j-info">
+        <div class="j-nome">${esc(j.nome)}</div>
+        <div class="j-preco">R$${(j.preco||3).toFixed(2).replace('.',',')}</div>
+        <div class="j-acoes">
+          <button class="j-btn j-btn-edit" onclick="editarJogador(${j.id})">✏️ Editar</button>
+          <button class="j-btn j-btn-del" onclick="removerJogador(${j.id})">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  html+=`<div class="adicionar-card" onclick="abrirModalJogador()">
+    <span>➕</span>Novo Craque
+  </div>`;
+  grid.innerHTML=html;
+}
+
+// ════ MODAL JOGADOR ════
+function abrirModalJogador(){
+  editandoJId=null;imgBase64=null;pdfBase64=null;pdfNome=null;
+  document.getElementById('jModalTitulo').textContent='➕ Novo Craque';
+  document.getElementById('jNome').value='';
+  document.getElementById('jNum').value='';
+  document.getElementById('jPos').value='Atacante';
+  document.getElementById('jPreco').value='3.00';
+  document.getElementById('jEmoji').value='';
+  document.getElementById('imgPreview').style.display='none';
+  document.getElementById('imgPreview').src='';
+  document.getElementById('imgPlaceholder').style.display='block';
+  document.getElementById('imgFileInput').value='';
+  document.getElementById('pdfFileInput').value='';
+  document.getElementById('pdfStatus').textContent='Nenhum PDF enviado';
+  document.getElementById('pdfStatus').className='pdf-status';
+  document.getElementById('ovJogador').classList.add('show');
+}
+
+function editarJogador(id){
+  const j=jogadores.find(x=>x.id===id);
+  if(!j)return;
+  editandoJId=id;
+  imgBase64=j.img||null;
+  pdfBase64=j.pdf||null;
+  pdfNome=j.pdfNome||null;
+  document.getElementById('jModalTitulo').textContent='✏️ Editar: '+j.nome;
+  document.getElementById('jNome').value=j.nome||'';
+  document.getElementById('jNum').value=j.num||'';
+  document.getElementById('jPos').value=j.pos||'Atacante';
+  document.getElementById('jPreco').value=(j.preco||3).toFixed(2);
+  document.getElementById('jEmoji').value=j.emoji||'';
+  const prev=document.getElementById('imgPreview');
+  const plh=document.getElementById('imgPlaceholder');
+  if(j.img){prev.src=j.img;prev.style.display='block';plh.style.display='none';}
+  else{prev.style.display='none';prev.src='';plh.style.display='block';}
+  document.getElementById('pdfFileInput').value='';
+  const ps=document.getElementById('pdfStatus');
+  if(j.pdf){ps.textContent='✓ '+( j.pdfNome||'PDF salvo');ps.className='pdf-status ok';}
+  else{ps.textContent='Nenhum PDF enviado';ps.className='pdf-status';}
+  document.getElementById('ovJogador').classList.add('show');
+}
+
+function handleImgUpload(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  if(f.size>2*1024*1024){toast('⚠️ Imagem muito grande (max 2MB)');return;}
+  const r=new FileReader();
+  r.onload=ev=>{
+    imgBase64=ev.target.result;
+    const prev=document.getElementById('imgPreview');
+    prev.src=imgBase64;prev.style.display='block';
+    document.getElementById('imgPlaceholder').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+
+function handlePdfUpload(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  if(f.size>5*1024*1024){toast('⚠️ PDF muito grande (max 5MB)');return;}
+  pdfNome=f.name;
+  const r=new FileReader();
+  r.onload=ev=>{
+    pdfBase64=ev.target.result;
+    const ps=document.getElementById('pdfStatus');
+    ps.textContent='✓ '+f.name+' ('+Math.round(f.size/1024)+'KB)';
+    ps.className='pdf-status ok';
+    toast('📄 PDF carregado!');
+  };
+  r.readAsDataURL(f);
+}
+
+function salvarJogador(){
+  const nome=document.getElementById('jNome').value.trim();
+  const num=parseInt(document.getElementById('jNum').value)||0;
+  const pos=document.getElementById('jPos').value;
+  const preco=parseFloat(document.getElementById('jPreco').value)||3;
+  const emoji=document.getElementById('jEmoji').value.trim()||'⚽';
+  if(!nome){toast('Informe o nome do craque');return;}
+  if(!num||num<1||num>99){toast('Número de camisa inválido');return;}
+
+  // Gera cores automáticas
+  const cores=['#FFFDE7,#FFF9C4','#E8F5E9,#C8E6C9','#F3E5F5,#E1BEE7','#FCE4EC,#F8BBD0','#E3F2FD,#BBDEFB','#EDE7F6,#D1C4E9'];
+
+  if(editandoJId){
+    const idx=jogadores.findIndex(x=>x.id===editandoJId);
+    if(idx>=0){
+      jogadores[idx]={...jogadores[idx],nome,num,pos,preco,emoji,
+        img:imgBase64!==undefined?imgBase64:jogadores[idx].img,
+        pdf:pdfBase64!==undefined?pdfBase64:jogadores[idx].pdf,
+        pdfNome:pdfNome||jogadores[idx].pdfNome};
+    }
+    toast('✅ Craque atualizado!');
+  } else {
+    const novoId=Date.now();
+    jogadores.push({id:novoId,nome,num,pos,preco,emoji,
+      img:imgBase64||null,pdf:pdfBase64||null,pdfNome:pdfNome||null,
+      grad:cores[jogadores.length%cores.length]});
+    toast('✅ Craque adicionado!');
+  }
+  salvarJogadoresLS();
+  sincronizarComLoja();
+  renderJogadores();
+  fecharOverlay('ovJogador');
+}
+
+function removerJogador(id){
+  const j=jogadores.find(x=>x.id===id);
+  if(!j||!confirm(`Remover "${j.nome}" do catálogo?`))return;
+  jogadores=jogadores.filter(x=>x.id!==id);
+  salvarJogadoresLS();
+  sincronizarComLoja();
+  renderJogadores();
+  toast('🗑 Craque removido');
+}
+
+// Sincroniza jogadores com a loja (sem os PDFs para não pesar)
+function sincronizarComLoja(){
+  try{
+    const paraLoja=jogadores.map(j=>({...j,pdf:null})); // PDF fica só no admin
+    localStorage.setItem('cc_jogadores_loja',JSON.stringify(paraLoja));
+  }catch(e){}
+}
+
+// ════ ABAS ════
+function irAba(id,el){
+  document.querySelectorAll('.aba').forEach(a=>a.classList.remove('ativa'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
+  document.getElementById('aba-'+id).classList.add('ativa');
+  el.classList.add('ativo');
+}
+
+// ════ HELPERS ════
+function fecharOverlay(id,e){
+  if(!e||e.target.id===id)document.getElementById(id).classList.remove('show');
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ════ INIT ════
+(function init(){
+  const tok=sessionStorage.getItem('_ccs');
+  if(tok){_tok=tok;abrirPainel();}
+  document.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+</script>
+</body>
+</html>
