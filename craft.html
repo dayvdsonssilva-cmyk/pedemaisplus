@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <title>Painel · Copa Craft</title>
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="no-referrer">
@@ -808,7 +809,7 @@ function handlePdfUpload(e){
   r.readAsDataURL(f);
 }
 
-function salvarJogador(){
+async function salvarJogador(){
   const nome=document.getElementById('jNome').value.trim();
   const num=parseInt(document.getElementById('jNum').value)||0;
   const pos=document.getElementById('jPos').value;
@@ -837,7 +838,7 @@ function salvarJogador(){
     toast('✅ Craque adicionado!');
   }
   salvarJogadoresLS();
-  sincronizarComLoja();
+  await sincronizarComLoja();
   renderJogadores();
   fecharOverlay('ovJogador');
 }
@@ -852,22 +853,67 @@ function removerJogador(id){
   toast('🗑 Craque removido');
 }
 
-// Sincroniza jogadores com a loja — imagem vai junto, PDF fica só no admin
-function sincronizarComLoja(){
+// ── COMPRIME IMAGEM para caber no localStorage (máx ~80KB por jogador) ──
+function comprimirImg(base64, maxKB=80) {
+  return new Promise(resolve => {
+    if (!base64) { resolve(null); return; }
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      // Reduz para no máximo 300x300
+      const size = Math.min(img.width, img.height, 300);
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Corte centralizado
+      const sx = (img.width  - size) / 2;
+      const sy = (img.height - size) / 2;
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+      // Tenta qualidades decrescentes até caber
+      let quality = 0.7;
+      let result = canvas.toDataURL('image/jpeg', quality);
+      while (result.length > maxKB * 1024 * 1.37 && quality > 0.2) {
+        quality -= 0.1;
+        result = canvas.toDataURL('image/jpeg', quality);
+      }
+      resolve(result);
+    };
+    img.onerror = () => resolve(null);
+    img.src = base64;
+  });
+}
+
+// Sincroniza jogadores com a loja — imagem comprimida + PDF incluído
+async function sincronizarComLoja() {
   try {
-    // PDF fica só no admin (economiza espaço na chave da loja)
-    const paraLoja = jogadores.map(j => ({ ...j, pdf: null, pdfNome: null }));
+    // Comprime todas as imagens antes de salvar
+    const paraLoja = await Promise.all(jogadores.map(async j => ({
+      ...j,
+      img: await comprimirImg(j.img),  // comprimida
+      pdf: j.pdf || null,              // PDF vai junto para o botão funcionar
+      pdfNome: j.pdfNome || null
+    })));
+
     const json = JSON.stringify(paraLoja);
-    localStorage.setItem('cc_jogadores_loja', json);
-    toast('✅ Loja atualizada!');
+    const kb = Math.round(json.length / 1024);
+
+    // Verifica se cabe (localStorage ~5MB)
+    if (json.length > 4 * 1024 * 1024) {
+      // Muito grande: salva sem PDF, só imagem comprimida
+      const semPdf = paraLoja.map(j => ({ ...j, pdf: null, pdfNome: null }));
+      localStorage.setItem('cc_jogadores_loja', JSON.stringify(semPdf));
+      toast(`⚠️ PDFs grandes demais (${kb}KB). Salvo sem PDF — use arquivos menores.`);
+    } else {
+      localStorage.setItem('cc_jogadores_loja', json);
+      toast(`✅ Loja atualizada! (${kb}KB)`);
+    }
   } catch(e) {
-    // Storage cheio — tenta salvar sem as imagens em base64 (fallback)
     try {
-      const semImg = jogadores.map(j => ({ ...j, img: null, pdf: null, pdfNome: null }));
-      localStorage.setItem('cc_jogadores_loja', JSON.stringify(semImg));
-      toast('⚠️ Fotos muito grandes — salvo sem imagem. Reduza o tamanho das fotos.');
+      // Último recurso: sem imagem, sem PDF
+      const minimo = jogadores.map(j => ({ ...j, img: null, pdf: null, pdfNome: null }));
+      localStorage.setItem('cc_jogadores_loja', JSON.stringify(minimo));
+      toast('⚠️ Storage cheio — salvo sem fotos. Limpe o cache.');
     } catch(e2) {
-      toast('❌ Erro ao salvar: storage cheio. Limpe o cache do navegador.');
+      toast('❌ Erro crítico de storage. Abra o DevTools e limpe o localStorage.');
     }
   }
 }
