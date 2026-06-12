@@ -184,6 +184,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);m
 .crop-zoom{display:flex;align-items:center;gap:10px;width:100%;max-width:340px}
 .crop-zoom-lbl{font-size:12px;color:rgba(255,255,255,.5);font-weight:700;white-space:nowrap}
 .crop-zoom input{flex:1;accent-color:var(--amarelo)}
+body.modal-aberto{overflow:hidden;position:fixed;width:100%}
 </style>
 </head>
 <body>
@@ -540,7 +541,7 @@ function abrirPedido(id){
   bf.textContent='Fechar';
   bf.onclick=()=>fecharOverlay('ovPedido');
   acoes.appendChild(bf);
-  document.getElementById('ovPedido').classList.add('show');
+  abrirOverlay('ovPedido');
 }
 
 function marcarPago(){
@@ -635,7 +636,7 @@ function abrirModalJogador(){
   document.getElementById('pdfFileInput').value='';
   document.getElementById('pdfStatus').textContent='Nenhum PDF enviado';
   document.getElementById('pdfStatus').className='pdf-status';
-  document.getElementById('ovJogador').classList.add('show');
+  abrirOverlay('ovJogador');
 }
 
 function editarJogador(id){
@@ -663,9 +664,9 @@ function editarJogador(id){
   }
   document.getElementById('pdfFileInput').value='';
   const ps=document.getElementById('pdfStatus');
-  if(j.pdf){ps.textContent='✓ '+( j.pdfNome||'PDF salvo');ps.className='pdf-status ok';}
+  if(j.pdf){ps.textContent='✓ '+(j.pdfNome||'PDF salvo');ps.className='pdf-status ok';}
   else{ps.textContent='Nenhum PDF enviado';ps.className='pdf-status';}
-  document.getElementById('ovJogador').classList.add('show');
+  abrirOverlay('ovJogador');
 }
 
 // ════ CROP DE IMAGEM ════
@@ -689,7 +690,7 @@ function abrirCrop(e) {
     document.getElementById('cropZoom').max = fitScale * 4;
     document.getElementById('cropZoom').value = fitScale;
     aplicarTransform();
-    document.getElementById('cropOverlay').classList.add('show');
+    abrirOverlay('cropOverlay');
   };
   img.src = url;
   document.getElementById('imgFileInput').value = '';
@@ -748,7 +749,7 @@ stage.addEventListener('touchmove', e => {
 }, {passive:true});
 
 function cancelarCrop() {
-  document.getElementById('cropOverlay').classList.remove('show');
+  fecharOverlay('cropOverlay');
   URL.revokeObjectURL(document.getElementById('cropImg').src);
 }
 
@@ -786,7 +787,7 @@ function confirmarCrop() {
   document.getElementById('imgPreviewBox').style.display = 'block';
   document.getElementById('imgPlaceholderBox').style.display = 'none';
 
-  document.getElementById('cropOverlay').classList.remove('show');
+  fecharOverlay('cropOverlay');
   URL.revokeObjectURL(img.src);
   toast('✅ Imagem ajustada!');
 }
@@ -851,12 +852,24 @@ function removerJogador(id){
   toast('🗑 Craque removido');
 }
 
-// Sincroniza jogadores com a loja (sem os PDFs para não pesar)
+// Sincroniza jogadores com a loja — imagem vai junto, PDF fica só no admin
 function sincronizarComLoja(){
-  try{
-    const paraLoja=jogadores.map(j=>({...j,pdf:null})); // PDF fica só no admin
-    localStorage.setItem('cc_jogadores_loja',JSON.stringify(paraLoja));
-  }catch(e){}
+  try {
+    // PDF fica só no admin (economiza espaço na chave da loja)
+    const paraLoja = jogadores.map(j => ({ ...j, pdf: null, pdfNome: null }));
+    const json = JSON.stringify(paraLoja);
+    localStorage.setItem('cc_jogadores_loja', json);
+    toast('✅ Loja atualizada!');
+  } catch(e) {
+    // Storage cheio — tenta salvar sem as imagens em base64 (fallback)
+    try {
+      const semImg = jogadores.map(j => ({ ...j, img: null, pdf: null, pdfNome: null }));
+      localStorage.setItem('cc_jogadores_loja', JSON.stringify(semImg));
+      toast('⚠️ Fotos muito grandes — salvo sem imagem. Reduza o tamanho das fotos.');
+    } catch(e2) {
+      toast('❌ Erro ao salvar: storage cheio. Limpe o cache do navegador.');
+    }
+  }
 }
 
 // ════ ABAS ════
@@ -868,8 +881,21 @@ function irAba(id,el){
 }
 
 // ════ HELPERS ════
+let _scrollY = 0;
+function abrirOverlay(id) {
+  _scrollY = window.scrollY;
+  document.body.classList.add('modal-aberto');
+  document.body.style.top = `-${_scrollY}px`;
+  document.getElementById(id).classList.add('show');
+}
 function fecharOverlay(id,e){
-  if(!e||e.target.id===id)document.getElementById(id).classList.remove('show');
+  if(e && e.target.id !== id) return;
+  document.getElementById(id).classList.remove('show');
+  if(!document.querySelector('.overlay.show')){
+    document.body.classList.remove('modal-aberto');
+    document.body.style.top='';
+    window.scrollTo(0,_scrollY);
+  }
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function toast(msg){
