@@ -680,13 +680,14 @@ h1 em{
       background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
       padding:2px;flex-shrink:0;
     ">
-      <div style="width:100%;height:100%;border-radius:50%;background:#111;
-        display:flex;align-items:center;justify-content:center;font-size:14px;">🕊️</div>
+      <div id="instaAvatar" style="width:100%;height:100%;border-radius:50%;background:#111;
+        display:flex;align-items:center;justify-content:center;font-size:14px;
+        color:#fff;font-family:'Inter',sans-serif;font-weight:700;font-size:13px;">?</div>
     </div>
     <!-- Nome + localização -->
     <div style="flex:1">
-      <div style="font-size:12px;font-weight:700;color:#fff;line-height:1">parasemprepai</div>
-      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">Patrocinado</div>
+      <div id="instaUserName" style="font-size:12px;font-weight:700;color:#fff;line-height:1">você</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">Agora mesmo</div>
     </div>
     <!-- ··· -->
     <div style="font-size:18px;color:rgba(255,255,255,.5);letter-spacing:1px;line-height:1">···</div>
@@ -717,8 +718,8 @@ h1 em{
       <span style="font-size:22px;filter:grayscale(1);opacity:.7;margin-left:auto">🔖</span>
     </div>
     <div style="font-size:11px;color:rgba(255,255,255,.5)">
-      <span style="color:#fff;font-weight:700">parasemprepai</span>
-      &nbsp;Um amor que não tem distância 🕊️
+      <span id="instaLegendaUser" style="color:#fff;font-weight:700">você</span>
+      &nbsp;<span id="instaLegenda">🕊️ Para sempre no meu coração</span>
     </div>
   </div>
 </div>
@@ -1372,6 +1373,24 @@ function mostrarTela2(){
   document.getElementById('tela1').style.display='none';
   document.getElementById('tela2').style.display='block';
   slideAtual = 0;
+
+  // Atualiza perfil fake com dados da pessoa
+  const nomeF   = document.getElementById('nomeF')?.value.trim() || 'você';
+  const nomePai = document.getElementById('nomePai')?.value.trim() || 'Pai';
+  // Username: nome em minúsculo sem espaço
+  const username = nomeF.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_');
+  // Inicial para o avatar
+  const inicial = nomeF.charAt(0).toUpperCase();
+
+  const av = document.getElementById('instaAvatar');
+  if(av){ av.textContent = inicial; av.style.fontSize='13px'; }
+  const un = document.getElementById('instaUserName');
+  if(un) un.textContent = username;
+  const lu = document.getElementById('instaLegendaUser');
+  if(lu) lu.textContent = username;
+  const leg = document.getElementById('instaLegenda');
+  if(leg) leg.textContent = `🕊️ Pai, ${nomePai}, para sempre no meu coração`;
+
   renderInstaPreview();
   renderMiniaturasScroll();
   window.scrollTo({top:0,behavior:'smooth'});
