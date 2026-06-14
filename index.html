@@ -522,9 +522,9 @@ h1 em{
 <div id="tela2" style="display:none">
 <div class="page">
   <div class="hero" style="padding-top:48px">
-    <div class="eyebrow">Prévia do seu carrossel</div>
-    <h1 style="font-size:44px">Quase<em>lá</em></h1>
-    <p class="hero-sub" style="margin-bottom:20px">Deslize para ver os slides · Desbloqueie para baixar</p>
+    <div class="eyebrow">Feito com amor</div>
+    <h1 style="font-size:44px">Uma prévia<em>especial</em></h1>
+    <p class="hero-sub" style="margin-bottom:20px">O primeiro slide é seu.<br>Complete para receber todos.</p>
   </div>
 </div>
 
@@ -542,14 +542,16 @@ h1 em{
     margin-bottom:16px;
     position:relative;overflow:hidden;
   ">
-    <div style="font-size:36px;margin-bottom:12px">🔒</div>
+    <div style="font-size:36px;margin-bottom:14px">🕊️</div>
     <div style="
       font-family:'Cormorant Garamond',serif;
-      font-size:26px;font-weight:600;
-      color:var(--branco);margin-bottom:6px;
-    ">Liberar meu carrossel</div>
-    <p style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:22px">
-      10 slides 1080×1080px prontos<br>para postar no Instagram
+      font-size:24px;font-weight:600;
+      color:var(--branco);margin-bottom:10px;line-height:1.3;
+    ">Guardar essa memória<br><em style="color:var(--ouro)">para sempre</em></div>
+    <p style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:22px">
+      Seu carrossel está pronto.<br>
+      Baixe os slides e compartilhe<br>
+      esse amor com quem você quiser.
     </p>
 
     <!-- PREÇO DESTACADO -->
@@ -559,11 +561,14 @@ h1 em{
       color:var(--ouro);line-height:1;margin-bottom:4px;
     ">R$19,90</div>
     <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;
-      text-transform:uppercase;margin-bottom:22px">pagamento único</div>
+      text-transform:uppercase;margin-bottom:22px">acesso completo · 10 slides</div>
 
     <button class="btn" id="btnPagar" onclick="iniciarPagamento()">
-      Pagar com PIX ✦
+      Receber meu carrossel ✦
     </button>
+    <p style="font-size:11px;color:var(--cinza);margin-top:12px;opacity:.6">
+      Pagamento seguro · liberação imediata
+    </p>
   </div>
 </div>
 
@@ -577,27 +582,27 @@ h1 em{
     margin-bottom:16px;text-align:center;
   ">
     <div style="font-size:13px;color:var(--cinza);letter-spacing:1px;
-      text-transform:uppercase;margin-bottom:6px">Aguardando pagamento</div>
+      text-transform:uppercase;margin-bottom:6px">Quase lá</div>
     <div style="
       font-family:'Cormorant Garamond',serif;
-      font-size:13px;color:var(--ouro);font-style:italic;
-      margin-bottom:20px;
-    " id="statusTxt">Verificando...</div>
+      font-size:15px;color:var(--ouro);font-style:italic;
+      margin-bottom:20px;line-height:1.6;
+    " id="statusTxt">Gerando seu código...</div>
 
-    <!-- QR CODE (se MP retornar) -->
+    <!-- QR CODE -->
     <div id="qrBox" style="display:none;margin-bottom:16px">
       <img id="qrImg" style="width:180px;height:180px;border-radius:12px;
         border:1px solid rgba(200,169,110,.2);">
     </div>
 
     <!-- Copia e cola PIX -->
-    <div id="copiaCola" style="display:none;
+    <div id="pixCopiaColaBox" style="display:none;
       background:rgba(14,11,8,.6);border-radius:8px;
       padding:10px 12px;font-size:11px;
       color:var(--creme);font-family:monospace;
       margin-bottom:12px;word-break:break-all;
       text-align:left;max-height:60px;overflow:hidden;
-    " id="pixCopiaCola"></div>
+    "></div>
 
     <button class="btn-copy" id="btnCopiarPix" style="display:none" onclick="copiarPixMP()">
       ✦ Copiar código PIX
@@ -609,11 +614,11 @@ h1 em{
       <div style="flex:1;height:1px;background:rgba(200,169,110,.15)"></div>
     </div>
     <div style="font-size:12px;color:var(--cinza);margin-top:10px">
-      Verificando pagamento automaticamente...
+      Confirmação automática em instantes
     </div>
 
     <button class="btn ghost" onclick="confirmarManual()" style="margin-top:12px;font-size:14px">
-      Já paguei — verificar agora
+      Já realizei o pagamento
     </button>
   </div>
 </div>
@@ -1145,19 +1150,18 @@ async function iniciarPagamento(){
     // Copia e cola
     if(data.pix_copia_cola || data.init_point){
       pixCopiaColaStr = data.pix_copia_cola || data.init_point;
-      document.getElementById('pixCopiaCola').textContent = pixCopiaColaStr;
-      document.getElementById('pixCopiaCola').style.display='block';
+      document.getElementById('pixCopiaColaBox').textContent = pixCopiaColaStr;
+      document.getElementById('pixCopiaColaBox').style.display='block';
       document.getElementById('btnCopiarPix').style.display='block';
     }
 
-    // Se não tiver PIX direto, abre o checkout MP
     if(!data.pix_qr_code && data.init_point){
       window.open(data.init_point, '_blank');
       document.getElementById('statusTxt').textContent =
-        'Complete o pagamento na página do Mercado Pago';
+        'Finalize na página que abrimos para você';
     } else {
       document.getElementById('statusTxt').textContent =
-        'Escaneie o QR ou copie o código PIX';
+        'Escaneie o QR Code ou copie o código abaixo';
     }
 
     // Inicia polling
