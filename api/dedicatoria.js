@@ -1,10 +1,6 @@
 export default async function handler(req, res) {
-  // Só aceita POST
   if (req.method !== 'POST') return res.status(405).end();
-
-  // CORS para o próprio domínio
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST');
 
   const { nomeF, nomePai, memoria } = req.body || {};
   if (!nomeF || !nomePai) return res.status(400).json({ erro: 'Dados incompletos' });
@@ -21,18 +17,27 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        max_tokens: 400,
+        max_tokens: 500,
         messages: [{
           role: 'user',
-          content: `Escreva uma homenagem para um pai falecido.
+          content: `Escreva uma homenagem emocionante para um pai falecido.
 Filho(a): ${nomeF}
-Pai: ${nomePai}
-${memoria ? 'Memória: ' + memoria : ''}
+Nome do pai: ${nomePai}
+${memoria ? 'Memória especial: ' + memoria : ''}
+
+Crie frases curtas e muito emocionantes, usando a palavra "Pai" com carinho.
+Use expressões como: "Pai, você...", "Saudade do meu Pai...", "Obrigado, Pai...", "Pai eterno..."
 
 Responda APENAS em JSON sem markdown:
-{"frases":["frase1","frase2","frase3","frase4","frase5","frase6","frase7"],"mensagem":"mensagem final em 2 linhas"}
+{"frases":["frase1","frase2","frase3","frase4","frase5","frase6","frase7"],"mensagem":"mensagem final emocionante em 2 linhas mencionando ${nomeF} e ${nomePai}"}
 
-Regras: máximo 7 palavras por frase, em português, emocionantes e simples.`
+Regras OBRIGATÓRIAS:
+- Máximo 8 palavras por frase
+- Sempre em português brasileiro
+- Use "Pai" nas frases com afeto
+- Frases que causem arrepios e saudade
+- Simples, diretas, poderosas
+- Nível: "Pai, a saudade não tem endereço.", "Para sempre no meu coração, Pai.", "Obrigado por tudo, meu herói."`
         }]
       })
     });
