@@ -668,7 +668,32 @@ h1 em{
 <!-- SLIDES COM BLUR -->
 <!-- PREVIEW ESTILO INSTAGRAM -->
 <div style="padding:0 16px;margin-bottom:12px">
-  <div class="insta-frame" id="instaFrame">
+  <!-- HEADER PERFIL INSTAGRAM -->
+  <div style="
+    background:#111;border-radius:14px 14px 0 0;
+    padding:10px 12px;display:flex;align-items:center;gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  ">
+    <!-- Avatar -->
+    <div style="
+      width:32px;height:32px;border-radius:50%;
+      background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+      padding:2px;flex-shrink:0;
+    ">
+      <div style="width:100%;height:100%;border-radius:50%;background:#111;
+        display:flex;align-items:center;justify-content:center;font-size:14px;">🕊️</div>
+    </div>
+    <!-- Nome + localização -->
+    <div style="flex:1">
+      <div style="font-size:12px;font-weight:700;color:#fff;line-height:1">parasemprepai</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">Patrocinado</div>
+    </div>
+    <!-- ··· -->
+    <div style="font-size:18px;color:rgba(255,255,255,.5);letter-spacing:1px;line-height:1">···</div>
+  </div>
+
+  <!-- FRAME DO SLIDE -->
+  <div class="insta-frame" id="instaFrame" style="border-radius:0">
     <canvas id="instaCanvas"></canvas>
     <div class="insta-frame-ui">
       <div class="insta-dots" id="instaDots"></div>
@@ -677,6 +702,23 @@ h1 em{
         <button onclick="navSlide(-1)">‹</button>
         <button onclick="navSlide(1)">›</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ACTIONS INSTAGRAM -->
+  <div style="
+    background:#111;border-radius:0 0 14px 14px;
+    padding:10px 12px 12px;
+  ">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+      <span style="font-size:22px;filter:grayscale(1);opacity:.7">🤍</span>
+      <span style="font-size:22px;filter:grayscale(1);opacity:.7">💬</span>
+      <span style="font-size:22px;filter:grayscale(1);opacity:.7">✈️</span>
+      <span style="font-size:22px;filter:grayscale(1);opacity:.7;margin-left:auto">🔖</span>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5)">
+      <span style="color:#fff;font-weight:700">parasemprepai</span>
+      &nbsp;Um amor que não tem distância 🕊️
     </div>
   </div>
 </div>
@@ -1294,12 +1336,7 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
     x.fillText(nomePai,S/2,S/2+130);
   }
 
-  // Rodapé
-  x.strokeStyle=m.brd;x.lineWidth=.8;x.globalAlpha=.3;
-  x.beginPath();x.moveTo(80,S-62);x.lineTo(S-80,S-62);x.stroke();
-  x.globalAlpha=1;
-  x.fillStyle=m.brd;x.font='20px sans-serif';x.textAlign='center';
-  x.fillText('Para Sempre Pai · '+nomePai,S/2,S-36);
+  // SEM rodapé — removido
 
   return c;
 }
@@ -1347,7 +1384,28 @@ function renderInstaPreview(){
   const size  = document.getElementById('instaFrame').offsetWidth || 340;
   frame.width  = size;
   frame.height = size;
-  frame.getContext('2d').drawImage(c, 0, 0, size, size);
+  const ctx = frame.getContext('2d');
+
+  // Desenha o slide
+  ctx.drawImage(c, 0, 0, size, size);
+
+  // ── MARCA D'ÁGUA diagonal ──
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.translate(size/2, size/2);
+  ctx.rotate(-Math.PI/5);
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${size*0.055}px sans-serif`;
+  ctx.textAlign = 'center';
+  const linhas = ['parasemprepai.com','parasemprepai.com','parasemprepai.com'];
+  linhas.forEach((t,i)=>{
+    const y = (i-1) * size * 0.28;
+    ctx.fillText(t, 0, y);
+    ctx.fillText(t, size*0.32, y + size*0.14);
+    ctx.fillText(t, -size*0.32, y - size*0.14);
+  });
+  ctx.restore();
+
   // Dots
   const dots = document.getElementById('instaDots');
   dots.innerHTML = slides.map((_,i)=>
