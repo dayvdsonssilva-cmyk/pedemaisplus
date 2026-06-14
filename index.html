@@ -700,8 +700,25 @@ h1 em{
   <div class="stit">Feito com<em>amor</em></div>
   <p class="ssub">Seu carrossel está pronto.<br>Baixe e poste para homenagear seu pai.</p>
   <div class="divider"><span>✦</span></div>
+
+  <!-- BOTÃO INSTAGRAM -->
+  <button onclick="compartilharInstagram()" style="
+    width:100%;padding:16px;margin-bottom:12px;
+    background:linear-gradient(135deg,#E1306C,#833AB4,#F77737);
+    color:#fff;font-family:'Cormorant Garamond',serif;
+    font-size:20px;font-weight:600;border:none;
+    border-radius:12px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  ">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    Compartilhar no Instagram
+  </button>
+
+  <!-- BOTÃO DOWNLOAD -->
   <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Baixar meu carrossel</button>
-  <p style="font-size:11px;color:var(--cinza);letter-spacing:.5px">10 slides · 1080×1080px · Prontos para o Instagram</p>
+
+  <p style="font-size:11px;color:var(--cinza);letter-spacing:.5px;margin-bottom:6px">10 slides · 1080×1080px · Prontos para o Instagram</p>
+  <p style="font-size:10px;color:rgba(138,123,110,.5)">Para postar: abra o app → + → selecione todos os slides em ordem</p>
 </div>
 </div>
 
@@ -979,7 +996,8 @@ function loopParticulas(){
 loopParticulas();
 
 // ══ AUDIO — loop automático ══
-let audioOn = false;
+let audioOn    = false;
+let audioMuted = false; // usuário desligou manualmente
 const bgm   = document.getElementById('bgm');
 const btn   = document.getElementById('audioBtn');
 const prompt= document.getElementById('audioPrompt');
@@ -987,13 +1005,12 @@ const prompt= document.getElementById('audioPrompt');
 bgm.volume = 0.7;
 
 function iniciarAudio(){
-  if(audioOn) return;
+  if(audioOn || audioMuted) return; // respeita escolha do usuário
   bgm.play().then(()=>{
     audioOn = true;
     btn.textContent  = '🔇';
     prompt.style.display = 'none';
   }).catch(()=>{
-    // Bloqueado pelo browser — mostra o prompt
     prompt.style.display = 'block';
   });
 }
@@ -1002,8 +1019,10 @@ function toggleAudio(){
   if(audioOn){
     bgm.pause();
     btn.textContent = '🎵';
-    audioOn = false;
+    audioOn  = false;
+    audioMuted = true; // marcou manualmente
   } else {
+    audioMuted = false;
     bgm.play().then(()=>{
       audioOn = true;
       btn.textContent = '🔇';
@@ -1012,20 +1031,21 @@ function toggleAudio(){
   }
 }
 
-// Tenta tocar no primeiro evento de qualquer tipo
-['touchstart','touchend','click','keydown','scroll'].forEach(ev=>{
-  document.addEventListener(ev, function handler(){
+// Tenta tocar no primeiro evento — só se não foi desligado manualmente
+['touchstart','click'].forEach(ev=>{
+  document.addEventListener(ev, function handler(e){
+    // Não dispara se o clique foi no botão de audio
+    if(e.target.id==='audioBtn'||e.target.closest?.('#audioBtn')) return;
     iniciarAudio();
-    // Remove após primeiro sucesso
     if(audioOn) document.removeEventListener(ev, handler);
-  }, {once:true, passive:true});
+  }, {once:false, passive:true});
 });
 
-// Fallback: tenta direto após 1s (funciona em alguns browsers)
-setTimeout(()=>{ if(!audioOn) iniciarAudio(); }, 1000);
+setTimeout(()=>{ if(!audioOn && !audioMuted) iniciarAudio(); }, 1200);
 
-// Garante que o loop reinicia mesmo se o evento 'ended' disparar
-bgm.addEventListener('ended', ()=>{ bgm.currentTime=0; bgm.play().catch(()=>{}); });
+bgm.addEventListener('ended', ()=>{
+  if(!audioMuted){ bgm.currentTime=0; bgm.play().catch(()=>{}); }
+});
 
 // ══ ESTADO ══
 let fotos=[],molduraSel=0,slides=[],etapa=1;
@@ -1215,17 +1235,26 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
   }
 
   if(tipo==='foto'&&texto){
+    // Sombra para legibilidade sobre qualquer foto
+    x.shadowColor='rgba(0,0,0,0.8)';
+    x.shadowBlur=20;
+    x.shadowOffsetY=2;
     x.fillStyle=m.tx;
-    x.font=`italic 300 40px Cormorant Garamond,serif`;x.textAlign='center';
-    wrapTxt(x,texto,S/2,800,S-130,52);
+    x.font=`italic 300 52px Cormorant Garamond,serif`;
+    x.textAlign='center';
+    wrapTxt(x,texto,S/2,810,S-100,64);
+    x.shadowBlur=0; x.shadowOffsetY=0;
   }
 
   if(tipo==='fim'){
+    // Sombra em texto do encerramento
+    x.shadowColor='rgba(0,0,0,0.6)'; x.shadowBlur=16;
     x.fillStyle=m.tx;
-    x.font=`italic 300 44px Cormorant Garamond,serif`;x.textAlign='center';
-    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-30,S-140,58);
+    x.font=`italic 300 52px Cormorant Garamond,serif`;x.textAlign='center';
+    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-30,S-120,64);
+    x.shadowBlur=0;
     x.fillStyle=m.brd;x.font='30px serif';x.fillText('✦',S/2,S/2+80);
-    x.fillStyle=m.tx;x.font=`600 34px Cormorant Garamond,serif`;
+    x.fillStyle=m.tx;x.font=`600 38px Cormorant Garamond,serif`;
     x.fillText(nomePai,S/2,S/2+130);
   }
 
@@ -1444,17 +1473,14 @@ function buscarSlides(){
   if(!contato){ document.getElementById('galeriaErro').textContent='Digite seu e-mail ou telefone'; return; }
 
   const users = lerUsuarios();
-
-  // Busca por e-mail
   let email = null;
-  if(users[contato]){
-    email = contato;
-  } else {
-    // Busca por telefone (busca em todos os usuários)
-    const tel = contato.replace(/\D/g,''); // só números
+
+  if(users[contato]){ email = contato; }
+  else {
+    const tel = contato.replace(/\D/g,'');
     for(const [e,u] of Object.entries(users)){
       const uTel = (u.tel||'').replace(/\D/g,'');
-      if(uTel && uTel === tel){ email=e; break; }
+      if(uTel && uTel===tel){ email=e; break; }
     }
   }
 
@@ -1463,20 +1489,50 @@ function buscarSlides(){
     return;
   }
 
-  const user = users[email];
-  const compras = (user.compras||[]).filter(c=>c.status==='approved'||c.status==='pago');
+  const user    = users[email];
+  // ← SÓ COMPRAS APROVADAS
+  const compras = (user.compras||[]).filter(c=>c.status==='approved');
 
   if(!compras.length){
-    mostrarEstadoGaleria('vazio');
+    document.getElementById('galeriaErro').textContent='Nenhuma compra confirmada encontrada';
     return;
   }
 
-  // Loga o usuário
-  galeriaUsuario = { email, nome: user.nome, tel: user.tel };
+  galeriaUsuario     = { email, nome: user.nome, tel: user.tel };
+  galeriaSlidesCache = slides;
   salvarSessao(email);
   usuarioAtual = galeriaUsuario;
-  galeriaSlidesCache = slides; // slides da sessão atual se disponíveis
   mostrarSlidesGaleria();
+}
+
+// ══ COMPARTILHAR INSTAGRAM ══
+async function compartilharInstagram(){
+  if(!slides.length){ toast('Nenhum slide gerado'); return; }
+
+  // Web Share API — funciona no mobile
+  if(navigator.share && navigator.canShare){
+    try{
+      const blobs = await Promise.all(
+        slides.slice(0,5).map(c=>new Promise(r=>c.toBlob(r,'image/jpeg',.92)))
+      );
+      const files = blobs.map((b,i)=>new File([b],`para_sempre_pai_${i+1}.jpg`,{type:'image/jpeg'}));
+      if(navigator.canShare({ files })){
+        await navigator.share({
+          files,
+          title:'Para Sempre Pai',
+          text:'Uma homenagem feita com amor 🕊️'
+        });
+        return;
+      }
+    }catch(e){ if(e.name!=='AbortError') console.error(e); return; }
+  }
+
+  // Fallback: baixa e orienta abrir no Instagram
+  toast('Baixando slides para postar no Instagram...');
+  await baixarZIP();
+  setTimeout(()=>{
+    toast('Abra o Instagram → + → selecione os slides em ordem');
+  }, 1500);
 }
 
 function mostrarSlidesGaleria(){
