@@ -387,7 +387,117 @@ h1 em{
 }
 .audio-fab:active{transform:scale(.9)}
 
-/* TOAST */
+/* HEADER FIXO */
+.header-fixo{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;
+  background:rgba(14,11,8,.7);
+  border-bottom:1px solid rgba(200,169,110,.1);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.header-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;color:var(--ouro);letter-spacing:.5px;
+}
+.btn-meus-slides{
+  background:rgba(200,169,110,.12);
+  border:1px solid rgba(200,169,110,.3);
+  color:var(--ouro);
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px;padding:7px 14px;
+  border-radius:8px;cursor:pointer;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-meus-slides:active{background:rgba(200,169,110,.22)}
+
+/* MODAL GALERIA */
+.galeria-overlay{
+  position:fixed;inset:0;
+  background:rgba(14,11,8,.96);
+  z-index:500;display:none;
+  flex-direction:column;
+  backdrop-filter:blur(12px);
+}
+.galeria-overlay.show{display:flex}
+.galeria-header{
+  padding:16px 18px;
+  border-bottom:1px solid rgba(200,169,110,.12);
+  display:flex;align-items:center;gap:12px;
+}
+.galeria-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;color:var(--ouro);flex:1;
+}
+.btn-fechar-galeria{
+  background:none;border:none;
+  color:var(--cinza);font-size:22px;
+  cursor:pointer;padding:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.galeria-body{
+  flex:1;overflow-y:auto;
+  padding:20px 18px 40px;
+  max-width:430px;margin:0 auto;width:100%;
+}
+
+/* LOGIN GALERIA */
+.galeria-login{text-align:center;padding:20px 0}
+.galeria-login-ico{font-size:40px;margin-bottom:14px;display:block}
+.galeria-login-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;color:var(--branco);margin-bottom:6px;
+}
+.galeria-login-sub{font-size:13px;color:var(--cinza);margin-bottom:24px;line-height:1.6}
+.g-inp{
+  width:100%;padding:13px 16px;
+  background:rgba(200,169,110,.05);
+  border:1px solid rgba(200,169,110,.2);
+  border-radius:10px;font-size:14px;
+  font-family:'Inter',sans-serif;color:var(--creme);
+  outline:none;margin-bottom:12px;
+}
+.g-inp::placeholder{color:rgba(200,169,110,.25)}
+.g-inp:focus{border-color:rgba(200,169,110,.5)}
+.btn-entrar-galeria{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
+  color:var(--noite);font-family:'Cormorant Garamond',serif;
+  font-size:19px;font-weight:600;border:none;border-radius:12px;cursor:pointer;
+}
+.galeria-erro{font-size:12px;color:#e07070;margin-top:10px;min-height:16px}
+
+/* SLIDES DA GALERIA */
+.galeria-slides-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px;margin-top:4px;
+}
+.galeria-slide{
+  border-radius:12px;overflow:hidden;
+  border:1px solid rgba(200,169,110,.15);
+  cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.galeria-slide canvas{width:100%;display:block}
+.galeria-slide-num{
+  position:absolute;bottom:6px;right:8px;
+  font-size:10px;color:rgba(200,169,110,.6);
+  font-family:'Cormorant Garamond',serif;
+}
+.galeria-nome{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--branco);margin-bottom:4px;
+}
+.galeria-sub{font-size:12px;color:var(--cinza);margin-bottom:18px}
+.btn-dl-todos{
+  width:100%;padding:14px;margin-bottom:16px;
+  background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
+  color:var(--noite);font-family:'Cormorant Garamond',serif;
+  font-size:19px;font-weight:600;border:none;border-radius:12px;cursor:pointer;
+}
+
 .toast{
   position:fixed;bottom:88px;left:50%;
   transform:translateX(-50%) translateY(12px);
@@ -402,6 +512,14 @@ h1 em{
 </style>
 </head>
 <body>
+
+<!-- HEADER FIXO -->
+<div class="header-fixo">
+  <div class="header-logo">🕊️ Para Sempre Pai</div>
+  <button class="btn-meus-slides" onclick="abrirGaleria()">
+    🖼️ Meus Slides
+  </button>
+</div>
 
 <!-- CANVAS DE PARTÍCULAS -->
 <canvas id="canvas-bg"></canvas>
@@ -433,7 +551,7 @@ h1 em{
 <div class="page">
 
   <!-- HERO -->
-  <div class="hero">
+  <div class="hero" style="padding-top:90px">
     <div class="eyebrow">Dia dos Pais · 2026</div>
     <h1>Para Sempre<em>Pai</em></h1>
     <p class="hero-sub">Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.</p>
@@ -585,6 +703,50 @@ h1 em{
   <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Baixar meu carrossel</button>
   <p style="font-size:11px;color:var(--cinza);letter-spacing:.5px">10 slides · 1080×1080px · Prontos para o Instagram</p>
 </div>
+</div>
+
+<!-- ════════ MODAL MEUS SLIDES ════════ -->
+<div class="galeria-overlay" id="galeriaOverlay">
+  <div class="galeria-header">
+    <div class="galeria-titulo">🖼️ Meus Slides</div>
+    <button class="btn-fechar-galeria" onclick="fecharGaleria()">✕</button>
+  </div>
+  <div class="galeria-body">
+
+    <!-- ESTADO: LOGIN -->
+    <div id="galeriaLogin">
+      <div class="galeria-login">
+        <span class="galeria-login-ico">🕊️</span>
+        <div class="galeria-login-titulo">Acessar meus slides</div>
+        <p class="galeria-login-sub">Digite o e-mail ou WhatsApp<br>que você usou na compra</p>
+        <input class="g-inp" id="galeriaContato" type="text"
+          placeholder="E-mail ou telefone..."
+          onkeydown="if(event.key==='Enter')buscarSlides()">
+        <button class="btn-entrar-galeria" onclick="buscarSlides()">Ver meus slides →</button>
+        <div class="galeria-erro" id="galeriaErro"></div>
+      </div>
+    </div>
+
+    <!-- ESTADO: SLIDES -->
+    <div id="galeriaSlides" style="display:none">
+      <div class="galeria-nome" id="galeriaNome"></div>
+      <div class="galeria-sub" id="galeriaSub"></div>
+      <button class="btn-dl-todos" onclick="baixarZIPGaleria()">⬇ Baixar todos os slides</button>
+      <div class="galeria-slides-grid" id="galeriaSlidesGrid"></div>
+      <button class="btn-ghost" onclick="sairGaleria()" style="width:100%;margin-top:16px;padding:12px;border-radius:10px;background:none;border:1px solid rgba(200,169,110,.2);color:var(--cinza);font-size:13px;cursor:pointer;">
+        Sair desta conta
+      </button>
+    </div>
+
+    <!-- ESTADO: VAZIO -->
+    <div id="galeriaVazio" style="display:none;text-align:center;padding:40px 0">
+      <div style="font-size:40px;margin-bottom:14px">📭</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--branco);margin-bottom:8px">Nenhuma compra encontrada</div>
+      <p style="font-size:13px;color:var(--cinza);margin-bottom:20px">Tente outro e-mail ou telefone</p>
+      <button class="btn-entrar-galeria" onclick="voltarLoginGaleria()">Tentar novamente</button>
+    </div>
+
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1238,6 +1400,157 @@ async function baixarZIP(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);a.download='Para_Sempre_Pai.zip';a.click();
   toast('Download iniciado ✦');
+}
+
+// ══ GALERIA — MEUS SLIDES ══
+let galeriaUsuario = null;
+let galeriaSlidesCache = []; // slides em canvas da sessão atual
+
+function abrirGaleria(){
+  // Se já tem slides gerados e está logado, mostra direto
+  if(slides.length > 0 && usuarioAtual){
+    galeriaUsuario = usuarioAtual;
+    galeriaSlidesCache = slides;
+    mostrarSlidesGaleria();
+    document.getElementById('galeriaOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+  // Se já tem sessão salva
+  if(usuarioAtual){
+    galeriaUsuario = usuarioAtual;
+    galeriaSlidesCache = slides;
+    mostrarSlidesGaleria();
+  } else {
+    mostrarEstadoGaleria('login');
+  }
+  document.getElementById('galeriaOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharGaleria(){
+  document.getElementById('galeriaOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function mostrarEstadoGaleria(estado){
+  document.getElementById('galeriaLogin').style.display  = estado==='login'  ? 'block' : 'none';
+  document.getElementById('galeriaSlides').style.display = estado==='slides' ? 'block' : 'none';
+  document.getElementById('galeriaVazio').style.display  = estado==='vazio'  ? 'block' : 'none';
+}
+
+function buscarSlides(){
+  const contato = (document.getElementById('galeriaContato').value||'').trim().toLowerCase();
+  if(!contato){ document.getElementById('galeriaErro').textContent='Digite seu e-mail ou telefone'; return; }
+
+  const users = lerUsuarios();
+
+  // Busca por e-mail
+  let email = null;
+  if(users[contato]){
+    email = contato;
+  } else {
+    // Busca por telefone (busca em todos os usuários)
+    const tel = contato.replace(/\D/g,''); // só números
+    for(const [e,u] of Object.entries(users)){
+      const uTel = (u.tel||'').replace(/\D/g,'');
+      if(uTel && uTel === tel){ email=e; break; }
+    }
+  }
+
+  if(!email || !users[email]){
+    document.getElementById('galeriaErro').textContent='Nenhuma compra encontrada para este contato';
+    return;
+  }
+
+  const user = users[email];
+  const compras = (user.compras||[]).filter(c=>c.status==='approved'||c.status==='pago');
+
+  if(!compras.length){
+    mostrarEstadoGaleria('vazio');
+    return;
+  }
+
+  // Loga o usuário
+  galeriaUsuario = { email, nome: user.nome, tel: user.tel };
+  salvarSessao(email);
+  usuarioAtual = galeriaUsuario;
+  galeriaSlidesCache = slides; // slides da sessão atual se disponíveis
+  mostrarSlidesGaleria();
+}
+
+function mostrarSlidesGaleria(){
+  mostrarEstadoGaleria('slides');
+
+  const primeiroNome = (galeriaUsuario?.nome||'').split(' ')[0];
+  document.getElementById('galeriaNome').textContent = primeiroNome ? `Olá, ${primeiroNome} 🕊️` : 'Seus slides';
+
+  const users   = lerUsuarios();
+  const user    = users[galeriaUsuario?.email]||{};
+  const compras = (user.compras||[]).filter(c=>c.status==='approved'||c.status==='pago');
+  document.getElementById('galeriaSub').textContent = `${compras.length} compra(s) · deslize para ver`;
+
+  const grid = document.getElementById('galeriaSlidesGrid');
+  grid.innerHTML = '';
+
+  // Se tem slides na sessão atual, mostra eles
+  if(galeriaSlidesCache.length > 0){
+    galeriaSlidesCache.forEach((c,i)=>{
+      const div = document.createElement('div');
+      div.className = 'galeria-slide';
+      const mini = document.createElement('canvas');
+      const size = Math.floor((window.innerWidth - 56) / 2);
+      mini.width = size; mini.height = size;
+      mini.getContext('2d').drawImage(c, 0, 0, size, size);
+      div.appendChild(mini);
+      const num = document.createElement('div');
+      num.className = 'galeria-slide-num';
+      num.textContent = `${i+1}/${galeriaSlidesCache.length}`;
+      div.appendChild(num);
+      div.onclick = () => baixarSlideUnico(i);
+      grid.appendChild(div);
+    });
+  } else {
+    // Sem slides em memória — mostra mensagem para regenerar
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:24px 0">
+      <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.7">
+        Seus slides foram gerados em outra sessão.<br>
+        Para baixar novamente, <strong style="color:var(--ouro)">refaça o carrossel gratuitamente</strong><br>
+        — o pagamento já está confirmado.
+      </div>
+    </div>`;
+  }
+}
+
+async function baixarSlideUnico(i){
+  if(!galeriaSlidesCache[i]) return;
+  const blob = await new Promise(r=>galeriaSlidesCache[i].toBlob(r,'image/jpeg',.92));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Para_Sempre_Pai_slide_${String(i+1).padStart(2,'0')}.jpg`;
+  a.click();
+  toast('✦ Slide baixado!');
+}
+
+async function baixarZIPGaleria(){
+  if(!galeriaSlidesCache.length){ toast('Refaça o carrossel para baixar'); return; }
+  await baixarZIP();
+}
+
+function voltarLoginGaleria(){
+  document.getElementById('galeriaErro').textContent='';
+  document.getElementById('galeriaContato').value='';
+  mostrarEstadoGaleria('login');
+}
+
+function sairGaleria(){
+  galeriaUsuario = null;
+  usuarioAtual   = null;
+  salvarSessao(null);
+  galeriaSlidesCache = [];
+  voltarLoginGaleria();
+  toast('Sessão encerrada');
 }
 
 // ══ INIT SESSÃO ══
