@@ -1100,11 +1100,10 @@ function mostrarTela2(){
     const m=document.createElement('canvas');m.width=140;m.height=140;
     const ctx=m.getContext('2d');
     ctx.drawImage(c,0,0,140,140);
-    // Blur nos slides exceto o primeiro (prévia livre)
+    // Blur leve nos slides exceto o primeiro (prévia livre)
     if(i>0){
-      d.style.filter='blur(6px)';
+      d.style.filter='blur(3px) brightness(0.7)';
       d.style.userSelect='none';
-      d.title='Desbloqueie para ver todos';
     }
     d.appendChild(m);sc.appendChild(d);
   });
