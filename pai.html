@@ -114,7 +114,7 @@ body{font-family:'Inter',sans-serif;background:var(--noite);color:var(--creme);m
 }
 .t-head,.t-row{
   display:grid;
-  grid-template-columns:120px 1fr 140px 70px 90px;
+  grid-template-columns:110px 1fr 150px 70px 90px;
   padding:11px 14px;align-items:center;gap:6px;
 }
 .t-head{
@@ -370,7 +370,7 @@ function renderPedidos(){
     return `<div class="t-row" onclick="abrirDet('${esc(p.id||'')}')">
       <div class="t-id">${esc(p.id||'—')}</div>
       <div class="t-nome">${esc(p.nomeF||'—')}</div>
-      <div class="t-contato">${esc(p.email||'—')}</div>
+      <div class="t-contato">${esc(p.email||'—')}<br><span style="font-size:10px;color:var(--ouro)">${esc(p.tel||p.telefone||'—')}</span></div>
       <div class="t-total">${tot}</div>
       <div>${badge}</div>
     </div>`;
@@ -422,6 +422,7 @@ function abrirDet(id){
     <div class="det-linha"><span class="det-k">Nome</span><span class="det-v">${esc(p.nomeF||'—')}</span></div>
     <div class="det-linha"><span class="det-k">Pai</span><span class="det-v">${esc(p.nomePai||'—')}</span></div>
     <div class="det-linha"><span class="det-k">E-mail</span><span class="det-v">${esc(p.email||'—')}</span></div>
+    <div class="det-linha"><span class="det-k">WhatsApp</span><span class="det-v">${esc(p.tel||p.telefone||'Não informado')}</span></div>
     <div class="det-linha"><span class="det-k">Total</span><span class="det-v">${tot}</span></div>
     <div class="det-linha"><span class="det-k">Data</span><span class="det-v">${dt}</span></div>
     <div class="det-linha"><span class="det-k">Status</span><span class="det-v">${esc(p.status||'—')}</span></div>
