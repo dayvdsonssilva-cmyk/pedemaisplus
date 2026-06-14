@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { nomeF, nomePai, memoria } = req.body || {};
   if (!nomeF || !nomePai) return res.status(400).json({ erro: 'Dados incompletos' });
 
-  const OPENAI_KEY = process.env.OPENAI_API_KEY;
+  const OPENAI_KEY = process.env.OPENAI_KEY;
   if (!OPENAI_KEY) return res.status(500).json({ erro: 'Chave não configurada' });
 
   try {
