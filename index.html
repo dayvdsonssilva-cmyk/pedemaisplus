@@ -301,6 +301,7 @@ h1 em{
   animation:spin 1.4s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .ring-txt{
   font-family:'Cormorant Garamond',serif;
   font-size:20px;color:var(--ouro);font-style:italic;
@@ -405,10 +406,26 @@ h1 em{
 <canvas id="canvas-bg"></canvas>
 
 <!-- AUDIO -->
-<audio id="bgm" loop preload="none">
+<audio id="bgm" loop preload="auto">
   <source src="musica.mp3" type="audio/mpeg">
 </audio>
-<button class="audio-fab" id="audioBtn" onclick="toggleAudio()">🎵</button>
+<button class="audio-fab" id="audioBtn" onclick="toggleAudio()" title="Tocar música">🎵</button>
+
+<!-- Toque para iniciar (aparece só se autoplay bloqueado) -->
+<div id="audioPrompt" style="
+  position:fixed;bottom:80px;right:16px;z-index:200;
+  background:rgba(200,169,110,.15);
+  border:1px solid rgba(200,169,110,.4);
+  border-radius:12px;padding:10px 14px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px;color:var(--ouro);
+  text-align:center;line-height:1.4;
+  backdrop-filter:blur(8px);
+  display:none;cursor:pointer;
+  animation:fadeInUp .5s ease;
+" onclick="toggleAudio();this.style.display='none'">
+  🎵 Toque para<br>ouvir a música
+</div>
 
 <!-- ════════ TELA 1 ════════ -->
 <div id="tela1">
@@ -711,20 +728,54 @@ function loopParticulas(){
 }
 loopParticulas();
 
-// ══ AUDIO ══
-let audioOn=false;
-function toggleAudio(){
-  const a=document.getElementById('bgm');
-  const b=document.getElementById('audioBtn');
-  if(audioOn){a.pause();b.textContent='🎵';audioOn=false;}
-  else{a.play().catch(()=>{});b.textContent='🔇';audioOn=true;}
+// ══ AUDIO — loop automático ══
+let audioOn = false;
+const bgm   = document.getElementById('bgm');
+const btn   = document.getElementById('audioBtn');
+const prompt= document.getElementById('audioPrompt');
+
+bgm.volume = 0.7;
+
+function iniciarAudio(){
+  if(audioOn) return;
+  bgm.play().then(()=>{
+    audioOn = true;
+    btn.textContent  = '🔇';
+    prompt.style.display = 'none';
+  }).catch(()=>{
+    // Bloqueado pelo browser — mostra o prompt
+    prompt.style.display = 'block';
+  });
 }
-document.addEventListener('touchstart',function ia(){
-  document.getElementById('bgm').play().then(()=>{
-    audioOn=true;document.getElementById('audioBtn').textContent='🔇';
-  }).catch(()=>{});
-  document.removeEventListener('touchstart',ia);
-},{once:true,passive:true});
+
+function toggleAudio(){
+  if(audioOn){
+    bgm.pause();
+    btn.textContent = '🎵';
+    audioOn = false;
+  } else {
+    bgm.play().then(()=>{
+      audioOn = true;
+      btn.textContent = '🔇';
+      prompt.style.display = 'none';
+    }).catch(()=>{});
+  }
+}
+
+// Tenta tocar no primeiro evento de qualquer tipo
+['touchstart','touchend','click','keydown','scroll'].forEach(ev=>{
+  document.addEventListener(ev, function handler(){
+    iniciarAudio();
+    // Remove após primeiro sucesso
+    if(audioOn) document.removeEventListener(ev, handler);
+  }, {once:true, passive:true});
+});
+
+// Fallback: tenta direto após 1s (funciona em alguns browsers)
+setTimeout(()=>{ if(!audioOn) iniciarAudio(); }, 1000);
+
+// Garante que o loop reinicia mesmo se o evento 'ended' disparar
+bgm.addEventListener('ended', ()=>{ bgm.currentTime=0; bgm.play().catch(()=>{}); });
 
 // ══ ESTADO ══
 let fotos=[],molduraSel=0,slides=[],etapa=1;
