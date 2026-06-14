@@ -509,6 +509,25 @@ h1 em{
   white-space:nowrap;pointer-events:none;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ══ CROP MODAL ══ */
+.crop-over{position:fixed;inset:0;background:rgba(14,11,8,.97);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;backdrop-filter:blur(4px)}
+.crop-over.show{display:flex}
+.crop-titulo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--ouro);letter-spacing:1px;text-align:center}
+.crop-info{font-size:12px;color:var(--cinza);text-align:center;line-height:1.5}
+.crop-stage{position:relative;width:min(85vw,360px);aspect-ratio:1;overflow:hidden;border-radius:14px;background:#000;touch-action:none;cursor:grab;border:2px solid rgba(200,169,110,.3)}
+.crop-stage:active{cursor:grabbing}
+.crop-stage img{position:absolute;transform-origin:center center;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none;max-width:none;max-height:none}
+.crop-grid-lines{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(rgba(200,169,110,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,110,.15) 1px,transparent 1px);background-size:33.33% 33.33%}
+.crop-border{position:absolute;inset:0;pointer-events:none;z-index:3;border:2px solid rgba(200,169,110,.5);border-radius:12px}
+.crop-zoom-row{display:flex;align-items:center;gap:10px;width:min(85vw,360px)}
+.crop-zoom-lbl{font-size:11px;color:var(--cinza);white-space:nowrap}
+.crop-zoom-inp{flex:1;accent-color:var(--ouro)}
+.crop-btns{display:flex;gap:10px;width:min(85vw,360px)}
+.crop-btn{flex:1;padding:13px;border:none;border-radius:12px;font-family:'Cormorant Garamond',serif;font-size:18px;cursor:pointer}
+.crop-btn-ok{background:var(--ouro);color:var(--noite)}
+.crop-btn-can{background:rgba(200,169,110,.1);color:var(--cinza)}
+.crop-prog{font-size:12px;color:var(--cinza);font-family:'Cormorant Garamond',serif;font-style:italic}
 </style>
 </head>
 <body>
@@ -584,14 +603,22 @@ h1 em{
   <!-- ETAPA 1: FOTOS -->
   <div id="etapa1">
     <div class="card">
-      <div class="slbl">Adicione as fotos</div>
+      <div class="slbl" style="justify-content:space-between">
+        <span>Adicione as fotos</span>
+        <span id="fotoContador" style="font-size:11px;color:var(--ouro);opacity:.7">0 / 10</span>
+      </div>
+      <!-- Zona de upload (some quando tem fotos) -->
       <div class="upload-zone" id="uploadZone" onclick="triggerUpload()">
         <span class="uico">🕊️</span>
         <p class="utxt"><strong>Toque para escolher fotos</strong></p>
-        <p class="utxt" style="margin-top:6px;font-size:12px;opacity:.6">Até 10 fotos · JPG ou PNG</p>
+        <p class="utxt" style="margin-top:6px;font-size:12px;opacity:.6">Exatamente 10 fotos · JPG ou PNG</p>
         <input type="file" id="fileInput" accept="image/*" multiple>
       </div>
+      <!-- Grid de fotos -->
       <div class="fotos-grid" id="fotosGrid" style="display:none"></div>
+      <!-- Aviso de quantidade -->
+      <div id="fotoAviso" style="display:none;text-align:center;margin-top:10px;
+        font-size:12px;color:var(--ouro);font-style:italic;opacity:.8"></div>
     </div>
     </div>
 
@@ -838,6 +865,26 @@ h1 em{
       <button class="btn-entrar-galeria" onclick="voltarLoginGaleria()">Tentar novamente</button>
     </div>
 
+  </div>
+</div>
+
+<!-- ════ CROP MODAL ════ -->
+<div class="crop-over" id="cropOver">
+  <div class="crop-titulo">✂️ Ajustar foto</div>
+  <div class="crop-info">Arraste para reposicionar · Pinça para zoom<br>A foto será recortada em quadrado</div>
+  <div class="crop-prog" id="cropProg"></div>
+  <div class="crop-stage" id="cropStage">
+    <img id="cropImg" draggable="false">
+    <div class="crop-grid-lines"></div>
+    <div class="crop-border"></div>
+  </div>
+  <div class="crop-zoom-row">
+    <span class="crop-zoom-lbl">🔍 Zoom</span>
+    <input type="range" class="crop-zoom-inp" id="cropZoom" min="0.5" max="4" step="0.01" value="1" oninput="aplicarCropTransform()">
+  </div>
+  <div class="crop-btns">
+    <button class="crop-btn crop-btn-can" onclick="cancelarCrop()">Cancelar</button>
+    <button class="crop-btn crop-btn-ok" onclick="confirmarCrop()">✓ Usar essa</button>
   </div>
 </div>
 
@@ -1125,34 +1172,234 @@ bgm.addEventListener('ended', ()=>{
 // ══ ESTADO ══
 let fotos=[],molduraSel=0,slides=[],etapa=1;
 
-// ══ UPLOAD ══
+// ══ UPLOAD + CROP ══
+let cropFila    = [];  // arquivos aguardando crop
+let cropAtual   = null;
+let cropState   = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0 };
+
 function triggerUpload(){
+  if(fotos.length >= 10){ toast('Máximo de 10 fotos atingido'); return; }
   const inp=document.getElementById('fileInput');
-  inp.value='';inp.onchange=handleFiles;inp.click();
+  inp.value=''; inp.onchange=handleFiles; inp.click();
 }
+
 async function handleFiles(e){
-  const files=[...e.target.files].slice(0,10-fotos.length);
-  for(const f of files){
-    const url=URL.createObjectURL(f);
-    fotos.push({url,file:f});
+  const restante = 10 - fotos.length;
+  const novos    = [...e.target.files].slice(0, restante);
+  if(!novos.length) return;
+  // Coloca na fila de crop
+  cropFila = novos.map(f=>({ file:f, url: URL.createObjectURL(f) }));
+  proximoCrop();
+}
+
+function proximoCrop(){
+  if(!cropFila.length){ renderFotos(); return; }
+  cropAtual = cropFila.shift();
+  abrirCropModal(cropAtual.url, cropFila.length);
+}
+
+function abrirCropModal(url, restNaFila){
+  const totalPendente = cropFila.length + 1;
+  const idx = fotos.length + 1;
+  document.getElementById('cropProg').textContent =
+    `Foto ${idx} de ${idx + cropFila.length} — ajuste e confirme`;
+
+  const img = document.getElementById('cropImg');
+  img.onload = () => {
+    const stage   = document.getElementById('cropStage');
+    const stageW  = stage.getBoundingClientRect().width || 300;
+    const fitScale = Math.max(stageW / img.naturalWidth, stageW / img.naturalHeight);
+    cropState = { scale: fitScale, x:0, y:0, dragging:false, startX:0, startY:0 };
+    const zi = document.getElementById('cropZoom');
+    zi.min   = (fitScale * 0.95).toFixed(3);
+    zi.max   = (fitScale * 4).toFixed(3);
+    zi.value = fitScale.toFixed(3);
+    aplicarCropTransform();
+    document.getElementById('cropOver').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  img.src = url;
+}
+
+function aplicarCropTransform(){
+  const img   = document.getElementById('cropImg');
+  const scale = parseFloat(document.getElementById('cropZoom').value);
+  cropState.scale = scale;
+  // Limita arraste para não mostrar borda
+  const stage    = document.getElementById('cropStage');
+  const stageW   = stage.getBoundingClientRect().width || 300;
+  const imgW     = img.naturalWidth  * scale;
+  const imgH     = img.naturalHeight * scale;
+  const maxX     = Math.max(0,(imgW - stageW)/2);
+  const maxY     = Math.max(0,(imgH - stageW)/2);
+  cropState.x    = Math.max(-maxX, Math.min(maxX, cropState.x));
+  cropState.y    = Math.max(-maxY, Math.min(maxY, cropState.y));
+  img.style.position      = 'absolute';
+  img.style.left          = '50%';
+  img.style.top           = '50%';
+  img.style.transform     = `translate(calc(-50% + ${cropState.x}px), calc(-50% + ${cropState.y}px)) scale(${scale})`;
+  img.style.transformOrigin = 'center center';
+}
+
+// ── DRAG mouse ──
+const cropStageEl = document.getElementById('cropStage');
+function onCD(ex,ey){ cropState.dragging=true; cropState.startX=ex-cropState.x; cropState.startY=ey-cropState.y; }
+function onCM(ex,ey){ if(!cropState.dragging)return; cropState.x=ex-cropState.startX; cropState.y=ey-cropState.startY; aplicarCropTransform(); }
+function onCU(){ cropState.dragging=false; }
+cropStageEl.addEventListener('mousedown', e=>{e.preventDefault();onCD(e.clientX,e.clientY);});
+cropStageEl.addEventListener('mousemove', e=>onCM(e.clientX,e.clientY));
+cropStageEl.addEventListener('mouseup',   onCU);
+cropStageEl.addEventListener('mouseleave',onCU);
+// ── DRAG touch ──
+cropStageEl.addEventListener('touchstart', e=>{e.preventDefault();onCD(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+cropStageEl.addEventListener('touchmove',  e=>{e.preventDefault();onCM(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+cropStageEl.addEventListener('touchend',   onCU);
+// ── PINCH ──
+let lastPinch=0;
+cropStageEl.addEventListener('touchstart',e=>{if(e.touches.length===2) lastPinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
+cropStageEl.addEventListener('touchmove',e=>{
+  if(e.touches.length!==2)return;
+  const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+  const zi=document.getElementById('cropZoom');
+  zi.value=Math.min(Math.max(parseFloat(zi.value)*(d/lastPinch),parseFloat(zi.min)),parseFloat(zi.max));
+  lastPinch=d; aplicarCropTransform();
+},{passive:true});
+
+function cancelarCrop(){
+  // Pula esta foto, vai para a próxima da fila
+  URL.revokeObjectURL(cropAtual?.url);
+  cropAtual=null;
+  document.getElementById('cropOver').classList.remove('show');
+  document.body.style.overflow='';
+  proximoCrop();
+}
+
+function confirmarCrop(){
+  const img      = document.getElementById('cropImg');
+  const stageEl  = document.getElementById('cropStage');
+  const stageW   = stageEl.getBoundingClientRect().width || 300;
+  const OUTPUT   = 1080;
+  const scale    = cropState.scale;
+
+  const canvas   = document.createElement('canvas');
+  canvas.width   = OUTPUT; canvas.height = OUTPUT;
+  const ctx      = canvas.getContext('2d');
+
+  const imgDrawW = img.naturalWidth  * scale;
+  const imgDrawH = img.naturalHeight * scale;
+  const imgLeft  = stageW/2 + cropState.x - imgDrawW/2;
+  const imgTop   = stageW/2 + cropState.y - imgDrawH/2;
+  const srcX     = -imgLeft / scale;
+  const srcY     = -imgTop  / scale;
+  const srcW     = stageW   / scale;
+  const srcH     = stageW   / scale;
+
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUTPUT, OUTPUT);
+
+  const b64 = canvas.toDataURL('image/jpeg', 0.92);
+  fotos.push({ url: cropAtual.url, base64: b64, croppada: true });
+
+  document.getElementById('cropOver').classList.remove('show');
+  document.body.style.overflow='';
+  URL.revokeObjectURL(cropAtual.url);
+  cropAtual = null;
+
+  renderFotos();
+  proximoCrop(); // próxima da fila
+}
+
+function renderFotos(){
+  const grid = document.getElementById('fotosGrid');
+  const zone = document.getElementById('uploadZone');
+  const aviso= document.getElementById('fotoAviso');
+  const cont = document.getElementById('fotoContador');
+  const btn  = document.getElementById('btnP1');
+
+  cont.textContent = `${fotos.length} / 10`;
+
+  if(!fotos.length){
+    grid.style.display='none'; zone.style.display='block';
+    aviso.style.display='none'; btn.disabled=true; return;
   }
+  zone.style.display='none'; grid.style.display='grid';
+
+  let h = fotos.map((f,i)=>`
+    <div class="foto-thumb" style="position:relative">
+      <img src="${f.url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">
+      <button class="rm" onclick="rmFoto(${i})" style="position:absolute;top:5px;right:5px;
+        background:rgba(14,11,8,.85);border:none;color:var(--ouro);
+        width:22px;height:22px;border-radius:50%;font-size:11px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="recortarFoto(${i})" style="position:absolute;bottom:5px;right:5px;
+        background:rgba(200,169,110,.85);border:none;color:var(--noite);
+        font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;cursor:pointer;">✂️</button>
+    </div>`).join('');
+
+  if(fotos.length < 10)
+    h += `<div class="foto-add" onclick="triggerUpload()" style="
+      aspect-ratio:1;border-radius:10px;
+      border:1px dashed rgba(200,169,110,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;color:rgba(200,169,110,.4);cursor:pointer;">+</div>`;
+
+  grid.innerHTML = h;
+
+  // Aviso
+  if(fotos.length < 10){
+    aviso.style.display='block';
+    aviso.textContent = `Adicione mais ${10 - fotos.length} foto${10-fotos.length>1?'s':''} para continuar`;
+    btn.disabled = true;
+  } else {
+    aviso.style.display='none';
+    btn.disabled = false;
+  }
+}
+
+function rmFoto(i){
+  fotos.splice(i,1);
   renderFotos();
 }
-function renderFotos(){
-  const grid=document.getElementById('fotosGrid');
-  const zone=document.getElementById('uploadZone');
-  if(!fotos.length){grid.style.display='none';zone.style.display='block';return;}
-  zone.style.display='none';grid.style.display='grid';
-  let h=fotos.map((f,i)=>`
-    <div class="foto-thumb">
-      <img src="${f.url}">
-      <button class="rm" onclick="rmFoto(${i})">✕</button>
-    </div>`).join('');
-  if(fotos.length<10) h+=`<div class="foto-add" onclick="triggerUpload()">+</div>`;
-  grid.innerHTML=h;
-  document.getElementById('btnP1').disabled=false;
+
+// Recortar uma foto já adicionada
+function recortarFoto(i){
+  cropAtual = { ...fotos[i], idx: i };
+  const img = document.getElementById('cropImg');
+  img.onload = () => {
+    const stage  = document.getElementById('cropStage');
+    const sw     = stage.getBoundingClientRect().width || 300;
+    const fit    = Math.max(sw/img.naturalWidth, sw/img.naturalHeight);
+    cropState    = { scale:fit, x:0, y:0, dragging:false, startX:0, startY:0 };
+    const zi     = document.getElementById('cropZoom');
+    zi.min=(fit*.95).toFixed(3); zi.max=(fit*4).toFixed(3); zi.value=fit.toFixed(3);
+    aplicarCropTransform();
+    document.getElementById('cropProg').textContent = `Recortando foto ${i+1}`;
+    // Override: salvar vai substituir no índice
+    document.querySelector('.crop-btn-ok').onclick = ()=>confirmarCropEdit(i);
+    document.getElementById('cropOver').classList.add('show');
+    document.body.style.overflow='hidden';
+  };
+  img.src = fotos[i].url;
 }
-function rmFoto(i){URL.revokeObjectURL(fotos[i].url);fotos.splice(i,1);renderFotos();}
+
+function confirmarCropEdit(idx){
+  const img    = document.getElementById('cropImg');
+  const stageEl= document.getElementById('cropStage');
+  const stageW = stageEl.getBoundingClientRect().width||300;
+  const OUTPUT = 1080; const scale=cropState.scale;
+  const canvas = document.createElement('canvas');
+  canvas.width=OUTPUT; canvas.height=OUTPUT;
+  const ctx=canvas.getContext('2d');
+  const imgDrawW=img.naturalWidth*scale, imgDrawH=img.naturalHeight*scale;
+  const imgLeft=stageW/2+cropState.x-imgDrawW/2, imgTop=stageW/2+cropState.y-imgDrawH/2;
+  ctx.drawImage(img,-imgLeft/scale,-imgTop/scale,stageW/scale,stageW/scale,0,0,OUTPUT,OUTPUT);
+  fotos[idx].base64 = canvas.toDataURL('image/jpeg',.92);
+  document.getElementById('cropOver').classList.remove('show');
+  document.body.style.overflow='';
+  // Restaura o onclick original
+  document.querySelector('.crop-btn-ok').onclick = confirmarCrop;
+  renderFotos();
+  toast('✦ Foto ajustada!');
+}
 
 // ══ MOLDURAS ══
 const MOLDURAS=[
@@ -1242,7 +1489,9 @@ async function gerarCarrossel(){
     slides.push(await gerarSlide(null,'capa',m,nomePai,nomeF,''));
     for(let i=0;i<Math.min(fotos.length,7);i++){
       setMsg(`Processando foto ${i+1} de ${Math.min(fotos.length,7)}...`);
-      slides.push(await gerarSlide(fotos[i].url,'foto',m,nomePai,nomeF,ded.frases[i]||''));
+      // Usa base64 croppada se disponível, senão url original
+      const fotoSrc = fotos[i].base64 || fotos[i].url;
+      slides.push(await gerarSlide(fotoSrc,'foto',m,nomePai,nomeF,ded.frases[i]||''));
     }
     setMsg('Finalizando...');
     slides.push(await gerarSlide(null,'fim',m,nomePai,nomeF,ded.mensagem));
