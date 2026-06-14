@@ -117,11 +117,11 @@ h1 em{
 }
 .step.ativo{opacity:1}
 .step-dot{
-  width:32px;height:32px;border-radius:50%;
+  width:28px;height:28px;border-radius:50%;
   border:1px solid rgba(200,169,110,.4);
   display:flex;align-items:center;justify-content:center;
   font-family:'Cormorant Garamond',serif;
-  font-size:15px;color:var(--ouro);
+  font-size:14px;color:var(--ouro);
   transition:.4s;
   position:relative;z-index:1;
 }
@@ -130,7 +130,7 @@ h1 em{
   border-color:var(--ouro);
   box-shadow:0 0 20px rgba(200,169,110,.4);
 }
-.step-nome{font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase}
+.step-nome{font-size:9px;color:var(--cinza);letter-spacing:.5px;text-transform:uppercase}
 .step-line{flex:1;height:1px;background:rgba(200,169,110,.15);margin-top:-22px;position:relative;z-index:0}
 
 /* CARD */
@@ -153,11 +153,11 @@ h1 em{
 
 /* SECTION LABEL */
 .slbl{
-  font-size:10px;
+  font-size:9px;
   color:var(--ouro);
-  letter-spacing:2px;
+  letter-spacing:1.5px;
   text-transform:uppercase;
-  margin-bottom:14px;
+  margin-bottom:10px;
   opacity:.7;
   display:flex;align-items:center;gap:8px;
 }
@@ -237,11 +237,11 @@ h1 em{
 }
 
 /* FORM */
-.form-group{margin-bottom:16px}
+.form-group{margin-bottom:12px}
 .flbl{
-  font-size:10px;color:var(--ouro);
-  letter-spacing:2px;text-transform:uppercase;
-  display:block;margin-bottom:8px;opacity:.8;
+  font-size:9px;color:var(--ouro);
+  letter-spacing:1.5px;text-transform:uppercase;
+  display:block;margin-bottom:6px;opacity:.8;
 }
 .finp{
   width:100%;padding:13px 16px;
@@ -600,16 +600,20 @@ h1 em{
 <div id="tela1">
 <div class="page">
 
-  <!-- HERO -->
-  <div class="hero" style="padding-top:90px">
-    <div class="eyebrow">Dia dos Pais · 2026</div>
-    <h1>Para Sempre<em>Pai</em></h1>
-    <p class="hero-sub">Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.</p>
-    <div class="divider"><span>✦</span></div>
+  <!-- HERO COMPACTO -->
+  <div style="padding-top:70px;padding-bottom:12px;text-align:center">
+    <div class="eyebrow" style="margin-bottom:4px">Dia dos Pais · 2026</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--branco);line-height:1">
+      Para Sempre<br><em style="color:var(--ouro);font-size:52px;font-weight:600">Pai</em>
+    </div>
+    <p style="font-size:12px;color:var(--cinza);margin-top:8px;line-height:1.5">
+      Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.
+    </p>
+    <div class="divider" style="margin:12px 0 0"><span>✦</span></div>
   </div>
 
-  <!-- STEPS -->
-  <div class="steps">
+  <!-- STEPS COMPACTOS -->
+  <div class="steps" style="margin-bottom:16px">
     <div class="step ativo" id="s1">
       <div class="step-dot">1</div>
       <div class="step-nome">Fotos</div>
@@ -768,7 +772,7 @@ h1 em{
     <div class="insta-frame-ui">
       <div class="insta-dots" id="instaDots"></div>
       <div class="slides-counter" id="slidesCounter"></div>
-      <div class="insta-nav">
+      <div class="insta-nav" style="display:none">
         <button onclick="navSlide(-1)">‹</button>
         <button onclick="navSlide(1)">›</button>
       </div>
@@ -792,17 +796,21 @@ h1 em{
     </div>
   </div>
 </div>
-<!-- MINIATURAS (scroll horizontal) -->
-<div class="slides-scroll" id="slidesScroll" style="padding-bottom:8px"></div>
+<!-- miniaturas removidas -->
 
 </div>
 
 <!-- ════════ TELA 2.5: PAGAMENTO ════════ -->
 <div id="telaPagamento" style="display:none">
 <div class="page" style="padding-top:20px">
-  <div style="text-align:center;margin-bottom:20px">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--branco);margin-bottom:4px">
-      Guardar essa memória<br><em style="color:var(--ouro)">para sempre</em>
+  <!-- Frase emocional -->
+  <div style="text-align:center;margin-bottom:20px;padding:0 8px">
+    <div style="font-size:32px;margin-bottom:10px">🕊️</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--branco);line-height:1.4;margin-bottom:6px">
+      "A distância que nos separa<br>não apaga o amor que ficou."
+    </div>
+    <div style="font-size:11px;color:var(--cinza);letter-spacing:1px">
+      Guarde essa memória para sempre ✦
     </div>
   </div>
   <div style="background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:24px 20px;margin-bottom:16px;text-align:center">
@@ -1744,42 +1752,38 @@ function renderInstaPreview(){
     `<div class="insta-dot ${i===slideAtual?'ativo':''}"></div>`
   ).join('');
   document.getElementById('slidesCounter').textContent = `${slideAtual+1} / ${slides.length}`;
+  initSwipe();
 }
 
 function navSlide(dir){
   slideAtual = Math.max(0, Math.min(slides.length-1, slideAtual+dir));
   renderInstaPreview();
-  // Atualiza miniatura ativa
-  document.querySelectorAll('.slide-mini').forEach((d,i)=>{
-    d.style.border = i===slideAtual ? '2px solid var(--ouro)' : '2px solid transparent';
-  });
 }
 
-function renderMiniaturasScroll(){
-  const sc=document.getElementById('slidesScroll');sc.innerHTML='';
-  slides.forEach((c,i)=>{
-    const d=document.createElement('div');
-    d.className='slide-mini';
-    d.style.cursor='pointer';
-    d.style.border = i===0 ? '2px solid var(--ouro)' : '2px solid transparent';
-    d.style.borderRadius='10px';d.style.overflow='hidden';d.style.flexShrink='0';
-    const m=document.createElement('canvas');m.width=80;m.height=80;
-    m.getContext('2d').drawImage(c,0,0,80,80);
-    // Cadeado nos que não são o primeiro
-    if(i>0){
-      d.style.position='relative';
-      const lock=document.createElement('div');
-      lock.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(14,11,8,.5);border-radius:8px;pointer-events:none;';
-      lock.textContent='🔒';
-      d.appendChild(lock);
+// ── SWIPE NO INSTAGRAM FRAME ──
+let swipeStartX=0, swipeStartY=0;
+function initSwipe(){
+  const el = document.getElementById('instaFrame');
+  if(!el || el._swipeInit) return;
+  el._swipeInit = true;
+
+  el.addEventListener('touchstart', e=>{
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+  }, {passive:true});
+
+  el.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    // Só conta como swipe horizontal se dx > dy e dx > 40px
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+      if(dx < 0) navSlide(1);  // swipe esquerda = próximo
+      else        navSlide(-1); // swipe direita = anterior
     }
-    d.appendChild(m);
-    d.onclick=()=>{ slideAtual=i; renderInstaPreview();
-      document.querySelectorAll('.slide-mini').forEach((el,j)=>el.style.border=j===i?'2px solid var(--ouro)':'2px solid transparent');
-    };
-    sc.appendChild(d);
-  });
+  }, {passive:true});
 }
+
+function renderMiniaturasScroll(){ /* miniaturas removidas */ }
 
 // ══ PAGAMENTO PIX INLINE ══
 let pedidoId='', pixStr='', pollingTimer=null, paymentMPId=null;
