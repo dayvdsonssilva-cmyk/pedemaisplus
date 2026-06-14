@@ -593,8 +593,11 @@ h1 em{
       </div>
       <div class="fotos-grid" id="fotosGrid" style="display:none"></div>
     </div>
-    <button class="btn" id="btnP1" disabled onclick="irEtapa(2)">Continuar →</button>
-  </div>
+    </div>
+
+<div class="bottom-bar-fixo" id="bottomBar1">
+  <button class="btn" id="btnP1" disabled onclick="irEtapa(2)">Continuar →</button>
+</div>
 
   <!-- ETAPA 2: MOLDURA -->
   <div id="etapa2" style="display:none">
@@ -602,8 +605,11 @@ h1 em{
       <div class="slbl">Escolha a moldura</div>
       <div class="molduras-grid" id="moldurasGrid"></div>
     </div>
-    <button class="btn" onclick="irEtapa(3)">Continuar →</button>
-  </div>
+    </div>
+
+<div class="bottom-bar-fixo" id="bottomBar2" style="display:none">
+  <button class="btn" onclick="irEtapa(3)">Continuar →</button>
+</div>
 
   <!-- ETAPA 3: MEMÓRIA -->
   <div id="etapa3" style="display:none">
@@ -632,7 +638,11 @@ h1 em{
           placeholder="Ex: Ele sempre dizia que o amor verdadeiro não tem distância..."></textarea>
       </div>
     </div>
-    <button class="btn" onclick="gerarCarrossel()">Criar meu carrossel ✦</button>
+    </div>
+
+<div class="bottom-bar-fixo" id="bottomBar3" style="display:none">
+  <button class="btn" onclick="gerarCarrossel()">Criar meu carrossel ✦</button>
+</div>
   </div>
 
 </div>
@@ -656,7 +666,22 @@ h1 em{
 </div>
 
 <!-- SLIDES COM BLUR -->
-<div class="slides-scroll" id="slidesScroll"></div>
+<!-- PREVIEW ESTILO INSTAGRAM -->
+<div style="padding:0 16px;margin-bottom:12px">
+  <div class="insta-frame" id="instaFrame">
+    <canvas id="instaCanvas"></canvas>
+    <div class="insta-frame-ui">
+      <div class="insta-dots" id="instaDots"></div>
+      <div class="slides-counter" id="slidesCounter"></div>
+      <div class="insta-nav">
+        <button onclick="navSlide(-1)">‹</button>
+        <button onclick="navSlide(1)">›</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MINIATURAS (scroll horizontal) -->
+<div class="slides-scroll" id="slidesScroll" style="padding-bottom:8px"></div>
 
 <!-- CARD PAGAMENTO (botão + QR tudo junto) -->
 <div class="page">
@@ -698,10 +723,20 @@ h1 em{
 <div class="page">
   <span class="sico">🕊️</span>
   <div class="stit">Feito com<em>amor</em></div>
-  <p class="ssub">Seu carrossel está pronto.<br>Baixe e poste para homenagear seu pai.</p>
+  <p class="ssub">Seus slides estão prontos.<br>Poste e eternize essa memória.</p>
   <div class="divider"><span>✦</span></div>
 
-  <!-- BOTÃO INSTAGRAM -->
+  <!-- PASTA COM SLIDES -->
+  <div class="pasta-card" onclick="abrirGaleria()">
+    <div class="pasta-ico">📁</div>
+    <div class="pasta-info">
+      <div class="pasta-nome">Minha homenagem</div>
+      <div class="pasta-qtd" id="pastaTxt">slides prontos</div>
+    </div>
+    <div style="color:var(--ouro);font-size:18px">›</div>
+  </div>
+
+  <!-- PUBLICAR NO INSTAGRAM -->
   <button onclick="compartilharInstagram()" style="
     width:100%;padding:16px;margin-bottom:12px;
     background:linear-gradient(135deg,#E1306C,#833AB4,#F77737);
@@ -710,15 +745,12 @@ h1 em{
     border-radius:12px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;gap:10px;
   ">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-    Compartilhar no Instagram
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    Publicar agora no Instagram
   </button>
 
-  <!-- BOTÃO DOWNLOAD -->
-  <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Baixar meu carrossel</button>
-
-  <p style="font-size:11px;color:var(--cinza);letter-spacing:.5px;margin-bottom:6px">10 slides · 1080×1080px · Prontos para o Instagram</p>
-  <p style="font-size:10px;color:rgba(138,123,110,.5)">Para postar: abra o app → + → selecione todos os slides em ordem</p>
+  <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Salvar no celular (PNG)</button>
+  <p style="font-size:10px;color:rgba(138,123,110,.4)">10 slides · 1080×1080px</p>
 </div>
 </div>
 
@@ -1136,8 +1168,12 @@ function selMoldura(i){
 // ══ ETAPAS ══
 function irEtapa(n){
   document.getElementById(`etapa${etapa}`).style.display='none';
+  // Esconde todas as bottom bars
+  [1,2,3].forEach(i=>{const b=document.getElementById(`bottomBar${i}`);if(b)b.style.display='none';});
   etapa=n;
   document.getElementById(`etapa${n}`).style.display='block';
+  // Mostra a bottom bar da etapa atual
+  const bb=document.getElementById(`bottomBar${n}`);if(bb)bb.style.display='block';
   [1,2,3,4].forEach(j=>document.getElementById(`s${j}`)?.classList.toggle('ativo',j<=n));
   if(n===2)renderMolduras();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1290,25 +1326,69 @@ function wrapTxt(x,t,cx,cy,mw,lh){
   if(line)x.fillText(line,cx,y);
 }
 
-// ══ PREVIEW ══
+// ══ PREVIEW INSTAGRAM ══
+let slideAtual = 0;
+
 function mostrarTela2(){
+  // Esconde bottom bars da etapa 1-3
+  [1,2,3].forEach(i=>{const b=document.getElementById(`bottomBar${i}`);if(b)b.style.display='none';});
   document.getElementById('tela1').style.display='none';
   document.getElementById('tela2').style.display='block';
+  slideAtual = 0;
+  renderInstaPreview();
+  renderMiniaturasScroll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderInstaPreview(){
+  const c = slides[slideAtual];
+  if(!c) return;
+  const frame = document.getElementById('instaCanvas');
+  const size  = document.getElementById('instaFrame').offsetWidth || 340;
+  frame.width  = size;
+  frame.height = size;
+  frame.getContext('2d').drawImage(c, 0, 0, size, size);
+  // Dots
+  const dots = document.getElementById('instaDots');
+  dots.innerHTML = slides.map((_,i)=>
+    `<div class="insta-dot ${i===slideAtual?'ativo':''}"></div>`
+  ).join('');
+  document.getElementById('slidesCounter').textContent = `${slideAtual+1} / ${slides.length}`;
+}
+
+function navSlide(dir){
+  slideAtual = Math.max(0, Math.min(slides.length-1, slideAtual+dir));
+  renderInstaPreview();
+  // Atualiza miniatura ativa
+  document.querySelectorAll('.slide-mini').forEach((d,i)=>{
+    d.style.border = i===slideAtual ? '2px solid var(--ouro)' : '2px solid transparent';
+  });
+}
+
+function renderMiniaturasScroll(){
   const sc=document.getElementById('slidesScroll');sc.innerHTML='';
   slides.forEach((c,i)=>{
-    const d=document.createElement('div');d.className='slide-mini';
-    const m=document.createElement('canvas');m.width=140;m.height=140;
-    m.getContext('2d').drawImage(c,0,0,140,140);
+    const d=document.createElement('div');
+    d.className='slide-mini';
+    d.style.cursor='pointer';
+    d.style.border = i===0 ? '2px solid var(--ouro)' : '2px solid transparent';
+    d.style.borderRadius='10px';d.style.overflow='hidden';d.style.flexShrink='0';
+    const m=document.createElement('canvas');m.width=80;m.height=80;
+    m.getContext('2d').drawImage(c,0,0,80,80);
+    // Cadeado nos que não são o primeiro
     if(i>0){
       d.style.position='relative';
       const lock=document.createElement('div');
-      lock.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(14,11,8,.45);border-radius:12px;pointer-events:none;';
+      lock.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(14,11,8,.5);border-radius:8px;pointer-events:none;';
       lock.textContent='🔒';
       d.appendChild(lock);
     }
-    d.appendChild(m);sc.appendChild(d);
+    d.appendChild(m);
+    d.onclick=()=>{ slideAtual=i; renderInstaPreview();
+      document.querySelectorAll('.slide-mini').forEach((el,j)=>el.style.border=j===i?'2px solid var(--ouro)':'2px solid transparent');
+    };
+    sc.appendChild(d);
   });
-  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ══ PAGAMENTO PIX INLINE ══
@@ -1399,11 +1479,16 @@ function liberarDownload(){
   clearInterval(pollingTimer);
   document.getElementById('tela2').style.display='none';
   document.getElementById('tela3').classList.add('show');
-  // Remove efeito de bloqueio
+  // Atualiza texto da pasta
+  const pt = document.getElementById('pastaTxt');
+  if(pt) pt.textContent = `${slides.length} slides prontos para postar`;
+  // Remove cadeados das miniaturas
   document.querySelectorAll('.slide-mini canvas').forEach(c=>c.style.filter='none');
-  document.querySelectorAll('.slide-mini div').forEach(d=>d.remove());
+  document.querySelectorAll('.slide-mini > div').forEach(d=>{if(d.textContent==='🔒')d.remove();});
   window.scrollTo({top:0,behavior:'smooth'});
   toast('✦ Carrossel liberado!');
+  // Remove cadeados do preview principal
+  slideAtual=0; renderInstaPreview();
 }
 
 // ══ ZIP ══
@@ -1436,18 +1521,19 @@ let galeriaUsuario = null;
 let galeriaSlidesCache = []; // slides em canvas da sessão atual
 
 function abrirGaleria(){
-  // Se já tem slides gerados e está logado, mostra direto
-  if(slides.length > 0 && usuarioAtual){
-    galeriaUsuario = usuarioAtual;
+  // Verifica se tem compra aprovada
+  const jaAprovado = usuarioAtual && (() => {
+    const users = lerUsuarios();
+    const u = users[usuarioAtual.email];
+    return (u?.compras||[]).some(c=>c.status==='approved');
+  })();
+
+  if(jaAprovado && slides.length > 0){
+    galeriaUsuario     = usuarioAtual;
     galeriaSlidesCache = slides;
     mostrarSlidesGaleria();
-    document.getElementById('galeriaOverlay').classList.add('show');
-    document.body.style.overflow = 'hidden';
-    return;
-  }
-  // Se já tem sessão salva
-  if(usuarioAtual){
-    galeriaUsuario = usuarioAtual;
+  } else if(jaAprovado){
+    galeriaUsuario     = usuarioAtual;
     galeriaSlidesCache = slides;
     mostrarSlidesGaleria();
   } else {
@@ -1618,6 +1704,15 @@ function toast(msg){
   t.textContent=msg;t.classList.add('show');
   clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);
 }
+// Bloqueia print screen e screenshot
+document.addEventListener('keyup', e=>{
+  if(e.key==='PrintScreen'){ navigator.clipboard?.writeText('').catch(()=>{}); toast('Conteúdo protegido'); }
+});
+// CSS anti-print
+const antiPrint=document.createElement('style');
+antiPrint.textContent='@media print{body{display:none!important}} .sucesso,.slide-mini,#instaFrame{-webkit-user-select:none;user-select:none;}';
+document.head.appendChild(antiPrint);
+
 document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 let _lt=0;
