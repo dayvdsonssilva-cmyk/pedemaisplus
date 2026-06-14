@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>Para Sempre Pai</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -517,27 +518,105 @@ h1 em{
   <div class="ring-sub" id="loadMsg">Preparando suas fotos</div>
 </div>
 
-<!-- ════════ TELA 2: PREVIEW + PIX ════════ -->
+<!-- ════════ TELA 2: PREVIEW + PAGAMENTO MP ════════ -->
 <div id="tela2" style="display:none">
 <div class="page">
   <div class="hero" style="padding-top:48px">
-    <div class="eyebrow">Pronto com amor</div>
-    <h1 style="font-size:44px">Seu<em>carrossel</em></h1>
-    <p class="hero-sub" style="margin-bottom:20px">Deslize para ver todos os slides</p>
+    <div class="eyebrow">Prévia do seu carrossel</div>
+    <h1 style="font-size:44px">Quase<em>lá</em></h1>
+    <p class="hero-sub" style="margin-bottom:20px">Deslize para ver os slides · Desbloqueie para baixar</p>
   </div>
 </div>
-  <div class="slides-scroll" id="slidesScroll"></div>
+
+<!-- SLIDES COM BLUR -->
+<div class="slides-scroll" id="slidesScroll"></div>
+
+<!-- CADEADO / BLOQUEIO -->
 <div class="page">
-  <div class="pix-box">
-    <div class="pix-lbl">Valor único</div>
-    <div class="pix-val">R$19,90</div>
-    <p style="font-size:13px;color:var(--cinza);margin:10px 0 18px;line-height:1.6">
-      Baixe o ZIP com todos os slides<br>prontos para o Instagram
+  <div style="
+    text-align:center;
+    background:rgba(200,169,110,.06);
+    border:1px solid rgba(200,169,110,.2);
+    border-radius:18px;
+    padding:28px 20px;
+    margin-bottom:16px;
+    position:relative;overflow:hidden;
+  ">
+    <div style="font-size:36px;margin-bottom:12px">🔒</div>
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:26px;font-weight:600;
+      color:var(--branco);margin-bottom:6px;
+    ">Liberar meu carrossel</div>
+    <p style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:22px">
+      10 slides 1080×1080px prontos<br>para postar no Instagram
     </p>
-    <div class="pix-key">pagamentos@parasemprepai.com.br</div>
-    <button class="btn-copy" onclick="copiarPix()">✦ Copiar chave PIX</button>
-    <button class="btn" onclick="confirmarPix()">Já paguei ✓</button>
+
+    <!-- PREÇO DESTACADO -->
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:52px;font-weight:600;
+      color:var(--ouro);line-height:1;margin-bottom:4px;
+    ">R$19,90</div>
+    <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:22px">pagamento único</div>
+
+    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">
+      Pagar com PIX ✦
+    </button>
   </div>
+</div>
+
+<!-- POLLING STATUS (aparece após clicar em pagar) -->
+<div id="aguardandoPix" style="display:none">
+<div class="page">
+  <div style="
+    background:rgba(200,169,110,.05);
+    border:1px solid rgba(200,169,110,.2);
+    border-radius:18px;padding:28px 20px;
+    margin-bottom:16px;text-align:center;
+  ">
+    <div style="font-size:13px;color:var(--cinza);letter-spacing:1px;
+      text-transform:uppercase;margin-bottom:6px">Aguardando pagamento</div>
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:13px;color:var(--ouro);font-style:italic;
+      margin-bottom:20px;
+    " id="statusTxt">Verificando...</div>
+
+    <!-- QR CODE (se MP retornar) -->
+    <div id="qrBox" style="display:none;margin-bottom:16px">
+      <img id="qrImg" style="width:180px;height:180px;border-radius:12px;
+        border:1px solid rgba(200,169,110,.2);">
+    </div>
+
+    <!-- Copia e cola PIX -->
+    <div id="copiaCola" style="display:none;
+      background:rgba(14,11,8,.6);border-radius:8px;
+      padding:10px 12px;font-size:11px;
+      color:var(--creme);font-family:monospace;
+      margin-bottom:12px;word-break:break-all;
+      text-align:left;max-height:60px;overflow:hidden;
+    " id="pixCopiaCola"></div>
+
+    <button class="btn-copy" id="btnCopiarPix" style="display:none" onclick="copiarPixMP()">
+      ✦ Copiar código PIX
+    </button>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-top:16px">
+      <div style="flex:1;height:1px;background:rgba(200,169,110,.15)"></div>
+      <div class="ring" style="width:24px;height:24px;border-width:1.5px"></div>
+      <div style="flex:1;height:1px;background:rgba(200,169,110,.15)"></div>
+    </div>
+    <div style="font-size:12px;color:var(--cinza);margin-top:10px">
+      Verificando pagamento automaticamente...
+    </div>
+
+    <button class="btn ghost" onclick="confirmarManual()" style="margin-top:12px;font-size:14px">
+      Já paguei — verificar agora
+    </button>
+  </div>
+</div>
 </div>
 </div>
 
@@ -557,8 +636,7 @@ h1 em{
 
 <script>
 // ══ CONFIG ══
-const OPENAI_KEY = 'SUA_CHAVE_AQUI';
-const PIX_KEY    = 'pagamentos@parasemprepai.com.br';
+const PIX_KEY = 'pagamentos@parasemprepai.com.br';
 
 // ══════════════════════════════════════
 // PARTÍCULAS COM CANVAS — DESTAQUE TOTAL
@@ -903,21 +981,15 @@ async function gerarCarrossel(){
 
 function setMsg(t){document.getElementById('loadMsg').textContent=t;}
 
-// ══ GPT ══
-async function gptDedicatoria(nomeF,nomePai,mem){
-  const r=await fetch('https://api.openai.com/v1/chat/completions',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${OPENAI_KEY}`},
-    body:JSON.stringify({
-      model:'gpt-4o',max_tokens:400,
-      messages:[{role:'user',content:
-        `Escreva uma homenagem para um pai falecido.\nFilho(a): ${nomeF}\nPai: ${nomePai}\n${mem?'Memória: '+mem:''}\n\nResponda APENAS em JSON sem markdown:\n{"frases":["frase1","frase2","frase3","frase4","frase5","frase6","frase7"],"mensagem":"mensagem final em 2 linhas"}\n\nRegras: máximo 7 palavras por frase, em português, emocionantes e simples.`
-      }]
-    })
+// ══ GPT via serverless (chave fica no Vercel, não exposta) ══
+async function gptDedicatoria(nomeF, nomePai, mem){
+  const r = await fetch('/api/dedicatoria', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nomeF, nomePai, memoria: mem })
   });
-  if(!r.ok)throw new Error('GPT '+r.status);
-  const d=await r.json();
-  return JSON.parse(d.choices[0].message.content.replace(/```json|```/g,'').trim());
+  if(!r.ok) throw new Error('GPT ' + r.status);
+  return r.json();
 }
 
 // ══ CANVAS SLIDE 1080x1080 ══
@@ -1013,30 +1085,161 @@ function wrapTxt(x,t,cx,cy,mw,lh){
   if(line)x.fillText(line,cx,y);
 }
 
-// ══ PREVIEW ══
+// ══ MOSTRAR PREVIEW ══
 function mostrarTela2(){
   document.getElementById('tela1').style.display='none';
   document.getElementById('tela2').style.display='block';
   const sc=document.getElementById('slidesScroll');sc.innerHTML='';
-  slides.forEach(c=>{
+  slides.forEach((c,i)=>{
     const d=document.createElement('div');d.className='slide-mini';
     const m=document.createElement('canvas');m.width=140;m.height=140;
-    m.getContext('2d').drawImage(c,0,0,140,140);
+    const ctx=m.getContext('2d');
+    ctx.drawImage(c,0,0,140,140);
+    // Blur nos slides exceto o primeiro (prévia livre)
+    if(i>0){
+      d.style.filter='blur(6px)';
+      d.style.userSelect='none';
+      d.title='Desbloqueie para ver todos';
+    }
     d.appendChild(m);sc.appendChild(d);
   });
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ══ PIX ══
-function copiarPix(){
-  navigator.clipboard?.writeText(PIX_KEY).catch(()=>{});
-  toast('Chave copiada ✦');
+// ══ MERCADO PAGO ══
+let pedidoId  = '';
+let pixCopiaColaStr = '';
+let pollingTimer = null;
+
+async function iniciarPagamento(){
+  const btn = document.getElementById('btnPagar');
+  btn.disabled = true;
+  btn.textContent = 'Aguarde...';
+
+  pedidoId = 'PSP'+Date.now().toString(36).toUpperCase();
+
+  const nomeF   = document.getElementById('nomeF')?.value  || '';
+  const nomePai = document.getElementById('nomePai')?.value || '';
+
+  try {
+    const r = await fetch('/api/criar-pagamento',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ pedidoId, nomeF, nomePai, email:'' })
+    });
+    const data = await r.json();
+
+    if(!r.ok) throw new Error(data.erro || 'Erro MP');
+
+    // Mostra seção de aguardando
+    document.getElementById('aguardandoPix').style.display='block';
+    document.getElementById('btnPagar').style.display='none';
+
+    // QR Code se disponível
+    if(data.pix_qr_code){
+      const qrImg = document.getElementById('qrImg');
+      qrImg.src = 'data:image/png;base64,' + data.pix_qr_code;
+      document.getElementById('qrBox').style.display='block';
+    }
+
+    // Copia e cola
+    if(data.pix_copia_cola || data.init_point){
+      pixCopiaColaStr = data.pix_copia_cola || data.init_point;
+      document.getElementById('pixCopiaCola').textContent = pixCopiaColaStr;
+      document.getElementById('pixCopiaCola').style.display='block';
+      document.getElementById('btnCopiarPix').style.display='block';
+    }
+
+    // Se não tiver PIX direto, abre o checkout MP
+    if(!data.pix_qr_code && data.init_point){
+      window.open(data.init_point, '_blank');
+      document.getElementById('statusTxt').textContent =
+        'Complete o pagamento na página do Mercado Pago';
+    } else {
+      document.getElementById('statusTxt').textContent =
+        'Escaneie o QR ou copie o código PIX';
+    }
+
+    // Inicia polling
+    iniciarPolling();
+
+  } catch(e){
+    btn.disabled=false;
+    btn.textContent='Pagar com PIX ✦';
+    toast('Erro ao gerar pagamento. Tente novamente.');
+    console.error(e);
+  }
 }
-function confirmarPix(){
+
+function copiarPixMP(){
+  if(!pixCopiaColaStr) return;
+  navigator.clipboard?.writeText(pixCopiaColaStr).catch(()=>{});
+  toast('Código PIX copiado ✦');
+}
+
+// Polling — verifica a cada 5 segundos
+function iniciarPolling(){
+  if(pollingTimer) clearInterval(pollingTimer);
+  pollingTimer = setInterval(verificarStatus, 5000);
+  verificarStatus(); // verifica imediatamente
+}
+
+async function verificarStatus(){
+  if(!pedidoId) return;
+  try {
+    const r = await fetch(`/api/webhook?pedido=${pedidoId}`);
+    const d = await r.json();
+
+    if(d.status === 'approved'){
+      clearInterval(pollingTimer);
+      liberarDownload();
+    } else if(d.status === 'rejected'){
+      clearInterval(pollingTimer);
+      document.getElementById('statusTxt').textContent = 'Pagamento recusado. Tente novamente.';
+      document.getElementById('btnPagar').style.display='block';
+      document.getElementById('btnPagar').disabled=false;
+      document.getElementById('btnPagar').textContent='Tentar novamente';
+    }
+    // pending = continua aguardando
+  } catch(e){ /* silencioso */ }
+}
+
+// Botão manual "já paguei"
+async function confirmarManual(){
+  document.getElementById('statusTxt').textContent='Verificando...';
+  await verificarStatus();
+  // Se ainda não aprovado após 3 tentativas rápidas
+  let tentativas = 0;
+  const rapido = setInterval(async()=>{
+    tentativas++;
+    await verificarStatus();
+    if(tentativas >= 3) clearInterval(rapido);
+  }, 2000);
+}
+
+function liberarDownload(){
+  clearInterval(pollingTimer);
   document.getElementById('tela2').style.display='none';
   document.getElementById('tela3').classList.add('show');
+  // Remove blur dos slides
+  document.querySelectorAll('.slide-mini').forEach(d=>{d.style.filter='none';});
   window.scrollTo({top:0,behavior:'smooth'});
+  toast('Pagamento confirmado! ✦');
 }
+
+// Verifica se voltou do MP com ?status=aprovado
+(function verificarRetornoMP(){
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+  const pedido = params.get('pedido');
+  if(status==='aprovado' && pedido){
+    pedidoId = pedido;
+    // Se tiver slides gerados, libera direto
+    if(slides.length > 0) liberarDownload();
+    // Limpa URL
+    window.history.replaceState({},'','/');
+  }
+})();
 
 // ══ ZIP ══
 async function baixarZIP(){
