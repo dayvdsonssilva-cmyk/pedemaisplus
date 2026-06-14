@@ -18,8 +18,8 @@
   --branco:#FDFAF6;
   --cinza:#8A7B6E;
 }
-html{touch-action:pan-y;background:var(--noite)}
-body{
+html{touch-action:pan-y;background:var(--noite);overflow-x:hidden}
+body{padding-bottom:90px;overflow-x:hidden;
   font-family:'Inter',sans-serif;
   background:var(--noite);
   color:var(--creme);
@@ -528,6 +528,31 @@ h1 em{
 .crop-btn-ok{background:var(--ouro);color:var(--noite)}
 .crop-btn-can{background:rgba(200,169,110,.1);color:var(--cinza)}
 .crop-prog{font-size:12px;color:var(--cinza);font-family:'Cormorant Garamond',serif;font-style:italic}
+
+/* BOTTOM BAR FIXA */
+.bottom-bar-fixo{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:180;
+  padding:12px 20px 28px;
+  background:linear-gradient(to top, rgba(14,11,8,1) 70%, transparent);
+  pointer-events:none;
+}
+.bottom-bar-fixo .btn,
+.bottom-bar-fixo button{
+  pointer-events:all;
+  max-width:430px;
+  display:block;
+  margin:0 auto;
+}
+.bottom-bar-fixo .btn-duplo{
+  pointer-events:all;
+  max-width:430px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
 </style>
 </head>
 <body>
@@ -675,6 +700,18 @@ h1 em{
 </div>
 </div>
 
+<!-- BOTTOM BAR TELA 2 -->
+<div class="bottom-bar-fixo" id="bottomBarPreview" style="display:none">
+  <div class="btn-duplo">
+    <button class="btn" onclick="irParaPagamento()" style="font-size:18px;padding:15px">
+      Receber meus slides agora ✦
+    </button>
+    <button class="btn ghost" onclick="refazerTudo()" style="font-size:15px;padding:11px;margin-top:0">
+      ↩ Refazer do início
+    </button>
+  </div>
+</div>
+
 <!-- ════════ LOADING ════════ -->
 <div class="overlay" id="loading">
   <div class="ring"></div>
@@ -754,6 +791,7 @@ h1 em{
 <div class="slides-scroll" id="slidesScroll" style="padding-bottom:8px"></div>
 
 <!-- CARD PAGAMENTO (botão + QR tudo junto) -->
+<div id="cardPagamento"></div>
 <div class="page">
   <div style="text-align:center;background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:28px 20px;margin-bottom:16px;">
     <div style="font-size:36px;margin-bottom:14px">🕊️</div>
@@ -761,7 +799,7 @@ h1 em{
     <p style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:22px">Seu carrossel está pronto.<br>Baixe os slides e compartilhe<br>esse amor com quem você quiser.</p>
     <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--ouro);line-height:1;margin-bottom:4px;">R$19,90</div>
     <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:22px;">acesso completo · 10 slides</div>
-    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">Receber meu carrossel ✦</button>
+    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">Receber meus slides ✦</button>
     <p style="font-size:11px;color:var(--cinza);margin-top:12px;opacity:.6;">Pagamento seguro · liberação imediata</p>
 
     <!-- PIX INLINE (aparece após clicar) -->
@@ -877,6 +915,15 @@ h1 em{
     <img id="cropImg" draggable="false">
     <div class="crop-grid-lines"></div>
     <div class="crop-border"></div>
+    <!-- Zona segura: indica onde as frases vão aparecer -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:28%;
+      background:linear-gradient(to top,rgba(14,11,8,.55),transparent);
+      pointer-events:none;z-index:4;border-radius:0 0 12px 12px;
+      display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;">
+      <div style="font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase">
+        ↑ área da frase
+      </div>
+    </div>
   </div>
   <div class="crop-zoom-row">
     <span class="crop-zoom-lbl">🔍 Zoom</span>
@@ -1301,7 +1348,7 @@ function confirmarCrop(){
 
   document.getElementById('cropOver').classList.remove('show');
   document.body.style.overflow='';
-  URL.revokeObjectURL(cropAtual.url);
+  // Não revogar aqui — ainda precisamos da URL para exibir
   cropAtual = null;
 
   renderFotos();
@@ -1642,6 +1689,9 @@ function mostrarTela2(){
 
   renderInstaPreview();
   renderMiniaturasScroll();
+  // Mostra bottom bar da preview
+  const bbp=document.getElementById('bottomBarPreview');
+  if(bbp) bbp.style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1657,20 +1707,19 @@ function renderInstaPreview(){
   // Desenha o slide
   ctx.drawImage(c, 0, 0, size, size);
 
-  // ── MARCA D'ÁGUA diagonal ──
+  // ── MARCA D'ÁGUA adaptativa (preta no fundo claro, branca nos escuros) ──
+  const m = MOLDURAS[molduraSel];
+  const bgClaro = m.bg==='#F5EFE6' || m.bg==='#fafaf8';
+  const wmCor   = bgClaro ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.13)';
   ctx.save();
-  ctx.globalAlpha = 0.18;
+  ctx.globalAlpha = 1;
   ctx.translate(size/2, size/2);
   ctx.rotate(-Math.PI/5);
-  ctx.fillStyle = '#fff';
-  ctx.font = `bold ${size*0.055}px sans-serif`;
+  ctx.fillStyle = wmCor;
+  ctx.font = `bold ${size*0.052}px sans-serif`;
   ctx.textAlign = 'center';
-  const linhas = ['parasemprepai.com','parasemprepai.com','parasemprepai.com'];
-  linhas.forEach((t,i)=>{
-    const y = (i-1) * size * 0.28;
-    ctx.fillText(t, 0, y);
-    ctx.fillText(t, size*0.32, y + size*0.14);
-    ctx.fillText(t, -size*0.32, y - size*0.14);
+  [[-size*.28,0],[0,0],[size*.28,0],[-size*.14,size*.22],[size*.14,-size*.22]].forEach(([x,y])=>{
+    ctx.fillText('parasemprepai.com', x, y);
   });
   ctx.restore();
 
@@ -1751,7 +1800,7 @@ async function iniciarPagamento(){
     document.getElementById('statusTxt').textContent='Aguardando seu pagamento...';
     iniciarPolling();
   }catch(e){
-    btn.disabled=false; btn.textContent='Receber meu carrossel ✦';
+    btn.disabled=false; btn.textContent='Receber meus slides ✦';
     toast('Erro ao gerar PIX. Tente novamente.'); console.error(e);
   }
 }
@@ -2021,6 +2070,48 @@ function sairGaleria(){
   toast('Sessão encerrada');
 }
 
+// Screenshot iOS (via visibilitychange)
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='hidden') mostrarTelaAntiPrint();
+});
+
+// ══ FUNÇÕES TELA 2 ══
+function irParaPagamento(){
+  document.getElementById('bottomBarPreview').style.display='none';
+  // Scroll até o card de pagamento
+  const card = document.getElementById('cardPagamento');
+  if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
+  else document.querySelector('#tela2 .page')?.scrollIntoView({behavior:'smooth'});
+}
+
+function refazerTudo(){
+  if(!confirm('Recomeçar do início? As fotos e slides atuais serão perdidos.')) return;
+  // Reset estado
+  fotos=[]; slides=[]; molduraSel=0; etapa=1; slideAtual=0;
+  document.getElementById('tela2').style.display='none';
+  document.getElementById('tela1').style.display='block';
+  document.getElementById('bottomBarPreview').style.display='none';
+  // Reset etapa 1
+  [1,2,3].forEach(i=>{
+    const e=document.getElementById(`etapa${i}`);
+    if(e) e.style.display=i===1?'block':'none';
+    const b=document.getElementById(`bottomBar${i}`);
+    if(b) b.style.display=i===1?'block':'none';
+  });
+  [1,2,3,4].forEach(j=>document.getElementById(`s${j}`)?.classList.toggle('ativo',j===1));
+  // Limpa fotos grid
+  document.getElementById('fotosGrid').innerHTML='';
+  document.getElementById('fotosGrid').style.display='none';
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('fotoContador').textContent='0 / 10';
+  document.getElementById('btnP1').disabled=true;
+  // Limpa form
+  ['nomeF','emailF','telF','nomePai','memoria'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 // ══ INIT SESSÃO ══
 iniciarSessao();
 
@@ -2030,15 +2121,46 @@ function toast(msg){
   t.textContent=msg;t.classList.add('show');
   clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);
 }
-// Bloqueia print screen e screenshot
-document.addEventListener('keyup', e=>{
-  if(e.key==='PrintScreen'){ navigator.clipboard?.writeText('').catch(()=>{}); toast('Conteúdo protegido'); }
-});
-// CSS anti-print
+// ══ PROTEÇÃO ANTI-PRINT ══
+// Tela preta ao tirar print
+function mostrarTelaAntiPrint(){
+  let overlay = document.getElementById('antiPrintOverlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'antiPrintOverlay';
+    overlay.style.cssText = [
+      'position:fixed','inset:0','background:#000','z-index:9999',
+      'display:flex','flex-direction:column','align-items:center',
+      'justify-content:center','gap:20px','padding:40px',
+      'text-align:center'
+    ].join(';');
+    overlay.innerHTML = `
+      <div style="font-size:48px">🕊️</div>
+      <div style="font-family:Cormorant Garamond,serif;font-size:28px;color:#C8A96E;line-height:1.2">
+        Feito com muito amor
+      </div>
+      <div style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;max-width:300px">
+        Prints perdem a qualidade e a magia desse momento.<br>
+        Para ter todos os slides em alta resolução,<br>
+        <strong style="color:#C8A96E">baixe seu carrossel completo.</strong>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.3);margin-top:8px">Toque para fechar</div>`;
+    overlay.onclick = ()=>{ overlay.style.display='none'; };
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+  setTimeout(()=>{ overlay.style.display='none'; }, 4000);
+}
+
+// CSS @media print
 const antiPrint=document.createElement('style');
-antiPrint.textContent='@media print{body{display:none!important}} .sucesso,.slide-mini,#instaFrame{-webkit-user-select:none;user-select:none;}';
+antiPrint.textContent='@media print{body{display:none!important}}';
 document.head.appendChild(antiPrint);
 
+// Bloqueia print screen e screenshot
+document.addEventListener('keyup', e=>{
+  if(e.key==='PrintScreen'){ navigator.clipboard?.writeText('').catch(()=>{}); mostrarTelaAntiPrint(); }
+});
 document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 let _lt=0;
