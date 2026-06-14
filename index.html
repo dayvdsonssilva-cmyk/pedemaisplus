@@ -3,773 +3,1025 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<title>Copa Craft 🇧🇷</title>
+<title>Para Sempre Pai</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-/* Bloqueia zoom por gesto em iOS/Android */
-html{touch-action:pan-x pan-y;-ms-touch-action:pan-x pan-y}
-body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);min-height:100vh;overflow-x:hidden;touch-action:pan-x pan-y}
 :root{
-  --verde:#009C3B;--verde-esc:#007a2e;--amarelo:#FFDF00;
-  --azul:#002776;--branco:#fff;--cinza:#F0F0F0;--cinza2:#E4E4E4;
-  --sombra:rgba(0,39,118,0.12);
+  --creme:#F5EFE6;
+  --ouro:#C8A96E;
+  --ouro-esc:#A8864A;
+  --noite:#0E0B08;
+  --noite2:#1A1410;
+  --branco:#FDFAF6;
+  --cinza:#8A7B6E;
 }
-body{font-family:'Nunito',sans-serif;background:var(--cinza);color:var(--azul);min-height:100vh;overflow-x:hidden}
+html{touch-action:pan-y;background:var(--noite)}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--noite);
+  color:var(--creme);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
 
-/* HEADER */
-header{background:var(--verde);padding:12px 16px 10px;position:sticky;top:0;z-index:100;box-shadow:0 3px 14px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--amarelo);letter-spacing:1px;line-height:1;flex:1}
-.logo span{color:rgba(255,255,255,.75);font-size:11px;display:block;letter-spacing:2.5px;font-family:'Nunito',sans-serif;font-weight:700;text-transform:uppercase;margin-top:1px}
+/* ══════════════════════════════
+   PARTÍCULAS — DESTAQUE TOTAL
+══════════════════════════════ */
+#canvas-bg{
+  position:fixed;
+  inset:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:0;
+}
 
-.header-btns{display:flex;align-items:center;gap:8px}
-
-/* MINHAS COMPRAS BTN */
-.btn-minhas{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.5px;padding:7px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent;transition:.2s;white-space:nowrap}
-.btn-minhas:active{background:rgba(255,255,255,.25)}
-
-/* BOLA CARRINHO */
-.cart-btn{position:relative;background:none;border:none;cursor:pointer;padding:4px;-webkit-tap-highlight-color:transparent}
-.ball{width:42px;height:42px;border-radius:50%;background:var(--branco);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,.28);transition:transform .15s}
-.cart-btn:active .ball{transform:scale(.88)}
-.cart-count{position:absolute;top:-3px;right:-3px;background:var(--amarelo);color:var(--azul);font-size:11px;font-weight:900;border-radius:50%;width:20px;height:20px;display:none;align-items:center;justify-content:center;border:2px solid var(--verde)}
-.cart-count.show{display:flex}
+/* ══════════════════════════════
+   LAYOUT MOBILE
+══════════════════════════════ */
+.page{position:relative;z-index:10;max-width:430px;margin:0 auto;padding:0 20px}
 
 /* HERO */
-.hero{background:linear-gradient(150deg,var(--amarelo) 0%,#FFEE55 100%);padding:20px 16px 16px;text-align:center;border-bottom:4px solid var(--verde);position:relative;overflow:hidden}
-.hero::before{content:'🇧🇷';position:absolute;font-size:120px;opacity:.07;top:-20px;right:-20px;pointer-events:none}
-.hero-eyebrow{font-size:11px;font-weight:900;color:var(--verde);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--azul);line-height:1;margin-bottom:6px;letter-spacing:.5px}
-.hero-sub{font-size:13px;color:rgba(0,39,118,.65);font-weight:700;margin-bottom:14px}
-.badge-combo{display:inline-flex;align-items:center;gap:6px;background:var(--verde);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.8px;border-radius:100px;padding:8px 20px;box-shadow:0 4px 14px rgba(0,150,59,.45);cursor:pointer;transition:transform .15s,background .2s;-webkit-tap-highlight-color:transparent}
-.badge-combo:active{transform:scale(.95)}
-.badge-combo.combo-selected{background:var(--azul)}
+.hero{
+  text-align:center;
+  padding:60px 0 24px;
+  position:relative;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:1px;height:48px;
+  background:linear-gradient(to bottom,transparent,var(--ouro));
+}
+.eyebrow{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:13px;
+  color:var(--ouro);
+  letter-spacing:5px;
+  text-transform:uppercase;
+  opacity:.7;
+  margin-bottom:20px;
+}
+h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px;
+  font-weight:300;
+  color:var(--branco);
+  line-height:1;
+  letter-spacing:-1px;
+}
+h1 em{
+  display:block;
+  font-style:italic;
+  font-size:68px;
+  color:var(--ouro);
+  line-height:.9;
+  font-weight:600;
+}
+.hero-sub{
+  font-size:13px;
+  color:var(--cinza);
+  letter-spacing:.3px;
+  line-height:1.6;
+  margin-top:20px;
+}
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:28px 0;
+}
+.divider::before,.divider::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,169,110,.3));
+}
+.divider::after{background:linear-gradient(270deg,transparent,rgba(200,169,110,.3))}
+.divider span{color:var(--ouro);font-size:14px;opacity:.6}
 
-/* USUARIO LOGADO no hero */
-.hero-usuario{background:rgba(0,39,118,.08);border-radius:12px;padding:8px 14px;margin-top:10px;font-size:12px;font-weight:700;color:var(--azul);display:none;align-items:center;gap:6px}
-.hero-usuario.show{display:inline-flex}
-.hero-usuario-nome{font-weight:900}
-.hero-usuario-trocar{font-size:11px;color:rgba(0,39,118,.45);cursor:pointer;text-decoration:underline;margin-left:4px}
-
-/* SECAO */
-.secao-titulo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--azul);letter-spacing:1px;padding:14px 14px 8px;display:flex;align-items:center;gap:8px}
-.secao-titulo::after{content:'';flex:1;height:2px;background:var(--amarelo);border-radius:2px}
-
-/* GRID */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 12px 120px}
+/* STEPS HORIZONTAL */
+.steps{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  margin-bottom:32px;
+  padding:0 8px;
+}
+.step{
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;opacity:.35;transition:.4s;flex:1;
+}
+.step.ativo{opacity:1}
+.step-dot{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid rgba(200,169,110,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;color:var(--ouro);
+  transition:.4s;
+  position:relative;z-index:1;
+}
+.step.ativo .step-dot{
+  background:var(--ouro);color:var(--noite);
+  border-color:var(--ouro);
+  box-shadow:0 0 20px rgba(200,169,110,.4);
+}
+.step-nome{font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase}
+.step-line{flex:1;height:1px;background:rgba(200,169,110,.15);margin-top:-22px;position:relative;z-index:0}
 
 /* CARD */
-.card{background:var(--branco);border-radius:16px;box-shadow:0 2px 10px var(--sombra);overflow:hidden;cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s;border:2.5px solid transparent;-webkit-tap-highlight-color:transparent;user-select:none}
-.card:active{transform:scale(.94)}
-.card.selected{border-color:var(--verde);box-shadow:0 0 0 3px rgba(0,156,59,.2)}
-.check-icon{position:absolute;top:6px;right:6px;background:var(--verde);color:#fff;font-size:10px;font-weight:900;width:20px;height:20px;border-radius:50%;display:none;align-items:center;justify-content:center;z-index:2}
-.card.selected .check-icon{display:flex}
-.card-img{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:54px;position:relative;overflow:hidden}
-.card-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.card-num{position:absolute;bottom:4px;left:7px;font-family:'Bebas Neue',sans-serif;font-size:22px;color:rgba(0,39,118,.28);line-height:1;z-index:1}
-.card-bandeira{position:absolute;top:5px;right:5px;font-size:13px;z-index:1}
-.card-pos{position:absolute;bottom:5px;right:6px;font-size:8px;font-weight:900;color:rgba(0,39,118,.35);text-transform:uppercase;letter-spacing:.5px;z-index:1}
-.card-info{padding:7px 8px 8px;text-align:center;background:var(--branco)}
-.card-nome{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--azul);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-preco{font-size:11px;font-weight:900;color:var(--verde);margin-top:2px}
+.card{
+  background:rgba(200,169,110,.04);
+  border:1px solid rgba(200,169,110,.12);
+  border-radius:18px;
+  padding:28px 22px;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,169,110,.4),transparent);
+}
 
-/* BOTTOM BAR */
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:3px solid var(--amarelo);padding:10px 14px 14px;box-shadow:0 -4px 24px rgba(0,0,0,.14);z-index:99;transform:translateY(110%);transition:transform .35s cubic-bezier(.34,1.4,.64,1)}
-.bottom-bar.show{transform:translateY(0)}
-.bottom-resumo{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-.bottom-resumo-txt{font-size:12px;color:#888;font-weight:700}
-.bottom-total{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--verde)}
-.btn-levar{background:linear-gradient(135deg,var(--verde) 0%,var(--verde-esc) 100%);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;border:none;border-radius:14px;padding:15px;width:100%;cursor:pointer;box-shadow:0 5px 18px rgba(0,156,59,.42);transition:transform .15s;-webkit-tap-highlight-color:transparent}
-.btn-levar:active{transform:scale(.97)}
+/* SECTION LABEL */
+.slbl{
+  font-size:10px;
+  color:var(--ouro);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:14px;
+  opacity:.7;
+  display:flex;align-items:center;gap:8px;
+}
+.slbl::after{content:'';flex:1;height:1px;background:rgba(200,169,110,.15)}
 
-/* MODAIS */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(2px)}
-.overlay.show{display:flex}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.sheet{background:var(--branco);width:100%;max-height:90vh;border-radius:22px 22px 0 0;padding:16px 16px 36px;overflow-y:auto;animation:slideUp .3s cubic-bezier(.34,1.4,.64,1)}
-.handle{width:38px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 18px}
-.sheet-titulo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--azul);margin-bottom:4px}
-.sheet-sub{font-size:12px;color:#999;font-weight:700;margin-bottom:16px}
+/* UPLOAD */
+.upload-zone{
+  border:1px dashed rgba(200,169,110,.25);
+  border-radius:14px;
+  padding:32px 16px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s;
+  -webkit-tap-highlight-color:transparent;
+  background:rgba(200,169,110,.02);
+}
+.upload-zone:active{background:rgba(200,169,110,.06);border-color:var(--ouro)}
+.upload-zone .uico{font-size:28px;margin-bottom:10px;display:block;opacity:.5}
+.upload-zone .utxt{font-size:13px;color:var(--cinza)}
+.upload-zone .utxt strong{color:var(--ouro);font-weight:500}
+.upload-zone input{position:fixed;top:-999px;left:-999px;width:1px;height:1px;opacity:0;pointer-events:none}
 
-/* CARRINHO */
-.item-cart{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f2f2f2}
-.item-cart-emoji{font-size:34px;flex-shrink:0}
-.item-cart-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0}
-.item-cart-info{flex:1}
-.item-cart-nome{font-weight:900;font-size:14px;color:var(--azul)}
-.item-cart-preco{font-size:12px;color:var(--verde);font-weight:700;margin-top:2px}
-.item-cart-rm{background:none;border:none;font-size:18px;cursor:pointer;color:#ccc;padding:6px}
-.cart-total-linha{display:flex;justify-content:space-between;align-items:center;padding:14px 0 6px}
-.cart-total-label{font-weight:900;font-size:15px}
-.cart-total-val{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--verde)}
+/* GRID FOTOS */
+.fotos-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:14px;
+}
+.foto-thumb{
+  aspect-ratio:1;border-radius:10px;
+  overflow:hidden;position:relative;
+  border:1px solid rgba(200,169,110,.15);
+}
+.foto-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-thumb .rm{
+  position:absolute;top:5px;right:5px;
+  background:rgba(14,11,8,.85);
+  border:none;color:var(--ouro);
+  width:22px;height:22px;border-radius:50%;
+  font-size:11px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.foto-add{
+  aspect-ratio:1;border-radius:10px;
+  border:1px dashed rgba(200,169,110,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:rgba(200,169,110,.3);
+  cursor:pointer;transition:.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.foto-add:active{border-color:var(--ouro);color:var(--ouro)}
 
-/* BOTÕES */
-.btn-primary{background:linear-gradient(135deg,var(--verde) 0%,var(--verde-esc) 100%);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:1px;border:none;border-radius:14px;padding:15px;width:100%;cursor:pointer;box-shadow:0 5px 18px rgba(0,156,59,.38);margin-bottom:10px;transition:transform .15s;-webkit-tap-highlight-color:transparent}
-.btn-primary:active{transform:scale(.97)}
-.btn-ghost{background:none;border:2px solid #eee;border-radius:12px;padding:11px;width:100%;font-size:14px;font-weight:700;color:#aaa;cursor:pointer}
+/* MOLDURAS */
+.molduras-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.moldura-opt{
+  border-radius:12px;border:2px solid transparent;
+  cursor:pointer;overflow:hidden;position:relative;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+}
+.moldura-opt canvas{width:100%;aspect-ratio:1;display:block}
+.moldura-opt.sel{
+  border-color:var(--ouro);
+  box-shadow:0 0 0 3px rgba(200,169,110,.2),0 0 20px rgba(200,169,110,.15);
+}
+.moldura-nome{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(14,11,8,.8);
+  font-size:10px;color:var(--ouro);
+  text-align:center;padding:5px;
+  letter-spacing:1px;text-transform:uppercase;
+}
 
 /* FORM */
-.form-group{margin-bottom:14px}
-.form-label{font-size:11px;font-weight:900;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px}
-.form-input{width:100%;padding:13px 14px;border:2px solid var(--cinza2);border-radius:12px;font-size:15px;font-family:'Nunito',sans-serif;font-weight:700;color:var(--azul);outline:none;transition:.2s;background:var(--branco)}
-.form-input:focus{border-color:var(--verde)}
+.form-group{margin-bottom:16px}
+.flbl{
+  font-size:10px;color:var(--ouro);
+  letter-spacing:2px;text-transform:uppercase;
+  display:block;margin-bottom:8px;opacity:.8;
+}
+.finp{
+  width:100%;padding:13px 16px;
+  background:rgba(200,169,110,.04);
+  border:1px solid rgba(200,169,110,.15);
+  border-radius:10px;font-size:14px;
+  font-family:'Inter',sans-serif;
+  color:var(--creme);outline:none;transition:.2s;
+  resize:none;
+}
+.finp::placeholder{color:rgba(200,169,110,.25)}
+.finp:focus{border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.06)}
 
-/* RESUMO CHECKOUT */
-.resumo-box{background:var(--cinza);border-radius:14px;padding:14px;margin-bottom:16px}
-.resumo-linha{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#666;margin-bottom:5px;align-items:center;gap:8px}
-.resumo-linha-img{width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0}
-.resumo-total{display:flex;justify-content:space-between;font-size:17px;font-weight:900;color:var(--azul);border-top:1px solid #ddd;padding-top:10px;margin-top:8px}
-.resumo-total span:last-child{color:var(--verde)}
+/* BOTÃO */
+.btn{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
+  color:var(--noite);
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;
+  letter-spacing:1.5px;border:none;
+  border-radius:12px;cursor:pointer;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
+}
+.btn::before{
+  content:'';position:absolute;
+  top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:.5s;
+}
+.btn:not(:disabled):active::before{left:100%}
+.btn:not(:disabled):active{transform:scale(.98)}
+.btn:disabled{opacity:.3;cursor:default}
+.btn.ghost{
+  background:none;
+  border:1px solid rgba(200,169,110,.3);
+  color:var(--ouro);
+  font-size:16px;
+  margin-top:10px;
+}
+
+/* LOADING */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(14,11,8,.95);
+  z-index:800;display:none;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:24px;
+  backdrop-filter:blur(12px);
+}
+.overlay.show{display:flex}
+.ring{
+  width:56px;height:56px;border-radius:50%;
+  border:1.5px solid rgba(200,169,110,.15);
+  border-top-color:var(--ouro);
+  animation:spin 1.4s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ring-txt{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--ouro);font-style:italic;
+}
+.ring-sub{font-size:12px;color:var(--cinza);letter-spacing:.5px}
+
+/* SLIDES PREVIEW */
+.slides-scroll{
+  display:flex;gap:12px;
+  overflow-x:auto;padding:4px 20px 16px;
+  scrollbar-width:none;margin:0 -20px;
+}
+.slides-scroll::-webkit-scrollbar{display:none}
+.slide-mini{
+  flex-shrink:0;width:140px;height:140px;
+  border-radius:12px;overflow:hidden;
+  border:1px solid rgba(200,169,110,.2);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.slide-mini canvas{width:100%;height:100%;display:block}
 
 /* PIX */
-.pix-card{background:linear-gradient(135deg,#e8f5e9,#f0faf0);border:2px solid var(--verde);border-radius:16px;padding:20px;text-align:center;margin-bottom:16px}
-.pix-emoji{font-size:38px;margin-bottom:6px}
-.pix-titulo{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--verde);margin-bottom:10px}
-.pix-chave{background:var(--branco);border-radius:10px;padding:10px 12px;font-size:13px;font-weight:900;color:var(--azul);margin-bottom:10px;word-break:break-all}
-.pix-valor{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--azul);line-height:1}
-.btn-copiar{background:var(--amarelo);color:var(--azul);border:none;border-radius:12px;padding:12px 20px;font-family:'Bebas Neue',sans-serif;font-size:19px;cursor:pointer;width:100%;margin-bottom:10px}
+.pix-box{
+  text-align:center;padding:28px 22px;
+  background:rgba(200,169,110,.05);
+  border:1px solid rgba(200,169,110,.2);
+  border-radius:18px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.pix-box::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,169,110,.5),transparent);
+}
+.pix-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:56px;font-weight:600;
+  color:var(--ouro);line-height:1;
+  margin-bottom:4px;
+}
+.pix-lbl{font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+.pix-key{
+  background:rgba(14,11,8,.6);border-radius:8px;
+  padding:11px 14px;font-size:12px;
+  color:var(--creme);font-family:'Inter',monospace;
+  margin-bottom:14px;letter-spacing:.3px;
+  word-break:break-all;
+}
+.btn-copy{
+  background:none;border:1px solid rgba(200,169,110,.3);
+  color:var(--ouro);font-family:'Cormorant Garamond',serif;
+  font-size:17px;padding:11px;width:100%;
+  border-radius:10px;cursor:pointer;margin-bottom:12px;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+}
+.btn-copy:active{background:rgba(200,169,110,.08)}
 
 /* SUCESSO */
-.sucesso-wrap{text-align:center;padding:24px 8px 10px}
-.sucesso-emoji{font-size:64px;margin-bottom:10px;display:block}
-.sucesso-titulo{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--verde);margin-bottom:6px}
-.sucesso-sub{font-size:14px;color:#777;font-weight:700;margin-bottom:6px}
-.sucesso-dica{background:linear-gradient(135deg,#FFFDE7,#FFF9C4);border:2px solid var(--amarelo);border-radius:14px;padding:14px;margin:16px 0;font-size:13px;font-weight:700;color:var(--azul);text-align:left}
-.sucesso-dica strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:17px;margin-bottom:4px;color:var(--verde)}
+.sucesso{
+  text-align:center;padding:60px 20px 40px;
+  display:none;
+}
+.sucesso.show{display:block}
+.sico{font-size:52px;margin-bottom:20px;display:block}
+.stit{
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:300;color:var(--branco);margin-bottom:6px;
+}
+.stit em{font-style:italic;color:var(--ouro)}
+.ssub{font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:32px}
 
-/* ════ MINHAS COMPRAS MODAL ════ */
-.compras-empty{text-align:center;padding:36px 16px;color:#ccc}
-.compras-empty span{font-size:48px;display:block;margin-bottom:10px}
+/* AUDIO */
+.audio-fab{
+  position:fixed;bottom:28px;right:20px;z-index:100;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(200,169,110,.12);
+  border:1px solid rgba(200,169,110,.25);
+  color:var(--ouro);font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(10px);
+  -webkit-tap-highlight-color:transparent;transition:.2s;
+}
+.audio-fab:active{transform:scale(.9)}
 
-.compra-card{background:var(--cinza);border-radius:14px;padding:14px;margin-bottom:12px}
-.compra-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.compra-data{font-size:11px;color:#aaa;font-weight:700}
-.compra-total{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--verde)}
-.compra-itens{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.compra-item{background:var(--branco);border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--azul);box-shadow:0 1px 4px var(--sombra)}
-.compra-item img{width:28px;height:28px;border-radius:6px;object-fit:cover}
-.btn-baixar{background:linear-gradient(135deg,var(--amarelo),#FFE840);color:var(--azul);border:none;border-radius:10px;padding:10px 16px;font-family:'Bebas Neue',sans-serif;font-size:16px;cursor:pointer;display:flex;align-items:center;gap:6px;width:100%;justify-content:center;margin-top:4px}
-.btn-baixar.sem-pdf{background:#eee;color:#aaa;cursor:default}
-.compra-badge{font-size:10px;font-weight:900;padding:3px 8px;border-radius:100px;background:#E8F5E9;color:var(--verde)}
-
-/* BODY TRAVADO quando modal aberto */
-body.modal-aberto{overflow:hidden;position:fixed;width:100%;}
-.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--azul);color:var(--amarelo);font-family:'Bebas Neue',sans-serif;font-size:16px;padding:10px 22px;border-radius:100px;opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none}
+/* TOAST */
+.toast{
+  position:fixed;bottom:88px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--ouro);color:var(--noite);
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;padding:9px 22px;
+  border-radius:100px;opacity:0;
+  transition:all .3s;z-index:999;
+  white-space:nowrap;pointer-events:none;
+}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="logo">
-    Copa Craft
-    <span>⚽ Imprime · Monta · Coleciona</span>
-  </div>
-  <div class="header-btns">
-    <button class="btn-minhas" id="btnMinhas" onclick="abrirMinhasCompras()">
-      📂 MINHAS COMPRAS
-    </button>
-    <button class="cart-btn" onclick="abrirCarrinho()" aria-label="Carrinho">
-      <div class="ball">⚽</div>
-      <div class="cart-count" id="cartCount">0</div>
-    </button>
-  </div>
-</header>
+<!-- CANVAS DE PARTÍCULAS -->
+<canvas id="canvas-bg"></canvas>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">🇧🇷 Copa do Mundo</div>
-  <h1>LEVE SEU CRAQUE</h1>
-  <div class="hero-sub">Papercraft dos jogadores · Imprime em casa</div>
-  <div class="badge-combo" id="badgeCombo" onclick="selecionarCombo()">
-    🏆 LEVE O TIME TODO — R$14,99
-  </div>
-  <div class="hero-usuario" id="heroUsuario">
-    👋 Olá, <span class="hero-usuario-nome" id="heroNome"></span>!
-    <span class="hero-usuario-trocar" onclick="trocarUsuario()">não sou eu</span>
-  </div>
-</div>
+<!-- AUDIO -->
+<audio id="bgm" loop preload="none">
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+<button class="audio-fab" id="audioBtn" onclick="toggleAudio()">🎵</button>
 
-<div class="secao-titulo">Escolha seu(s) craque(s)</div>
-<div class="grid" id="grid"></div>
+<!-- ════════ TELA 1 ════════ -->
+<div id="tela1">
+<div class="page">
 
-<!-- BOTTOM BAR -->
-<div class="bottom-bar" id="bottomBar">
-  <div class="bottom-resumo">
-    <span class="bottom-resumo-txt" id="resumoTxt"></span>
-    <span class="bottom-total" id="totalTxt"></span>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow">Dia dos Pais · 2025</div>
+    <h1>Para Sempre<em>Pai</em></h1>
+    <p class="hero-sub">Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.</p>
+    <div class="divider"><span>✦</span></div>
   </div>
-  <button class="btn-levar" onclick="irParaCheckout()">⚽ LEVAR MEUS CRAQUES →</button>
-</div>
 
-<!-- ══ OVERLAY CARRINHO ══ -->
-<div class="overlay" id="overlayCarrinho" onclick="fecharOverlay('overlayCarrinho',event)">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-titulo">⚽ Minha Seleção</div>
-    <div class="sheet-sub">Revise seus craques</div>
-    <div id="listaCarrinho"></div>
-    <div class="cart-total-linha">
-      <span class="cart-total-label">Total</span>
-      <span class="cart-total-val" id="totalModal"></span>
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step ativo" id="s1">
+      <div class="step-dot">1</div>
+      <div class="step-nome">Fotos</div>
     </div>
-    <button class="btn-primary" onclick="fecharOverlay('overlayCarrinho');irParaCheckout()">LEVAR ESSES CRAQUES →</button>
-    <button class="btn-ghost" onclick="fecharOverlay('overlayCarrinho')">Escolher mais</button>
+    <div class="step-line"></div>
+    <div class="step" id="s2">
+      <div class="step-dot">2</div>
+      <div class="step-nome">Moldura</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s3">
+      <div class="step-dot">3</div>
+      <div class="step-nome">Memória</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s4">
+      <div class="step-dot">4</div>
+      <div class="step-nome">Baixar</div>
+    </div>
   </div>
-</div>
 
-<!-- ══ OVERLAY CHECKOUT ══ -->
-<div class="overlay" id="overlayCheckout" onclick="fecharOverlay('overlayCheckout',event)">
-  <div class="sheet">
-    <div class="handle"></div>
+  <!-- ETAPA 1: FOTOS -->
+  <div id="etapa1">
+    <div class="card">
+      <div class="slbl">Adicione as fotos</div>
+      <div class="upload-zone" id="uploadZone" onclick="triggerUpload()">
+        <span class="uico">🕊️</span>
+        <p class="utxt"><strong>Toque para escolher fotos</strong></p>
+        <p class="utxt" style="margin-top:6px;font-size:12px;opacity:.6">Até 10 fotos · JPG ou PNG</p>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+      </div>
+      <div class="fotos-grid" id="fotosGrid" style="display:none"></div>
+    </div>
+    <button class="btn" id="btnP1" disabled onclick="irEtapa(2)">Continuar →</button>
+  </div>
 
-    <!-- ETAPA 1: DADOS -->
-    <div id="etapaDados">
-      <div class="sheet-titulo">👤 Seus dados</div>
-      <div class="sheet-sub">Para salvar suas compras e liberar os PDFs</div>
-      <div class="resumo-box" id="resumoCheckout"></div>
+  <!-- ETAPA 2: MOLDURA -->
+  <div id="etapa2" style="display:none">
+    <div class="card">
+      <div class="slbl">Escolha a moldura</div>
+      <div class="molduras-grid" id="moldurasGrid"></div>
+    </div>
+    <button class="btn" onclick="irEtapa(3)">Continuar →</button>
+  </div>
+
+  <!-- ETAPA 3: MEMÓRIA -->
+  <div id="etapa3" style="display:none">
+    <div class="card">
+      <div class="slbl">Sobre ele</div>
       <div class="form-group">
-        <label class="form-label">Seu Nome</label>
-        <input class="form-input" id="nomeInput" type="text" placeholder="Ex: João Silva" maxlength="60" autocomplete="name">
+        <label class="flbl">Seu nome</label>
+        <input class="finp" id="nomeF" type="text" placeholder="Maria" maxlength="40" autocomplete="given-name">
       </div>
       <div class="form-group">
-        <label class="form-label">Seu E-mail</label>
-        <input class="form-input" id="emailInput" type="email" placeholder="joao@email.com" autocomplete="email">
+        <label class="flbl">Nome do seu pai</label>
+        <input class="finp" id="nomePai" type="text" placeholder="José" maxlength="40">
       </div>
       <div class="form-group">
-        <label class="form-label">WhatsApp</label>
-        <input class="form-input" id="telInput" type="tel" placeholder="(35) 99999-0000" autocomplete="tel">
-      </div>
-      <button class="btn-primary" onclick="irParaPix()">IR PARA O PAGAMENTO →</button>
-      <button class="btn-ghost" onclick="fecharOverlay('overlayCheckout')">Voltar</button>
-    </div>
-
-    <!-- ETAPA 2: PIX -->
-    <div id="etapaPix" style="display:none">
-      <div class="sheet-titulo">⚡ Pagar com PIX</div>
-      <div class="sheet-sub">Instantâneo · Seguro · Sem taxas</div>
-      <div class="pix-card">
-        <div class="pix-emoji">📲</div>
-        <div class="pix-titulo">Chave PIX (E-mail)</div>
-        <div class="pix-chave">pagamentos@copaCraft.com.br</div>
-        <div class="pix-valor" id="pixValor">R$0,00</div>
-      </div>
-      <button class="btn-copiar" onclick="copiarPix()">📋 COPIAR CHAVE PIX</button>
-      <button class="btn-primary" onclick="confirmarPix()">✅ JÁ TRANSFERI!</button>
-      <button class="btn-ghost" onclick="mostrarEtapa('etapaDados')">Voltar</button>
-    </div>
-
-    <!-- ETAPA 3: SUCESSO -->
-    <div id="etapaSucesso" style="display:none">
-      <div class="sucesso-wrap">
-        <span class="sucesso-emoji">🎉</span>
-        <div class="sucesso-titulo">ARRASOU!</div>
-        <div class="sucesso-sub">Compra registrada com sucesso!</div>
-        <div class="sucesso-dica">
-          <strong>📂 Seus PDFs estão prontos!</strong>
-          Toque em <b>"Minhas Compras"</b> no topo da página para baixar seus craques a qualquer hora, de qualquer celular com este e-mail.
-        </div>
-        <button class="btn-primary" onclick="fecharEIrParaCompras()">📂 VER MINHAS COMPRAS →</button>
-        <button class="btn-ghost" onclick="reiniciar()">Comprar mais craques</button>
+        <label class="flbl">Uma memória ou frase dele</label>
+        <textarea class="finp" id="memoria" rows="3"
+          placeholder="Ex: Ele sempre dizia que o amor verdadeiro não tem distância..."></textarea>
       </div>
     </div>
+    <button class="btn" onclick="gerarCarrossel()">Criar meu carrossel ✦</button>
   </div>
+
+</div>
 </div>
 
-<!-- ══ OVERLAY MINHAS COMPRAS ══ -->
-<div class="overlay" id="overlayCompras" onclick="fecharOverlay('overlayCompras',event)">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="sheet-titulo">📂 Minhas Compras</div>
-    <div class="sheet-sub" id="comprasSubtitulo">Seus craques prontos para baixar</div>
-    <div id="comprasConteudo"></div>
-    <div style="margin-top:8px">
-      <button class="btn-ghost" onclick="fecharOverlay('overlayCompras')">Fechar</button>
-    </div>
+<!-- ════════ LOADING ════════ -->
+<div class="overlay" id="loading">
+  <div class="ring"></div>
+  <div class="ring-txt">Criando com carinho...</div>
+  <div class="ring-sub" id="loadMsg">Preparando suas fotos</div>
+</div>
+
+<!-- ════════ TELA 2: PREVIEW + PIX ════════ -->
+<div id="tela2" style="display:none">
+<div class="page">
+  <div class="hero" style="padding-top:48px">
+    <div class="eyebrow">Pronto com amor</div>
+    <h1 style="font-size:44px">Seu<em>carrossel</em></h1>
+    <p class="hero-sub" style="margin-bottom:20px">Deslize para ver todos os slides</p>
   </div>
+</div>
+  <div class="slides-scroll" id="slidesScroll"></div>
+<div class="page">
+  <div class="pix-box">
+    <div class="pix-lbl">Valor único</div>
+    <div class="pix-val">R$19,90</div>
+    <p style="font-size:13px;color:var(--cinza);margin:10px 0 18px;line-height:1.6">
+      Baixe o ZIP com todos os slides<br>prontos para o Instagram
+    </p>
+    <div class="pix-key">pagamentos@parasemprepai.com.br</div>
+    <button class="btn-copy" onclick="copiarPix()">✦ Copiar chave PIX</button>
+    <button class="btn" onclick="confirmarPix()">Já paguei ✓</button>
+  </div>
+</div>
+</div>
+
+<!-- ════════ TELA 3: SUCESSO ════════ -->
+<div class="sucesso" id="tela3">
+<div class="page">
+  <span class="sico">🕊️</span>
+  <div class="stit">Feito com<em>amor</em></div>
+  <p class="ssub">Seu carrossel está pronto.<br>Baixe e poste para homenagear seu pai.</p>
+  <div class="divider"><span>✦</span></div>
+  <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Baixar meu carrossel</button>
+  <p style="font-size:11px;color:var(--cinza);letter-spacing:.5px">10 slides · 1080×1080px · Prontos para o Instagram</p>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONFIG ──
-const P_UNIT   = 3.00;
-const P_COMBO  = 14.99;
-const PIX_KEY  = 'pagamentos@copaCraft.com.br';
-const LS_JOGS  = 'cc_jogadores_loja';
-const LS_USERS = 'cc_usuarios';       // { email → { nome, tel, compras:[] } }
-const LS_SESS  = 'cc_sessao';         // email do usuário logado
+// ══ CONFIG ══
+const OPENAI_KEY = 'SUA_CHAVE_AQUI';
+const PIX_KEY    = 'pagamentos@parasemprepai.com.br';
 
-const JOGADORES_DEFAULT = [
-  {id:1,nome:'Vini Jr',emoji:'🟡',num:7,pos:'Atacante',preco:3,img:null,pdf:null,grad:'#FFFDE7,#FFF9C4'},
-  {id:2,nome:'Rodrygo',emoji:'🟢',num:11,pos:'Atacante',preco:3,img:null,pdf:null,grad:'#E8F5E9,#C8E6C9'},
-  {id:3,nome:'Neymar',emoji:'⭐',num:10,pos:'Atacante',preco:3,img:null,pdf:null,grad:'#F3E5F5,#E1BEE7'},
-  {id:4,nome:'Raphinha',emoji:'🔴',num:22,pos:'Atacante',preco:3,img:null,pdf:null,grad:'#FCE4EC,#F8BBD0'},
-  {id:5,nome:'Endrick',emoji:'🔵',num:9,pos:'Atacante',preco:3,img:null,pdf:null,grad:'#E3F2FD,#BBDEFB'},
-  {id:6,nome:'Paquetá',emoji:'🟣',num:8,pos:'Meia',preco:3,img:null,pdf:null,grad:'#EDE7F6,#D1C4E9'},
-  {id:7,nome:'Casemiro',emoji:'🟤',num:5,pos:'Volante',preco:3,img:null,pdf:null,grad:'#EFEBE9,#D7CCC8'},
-  {id:8,nome:'Bruno G.',emoji:'🟠',num:17,pos:'Meia',preco:3,img:null,pdf:null,grad:'#FFF3E0,#FFE0B2'},
-  {id:9,nome:'Marquinhos',emoji:'🔷',num:4,pos:'Zagueiro',preco:3,img:null,pdf:null,grad:'#E1F5FE,#B3E5FC'},
-  {id:10,nome:'Militão',emoji:'🔶',num:3,pos:'Zagueiro',preco:3,img:null,pdf:null,grad:'#FBE9E7,#FFCCBC'},
-  {id:11,nome:'Danilo',emoji:'🟦',num:2,pos:'Lateral',preco:3,img:null,pdf:null,grad:'#E8EAF6,#C5CAE9'},
-  {id:12,nome:'Alisson',emoji:'🧤',num:1,pos:'Goleiro',preco:3,img:null,pdf:null,grad:'#F1F8E9,#DCEDC8'},
+// ══════════════════════════════════════
+// PARTÍCULAS COM CANVAS — DESTAQUE TOTAL
+// ══════════════════════════════════════
+const cvs = document.getElementById('canvas-bg');
+const ctx2 = cvs.getContext('2d');
+let W, H, particulas = [];
+
+function resizeCanvas(){
+  W = cvs.width  = window.innerWidth;
+  H = cvs.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Tipos de partícula para variedade visual
+function criarParticula(){
+  const tipo = Math.random() < 0.3 ? 'estrela' : Math.random() < 0.5 ? 'chama' : 'ponto';
+  return {
+    x: Math.random() * W,
+    y: H + Math.random() * 200,
+    vy: -(0.4 + Math.random() * 1.2),       // sobe
+    vx: (Math.random() - .5) * 0.5,          // drift lateral suave
+    size: tipo==='estrela' ? 2+Math.random()*3 : 1+Math.random()*2,
+    opacidade: 0,
+    opMax: tipo==='estrela' ? .8+Math.random()*.2 : .35+Math.random()*.45,
+    fase: 'in',                               // in | vivo | out
+    vida: 0,
+    vidaMax: 180 + Math.random()*300,
+    tipo,
+    pulso: Math.random() * Math.PI * 2,      // fase do pulso
+    brilho: Math.random() < 0.4,             // partícula com glow extra
+  };
+}
+
+// Inicializa com partículas espalhadas
+for(let i=0;i<60;i++){
+  const p = criarParticula();
+  p.y = Math.random() * H;   // espalhadas na tela já no início
+  p.vida = Math.random() * p.vidaMax;
+  p.opacidade = p.opMax * 0.5;
+  particulas.push(p);
+}
+
+function desenharEstrela(cx, x, y, r, op, cor){
+  const spikes=4, outer=r, inner=r*0.4;
+  cx.save();
+  cx.globalAlpha=op;
+  cx.fillStyle=cor;
+  cx.translate(x,y);
+  cx.rotate(Math.PI/4);
+  cx.beginPath();
+  for(let i=0;i<spikes*2;i++){
+    const ang=(i*Math.PI)/spikes;
+    const rad = i%2===0 ? outer : inner;
+    i===0 ? cx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad)
+           : cx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+  }
+  cx.closePath();cx.fill();cx.restore();
+}
+
+function loopParticulas(){
+  ctx2.clearRect(0,0,W,H);
+
+  // Adiciona novas quando necessário
+  while(particulas.length < 70) particulas.push(criarParticula());
+
+  particulas.forEach((p,i)=>{
+    p.vida++;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.pulso += 0.04;
+
+    // Fade in/out
+    if(p.fase==='in'){
+      p.opacidade = Math.min(p.opacidade + 0.015, p.opMax);
+      if(p.opacidade >= p.opMax * 0.9) p.fase='vivo';
+    } else if(p.fase==='vivo'){
+      // Pulso suave
+      p.opacidade = p.opMax * (0.7 + 0.3*Math.sin(p.pulso));
+      if(p.vida > p.vidaMax) p.fase='out';
+    } else {
+      p.opacidade = Math.max(0, p.opacidade - 0.012);
+      if(p.opacidade <= 0){
+        particulas.splice(i,1);return;
+      }
+    }
+
+    // Reposiciona se sair pela lateral ou topo
+    if(p.y < -50 || p.x < -20 || p.x > W+20){
+      particulas.splice(i,1);return;
+    }
+
+    const cor = '#C8A96E';
+
+    // Glow extra para partículas brilhantes
+    if(p.brilho){
+      ctx2.save();
+      ctx2.globalAlpha = p.opacidade * 0.25;
+      ctx2.shadowColor  = '#C8A96E';
+      ctx2.shadowBlur   = p.size * 8;
+      ctx2.fillStyle    = cor;
+      ctx2.beginPath();
+      ctx2.arc(p.x,p.y,p.size*2,0,Math.PI*2);
+      ctx2.fill();
+      ctx2.restore();
+    }
+
+    if(p.tipo==='estrela'){
+      desenharEstrela(ctx2, p.x, p.y, p.size, p.opacidade, cor);
+      // Raios cruzados para estrelas grandes
+      if(p.size > 3){
+        ctx2.save();
+        ctx2.globalAlpha = p.opacidade * .4;
+        ctx2.strokeStyle = cor;
+        ctx2.lineWidth   = .5;
+        ctx2.beginPath();
+        ctx2.moveTo(p.x-p.size*2.5,p.y); ctx2.lineTo(p.x+p.size*2.5,p.y);
+        ctx2.moveTo(p.x,p.y-p.size*2.5); ctx2.lineTo(p.x,p.y+p.size*2.5);
+        ctx2.stroke();
+        ctx2.restore();
+      }
+    } else if(p.tipo==='chama'){
+      // Forma de chama: oval vertical
+      ctx2.save();
+      ctx2.globalAlpha=p.opacidade;
+      ctx2.fillStyle=cor;
+      ctx2.beginPath();
+      ctx2.ellipse(p.x,p.y,p.size*.6,p.size,0,0,Math.PI*2);
+      ctx2.fill();
+      ctx2.restore();
+    } else {
+      // Ponto simples
+      ctx2.save();
+      ctx2.globalAlpha=p.opacidade;
+      ctx2.fillStyle=cor;
+      ctx2.beginPath();
+      ctx2.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx2.fill();
+      ctx2.restore();
+    }
+  });
+
+  // Nebulosa de fundo suave — manchas douradas difusas
+  ctx2.save();
+  const t = Date.now()*0.0003;
+  const grd = ctx2.createRadialGradient(
+    W*(.3+.1*Math.sin(t)), H*.25, 0,
+    W*(.3+.1*Math.sin(t)), H*.25, W*.4
+  );
+  grd.addColorStop(0,'rgba(200,169,110,0.025)');
+  grd.addColorStop(1,'transparent');
+  ctx2.fillStyle=grd;
+  ctx2.fillRect(0,0,W,H);
+
+  const grd2 = ctx2.createRadialGradient(
+    W*(.7+.08*Math.cos(t*.7)), H*.7, 0,
+    W*(.7+.08*Math.cos(t*.7)), H*.7, W*.35
+  );
+  grd2.addColorStop(0,'rgba(200,140,80,0.02)');
+  grd2.addColorStop(1,'transparent');
+  ctx2.fillStyle=grd2;
+  ctx2.fillRect(0,0,W,H);
+  ctx2.restore();
+
+  requestAnimationFrame(loopParticulas);
+}
+loopParticulas();
+
+// ══ AUDIO ══
+let audioOn=false;
+function toggleAudio(){
+  const a=document.getElementById('bgm');
+  const b=document.getElementById('audioBtn');
+  if(audioOn){a.pause();b.textContent='🎵';audioOn=false;}
+  else{a.play().catch(()=>{});b.textContent='🔇';audioOn=true;}
+}
+document.addEventListener('touchstart',function ia(){
+  document.getElementById('bgm').play().then(()=>{
+    audioOn=true;document.getElementById('audioBtn').textContent='🔇';
+  }).catch(()=>{});
+  document.removeEventListener('touchstart',ia);
+},{once:true,passive:true});
+
+// ══ ESTADO ══
+let fotos=[],molduraSel=0,slides=[],etapa=1;
+
+// ══ UPLOAD ══
+function triggerUpload(){
+  const inp=document.getElementById('fileInput');
+  inp.value='';inp.onchange=handleFiles;inp.click();
+}
+async function handleFiles(e){
+  const files=[...e.target.files].slice(0,10-fotos.length);
+  for(const f of files){
+    const url=URL.createObjectURL(f);
+    fotos.push({url,file:f});
+  }
+  renderFotos();
+}
+function renderFotos(){
+  const grid=document.getElementById('fotosGrid');
+  const zone=document.getElementById('uploadZone');
+  if(!fotos.length){grid.style.display='none';zone.style.display='block';return;}
+  zone.style.display='none';grid.style.display='grid';
+  let h=fotos.map((f,i)=>`
+    <div class="foto-thumb">
+      <img src="${f.url}">
+      <button class="rm" onclick="rmFoto(${i})">✕</button>
+    </div>`).join('');
+  if(fotos.length<10) h+=`<div class="foto-add" onclick="triggerUpload()">+</div>`;
+  grid.innerHTML=h;
+  document.getElementById('btnP1').disabled=false;
+}
+function rmFoto(i){URL.revokeObjectURL(fotos[i].url);fotos.splice(i,1);renderFotos();}
+
+// ══ MOLDURAS ══
+const MOLDURAS=[
+  {n:'Eterno',  bg:'#0E0B08',brd:'#C8A96E',tx:'#F5EFE6'},
+  {n:'Luz',     bg:'#F5EFE6',brd:'#A8864A',tx:'#1A1410'},
+  {n:'Sepia',   bg:'#1E1208',brd:'#C8A96E',tx:'#E8DDD0'},
+  {n:'Noite',   bg:'#080810',brd:'#8EA9C8',tx:'#D0E0F5'},
+  {n:'Rosa',    bg:'#12080E',brd:'#C87EA9',tx:'#F5D0E8'},
+  {n:'Cinza',   bg:'#0C0C0C',brd:'#A0A0A0',tx:'#E8E8E8'},
 ];
 
-// ── ESTADO ──
-let JOGADORES = [];
-let sel       = new Set();
-let isCombo   = false;
-let usuarioAtual = null; // { email, nome, tel }
-let pedidoAtual  = null;
-
-// ── USUÁRIOS (localStorage) ──
-function lerUsuarios() {
-  try { return JSON.parse(localStorage.getItem(LS_USERS) || '{}'); } catch(e){ return {}; }
-}
-function salvarUsuarios(u) {
-  try { localStorage.setItem(LS_USERS, JSON.stringify(u)); } catch(e){}
-}
-function lerSessao() {
-  try { return localStorage.getItem(LS_SESS) || null; } catch(e){ return null; }
-}
-function salvarSessao(email) {
-  try { if(email) localStorage.setItem(LS_SESS,email); else localStorage.removeItem(LS_SESS); } catch(e){}
+function renderMolduras(){
+  const g=document.getElementById('moldurasGrid');
+  g.innerHTML=MOLDURAS.map((m,i)=>`
+    <div class="moldura-opt ${i===molduraSel?'sel':''}" onclick="selMoldura(${i})">
+      <canvas id="pm${i}" width="120" height="120"></canvas>
+      <div class="moldura-nome">${m.n}</div>
+    </div>`).join('');
+  MOLDURAS.forEach((_,i)=>prevMoldura(i));
 }
 
-// Cria ou recupera usuário pelo e-mail
-function upsertUsuario(nome, email, tel) {
-  const usuarios = lerUsuarios();
-  if (!usuarios[email]) {
-    usuarios[email] = { nome, tel, compras: [] };
-  } else {
-    // Atualiza nome e tel se informados
-    if (nome) usuarios[email].nome = nome;
-    if (tel)  usuarios[email].tel  = tel;
+function prevMoldura(i){
+  const m=MOLDURAS[i];
+  const c=document.getElementById(`pm${i}`);
+  const x=c.getContext('2d');
+  const S=120;
+  x.fillStyle=m.bg;x.fillRect(0,0,S,S);
+  if(fotos.length){
+    const img=new Image();
+    img.onload=()=>{
+      const sc=Math.max(S*.7/img.width,S*.7/img.height);
+      const iw=img.width*sc,ih=img.height*sc;
+      x.save();
+      x.beginPath();x.roundRect(10,10,S-20,S*0.6,4);x.clip();
+      x.drawImage(img,(S-iw)/2,(S*.35-ih)/2+8,iw,ih);
+      x.restore();
+      desenharBordaPreview(x,m,S);
+    };img.src=fotos[0].url;
+  } else { desenharBordaPreview(x,m,S); }
+}
+
+function desenharBordaPreview(x,m,S){
+  x.strokeStyle=m.brd;x.lineWidth=1.5;
+  x.strokeRect(4,4,S-8,S-8);
+  x.fillStyle=m.tx;x.font=`italic bold ${S*.11}px serif`;x.textAlign='center';
+  x.fillText('Pai',S/2,S*.82);
+  x.fillStyle=m.brd;x.font=`${S*.1}px serif`;
+  x.fillText('✦',S/2,S*.95);
+}
+
+function selMoldura(i){
+  molduraSel=i;
+  document.querySelectorAll('.moldura-opt').forEach((el,j)=>el.classList.toggle('sel',j===i));
+}
+
+// ══ ETAPAS ══
+function irEtapa(n){
+  document.getElementById(`etapa${etapa}`).style.display='none';
+  etapa=n;
+  document.getElementById(`etapa${n}`).style.display='block';
+  [1,2,3,4].forEach(j=>document.getElementById(`s${j}`)?.classList.toggle('ativo',j<=n));
+  if(n===2)renderMolduras();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ GERAR ══
+async function gerarCarrossel(){
+  const nomeF=document.getElementById('nomeF').value.trim();
+  const nomePai=document.getElementById('nomePai').value.trim();
+  const mem=document.getElementById('memoria').value.trim();
+  if(!nomeF||!nomePai){toast('Preencha os nomes');return;}
+  document.getElementById('loading').classList.add('show');
+  slides=[];
+  try{
+    setMsg('Escrevendo com o coração...');
+    const ded=await gptDedicatoria(nomeF,nomePai,mem);
+    const m=MOLDURAS[molduraSel];
+    setMsg('Montando a capa...');
+    slides.push(await gerarSlide(null,'capa',m,nomePai,nomeF,''));
+    for(let i=0;i<Math.min(fotos.length,7);i++){
+      setMsg(`Processando foto ${i+1} de ${Math.min(fotos.length,7)}...`);
+      slides.push(await gerarSlide(fotos[i].url,'foto',m,nomePai,nomeF,ded.frases[i]||''));
+    }
+    setMsg('Finalizando...');
+    slides.push(await gerarSlide(null,'fim',m,nomePai,nomeF,ded.mensagem));
+    document.getElementById('loading').classList.remove('show');
+    mostrarTela2();
+  }catch(e){
+    document.getElementById('loading').classList.remove('show');
+    console.error(e);toast('Erro ao gerar. Verifique sua chave OpenAI.');
   }
-  salvarUsuarios(usuarios);
-  salvarSessao(email);
-  usuarioAtual = { email, nome: usuarios[email].nome, tel: usuarios[email].tel };
-  return usuarios[email];
 }
 
-function registrarCompra(email, compra) {
-  const usuarios = lerUsuarios();
-  if (!usuarios[email]) return;
-  if (!Array.isArray(usuarios[email].compras)) usuarios[email].compras = [];
-  usuarios[email].compras.unshift(compra);
-  salvarUsuarios(usuarios);
-  // Também salva no cc_pedidos (admin)
-  try {
-    const lista = JSON.parse(localStorage.getItem('cc_pedidos') || '[]');
-    lista.unshift({ ...compra, nome: usuarios[email].nome, email, telefone: usuarios[email].tel });
-    localStorage.setItem('cc_pedidos', JSON.stringify(lista.slice(0,500)));
-  } catch(e){}
-}
+function setMsg(t){document.getElementById('loadMsg').textContent=t;}
 
-// ── INIT SESSÃO ──
-function iniciarSessao() {
-  const email = lerSessao();
-  if (!email) return;
-  const usuarios = lerUsuarios();
-  if (usuarios[email]) {
-    usuarioAtual = { email, nome: usuarios[email].nome, tel: usuarios[email].tel };
-    mostrarUsuarioLogado();
-  }
-}
-
-function mostrarUsuarioLogado() {
-  if (!usuarioAtual) return;
-  document.getElementById('heroNome').textContent = usuarioAtual.nome.split(' ')[0];
-  document.getElementById('heroUsuario').classList.add('show');
-  // Pré-preenche form
-  document.getElementById('nomeInput').value  = usuarioAtual.nome || '';
-  document.getElementById('emailInput').value = usuarioAtual.email || '';
-  document.getElementById('telInput').value   = usuarioAtual.tel || '';
-}
-
-function trocarUsuario() {
-  usuarioAtual = null;
-  salvarSessao(null);
-  document.getElementById('heroUsuario').classList.remove('show');
-  document.getElementById('nomeInput').value  = '';
-  document.getElementById('emailInput').value = '';
-  document.getElementById('telInput').value   = '';
-}
-
-// ── JOGADORES ──
-function lerJogadores() {
-  try {
-    const raw = localStorage.getItem(LS_JOGS);
-    if (raw) { const p = JSON.parse(raw); if (Array.isArray(p) && p.length) return p; }
-  } catch(e){}
-  return JSON.parse(JSON.stringify(JOGADORES_DEFAULT));
-}
-
-function renderGrid() {
-  JOGADORES = lerJogadores();
-  const selAntes = new Set(sel);
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  sel.clear();
-
-  JOGADORES.forEach(j => {
-    const selecionado = selAntes.has(j.id);
-    if (selecionado) sel.add(j.id);
-    const d = document.createElement('div');
-    d.className = 'card' + (selecionado ? ' selected' : '');
-    d.id = 'card-' + j.id;
-    const imgContent = j.img
-      ? `<img src="${j.img}" alt="${j.nome}" loading="lazy">`
-      : `<span style="font-size:54px;z-index:1">${j.emoji||'⚽'}</span>`;
-    d.innerHTML = `
-      <div class="check-icon">✓</div>
-      <div class="card-img" style="background:linear-gradient(160deg,${j.grad||'#e8f5e9,#c8e6c9'})">
-        ${imgContent}
-        <div class="card-num">${j.num}</div>
-        <div class="card-bandeira">🇧🇷</div>
-        <div class="card-pos">${j.pos}</div>
-      </div>
-      <div class="card-info">
-        <div class="card-nome">${j.nome}</div>
-        <div class="card-preco">R$${(j.preco||3).toFixed(2).replace('.',',')}</div>
-      </div>`;
-    d.onclick = () => toggleCard(j.id);
-    grid.appendChild(d);
+// ══ GPT ══
+async function gptDedicatoria(nomeF,nomePai,mem){
+  const r=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${OPENAI_KEY}`},
+    body:JSON.stringify({
+      model:'gpt-4o',max_tokens:400,
+      messages:[{role:'user',content:
+        `Escreva uma homenagem para um pai falecido.\nFilho(a): ${nomeF}\nPai: ${nomePai}\n${mem?'Memória: '+mem:''}\n\nResponda APENAS em JSON sem markdown:\n{"frases":["frase1","frase2","frase3","frase4","frase5","frase6","frase7"],"mensagem":"mensagem final em 2 linhas"}\n\nRegras: máximo 7 palavras por frase, em português, emocionantes e simples.`
+      }]
+    })
   });
-  atualizarUI();
+  if(!r.ok)throw new Error('GPT '+r.status);
+  const d=await r.json();
+  return JSON.parse(d.choices[0].message.content.replace(/```json|```/g,'').trim());
 }
 
-// Sincroniza em tempo real quando admin altera
-window.addEventListener('storage', e => {
-  if (e.key === LS_JOGS) { renderGrid(); mostrarToast('🔄 Catálogo atualizado!'); }
-});
+// ══ CANVAS SLIDE 1080x1080 ══
+async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
+  const S=1080,c=document.createElement('canvas');
+  c.width=S;c.height=S;
+  const x=c.getContext('2d');
 
-// ── TOGGLE / COMBO ──
-function toggleCard(id) {
-  if (isCombo) { mostrarToast('Deselecione o combo primeiro'); return; }
-  const card = document.getElementById('card-' + id);
-  if (sel.has(id)) { sel.delete(id); card.classList.remove('selected'); }
-  else             { sel.add(id);    card.classList.add('selected'); }
-  atualizarUI();
-}
+  // Fundo
+  x.fillStyle=m.bg;x.fillRect(0,0,S,S);
 
-function selecionarCombo() {
-  isCombo = !isCombo;
-  const badge = document.getElementById('badgeCombo');
-  if (isCombo) {
-    sel = new Set(JOGADORES.map(j=>j.id));
-    JOGADORES.forEach(j=>document.getElementById('card-'+j.id)?.classList.add('selected'));
-    badge.classList.add('combo-selected');
-    badge.textContent='✅ TIME COMPLETO — R$14,99';
-    mostrarToast('🏆 Time completo!');
-  } else {
-    sel.clear();
-    JOGADORES.forEach(j=>document.getElementById('card-'+j.id)?.classList.remove('selected'));
-    badge.classList.remove('combo-selected');
-    badge.textContent='🏆 LEVE O TIME TODO — R$14,99';
+  if(tipo==='foto'&&fotoUrl){
+    const img=await loadImg(fotoUrl);
+    // Área da foto — sem distorção, fit-cover
+    const ax=50,ay=70,aw=S-100,ah=700;
+    const sc=Math.max(aw/img.width,ah/img.height);
+    const iw=img.width*sc,ih=img.height*sc;
+    x.save();
+    x.beginPath();rrect(x,ax,ay,aw,ah,16);x.clip();
+    x.drawImage(img,ax+(aw-iw)/2,ay+(ah-ih)/2,iw,ih);
+    // Gradiente na base da foto
+    const g=x.createLinearGradient(0,ay+ah-260,0,ay+ah);
+    g.addColorStop(0,'transparent');g.addColorStop(1,m.bg+'f0');
+    x.fillStyle=g;x.fillRect(ax,ay+ah-260,aw,260);
+    x.restore();
   }
-  atualizarUI();
-}
 
-function calcTotal() {
-  if (isCombo) return P_COMBO;
-  return JOGADORES.filter(j=>sel.has(j.id)).reduce((s,j)=>s+(j.preco||P_UNIT),0);
-}
-function fmt(v){ return 'R$'+v.toFixed(2).replace('.',','); }
+  // Borda dupla decorativa
+  x.strokeStyle=m.brd;x.lineWidth=3;rrect(x,28,28,S-56,S-56,22);x.stroke();
+  x.strokeStyle=m.brd;x.lineWidth=.8;x.globalAlpha=.4;
+  rrect(x,42,42,S-84,S-84,14);x.stroke();x.globalAlpha=1;
 
-function atualizarUI() {
-  const n = sel.size;
-  document.getElementById('resumoTxt').textContent = isCombo?'Time completo':n===0?'':n+(n===1?' craque':' craques');
-  document.getElementById('totalTxt').textContent  = (n>0||isCombo)?fmt(calcTotal()):'';
-  const bar = document.getElementById('bottomBar');
-  (n>0||isCombo)?bar.classList.add('show'):bar.classList.remove('show');
-  const cc = document.getElementById('cartCount');
-  cc.textContent = isCombo?'★':n;
-  (n>0||isCombo)?cc.classList.add('show'):cc.classList.remove('show');
-}
+  // Ornamento topo
+  x.fillStyle=m.brd;x.font='32px serif';x.textAlign='center';
+  x.fillText('✦',S/2,78);
 
-// ── CARRINHO ──
-function abrirCarrinho() {
-  if (!sel.size&&!isCombo){ mostrarToast('Toque em um craque!'); return; }
-  let html='';
-  if (isCombo) {
-    html=`<div class="item-cart"><div class="item-cart-emoji">🏆</div>
-      <div class="item-cart-info"><div class="item-cart-nome">Combo — ${JOGADORES.length} Craques</div>
-      <div class="item-cart-preco">${fmt(P_COMBO)}</div></div></div>`;
-  } else {
-    JOGADORES.filter(j=>sel.has(j.id)).forEach(j=>{
-      const media = j.img
-        ? `<img class="item-cart-img" src="${j.img}" alt="${j.nome}">`
-        : `<div class="item-cart-emoji">${j.emoji||'⚽'}</div>`;
-      html+=`<div class="item-cart">${media}
-        <div class="item-cart-info">
-          <div class="item-cart-nome">${j.nome} · #${j.num}</div>
-          <div class="item-cart-preco">${fmt(j.preco||P_UNIT)}</div>
-        </div>
-        <button class="item-cart-rm" onclick="removerItem(${j.id})">✕</button></div>`;
-    });
+  if(tipo==='capa'){
+    x.fillStyle=m.tx;
+    x.font=`italic 600 ${S*.11}px Cormorant Garamond,serif`;x.textAlign='center';
+    x.fillText(nomePai,S/2,S/2-30);
+    x.fillStyle=m.brd;x.font='32px serif';x.fillText('✦',S/2,S/2+30);
+    x.fillStyle=m.tx;
+    x.font=`italic 300 38px Cormorant Garamond,serif`;
+    x.fillText('Para sempre em nosso coração',S/2,S/2+90);
+    x.fillStyle=m.brd;x.font='26px sans-serif';
+    x.fillText('de '+nomeF,S/2,S/2+140);
   }
-  document.getElementById('listaCarrinho').innerHTML=html;
-  document.getElementById('totalModal').textContent=fmt(calcTotal());
-  abrirOverlay('overlayCarrinho');
-}
 
-function removerItem(id){
-  sel.delete(id);
-  document.getElementById('card-'+id)?.classList.remove('selected');
-  atualizarUI();
-  if(!sel.size) fecharOverlay('overlayCarrinho'); else abrirCarrinho();
-}
-
-// ── CHECKOUT ──
-function irParaCheckout() {
-  if (!sel.size&&!isCombo){ mostrarToast('Selecione um craque!'); return; }
-  // Monta resumo com imagens
-  let linhas='';
-  if (isCombo) {
-    linhas=`<div class="resumo-linha"><span>🏆 Combo Completo</span><span>${fmt(P_COMBO)}</span></div>`;
-  } else {
-    JOGADORES.filter(j=>sel.has(j.id)).forEach(j=>{
-      const img = j.img ? `<img class="resumo-linha-img" src="${j.img}" alt="${j.nome}">` : `<span>${j.emoji||'⚽'}</span>`;
-      linhas+=`<div class="resumo-linha">${img}<span style="flex:1">${j.nome}</span><span>${fmt(j.preco||P_UNIT)}</span></div>`;
-    });
+  if(tipo==='foto'&&texto){
+    x.fillStyle=m.tx;
+    x.font=`italic 300 40px Cormorant Garamond,serif`;x.textAlign='center';
+    wrapTxt(x,texto,S/2,800,S-130,52);
   }
-  document.getElementById('resumoCheckout').innerHTML=
-    linhas+`<div class="resumo-total"><span>Total</span><span>${fmt(calcTotal())}</span></div>`;
-  mostrarEtapa('etapaDados');
-  abrirOverlay('overlayCheckout');
+
+  if(tipo==='fim'){
+    x.fillStyle=m.tx;
+    x.font=`italic 300 44px Cormorant Garamond,serif`;x.textAlign='center';
+    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-30,S-140,58);
+    x.fillStyle=m.brd;x.font='30px serif';x.fillText('✦',S/2,S/2+80);
+    x.fillStyle=m.tx;x.font=`600 34px Cormorant Garamond,serif`;
+    x.fillText(nomePai,S/2,S/2+130);
+  }
+
+  // Rodapé
+  x.strokeStyle=m.brd;x.lineWidth=.8;x.globalAlpha=.3;
+  x.beginPath();x.moveTo(80,S-62);x.lineTo(S-80,S-62);x.stroke();
+  x.globalAlpha=1;
+  x.fillStyle=m.brd;x.font='20px sans-serif';x.textAlign='center';
+  x.fillText('Para Sempre Pai · '+nomePai,S/2,S-36);
+
+  return c;
 }
 
-function irParaPix() {
-  const nome  = document.getElementById('nomeInput').value.trim();
-  const email = document.getElementById('emailInput').value.trim();
-  const tel   = document.getElementById('telInput').value.trim();
-  if (!nome)                        { mostrarToast('Informe seu nome'); return; }
-  if (!/\S+@\S+\.\S+/.test(email)) { mostrarToast('E-mail inválido'); return; }
-
-  // ← CRIA/ATUALIZA CADASTRO JÁ AQUI
-  upsertUsuario(nome, email, tel);
-  mostrarUsuarioLogado();
-
-  document.getElementById('pixValor').textContent = fmt(calcTotal());
-  mostrarEtapa('etapaPix');
+function loadImg(url){
+  return new Promise((res,rej)=>{
+    const i=new Image();i.crossOrigin='anonymous';
+    i.onload=()=>res(i);i.onerror=rej;i.src=url;
+  });
 }
 
+function rrect(x,rx,ry,w,h,r){
+  x.beginPath();x.roundRect(rx,ry,w,h,r);
+}
+
+function wrapTxt(x,t,cx,cy,mw,lh){
+  const words=t.split(' ');let line='',y=cy;
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(x.measureText(test).width>mw&&line){
+      x.fillText(line,cx,y);line=w;y+=lh;
+    }else{line=test;}
+  }
+  if(line)x.fillText(line,cx,y);
+}
+
+// ══ PREVIEW ══
+function mostrarTela2(){
+  document.getElementById('tela1').style.display='none';
+  document.getElementById('tela2').style.display='block';
+  const sc=document.getElementById('slidesScroll');sc.innerHTML='';
+  slides.forEach(c=>{
+    const d=document.createElement('div');d.className='slide-mini';
+    const m=document.createElement('canvas');m.width=140;m.height=140;
+    m.getContext('2d').drawImage(c,0,0,140,140);
+    d.appendChild(m);sc.appendChild(d);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ PIX ══
 function copiarPix(){
   navigator.clipboard?.writeText(PIX_KEY).catch(()=>{});
-  mostrarToast('✅ Chave copiada!');
+  toast('Chave copiada ✦');
+}
+function confirmarPix(){
+  document.getElementById('tela2').style.display='none';
+  document.getElementById('tela3').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function confirmarPix() {
-  if (!usuarioAtual) return;
-
-  const jogsSel = isCombo ? JOGADORES : JOGADORES.filter(j=>sel.has(j.id));
-  const id = 'CC'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,4).toUpperCase();
-
-  // Salva compra com referência aos PDFs
-  pedidoAtual = {
-    id,
-    itens: isCombo?['COMBO']:jogsSel.map(j=>j.nome),
-    jogadorIds: jogsSel.map(j=>j.id),
-    total: calcTotal(),
-    ts: Date.now(),
-    status: 'pago'
-  };
-
-  registrarCompra(usuarioAtual.email, pedidoAtual);
-  mostrarEtapa('etapaSucesso');
-}
-
-function fecharEIrParaCompras() {
-  fecharOverlay('overlayCheckout');
-  setTimeout(() => {
-    renderCompras();
-    abrirOverlay('overlayCompras');
-  }, 320);
-  reiniciarSelecao();
-}
-
-function reiniciar() {
-  reiniciarSelecao();
-  fecharOverlay('overlayCheckout');
-}
-
-function reiniciarSelecao() {
-  sel.clear(); isCombo=false;
-  JOGADORES.forEach(j=>document.getElementById('card-'+j.id)?.classList.remove('selected'));
-  document.getElementById('badgeCombo').classList.remove('combo-selected');
-  document.getElementById('badgeCombo').textContent='🏆 LEVE O TIME TODO — R$14,99';
-  atualizarUI();
-}
-
-// ── MINHAS COMPRAS ──
-function abrirMinhasCompras() {
-  if (usuarioAtual) {
-    renderCompras();
-  } else {
-    // Mostra tela de identificação dentro do modal
-    document.getElementById('comprasConteudo').innerHTML = `
-      <div style="text-align:center;padding:8px 0 20px">
-        <div style="font-size:42px;margin-bottom:10px">📂</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--azul);margin-bottom:6px">Acesse suas compras</div>
-        <div style="font-size:13px;color:#999;font-weight:700;margin-bottom:20px">Digite o e-mail que usou na compra</div>
-        <input id="loginEmail" type="email" class="form-input" placeholder="seuemail@email.com"
-          style="margin-bottom:10px" autocomplete="email"
-          onkeydown="if(event.key==='Enter')buscarPorEmail()">
-        <button class="btn-primary" onclick="buscarPorEmail()" style="margin-bottom:0">
-          VER MINHAS COMPRAS →
-        </button>
-      </div>`;
-    document.getElementById('comprasSubtitulo').textContent = 'Digite seu e-mail para acessar';
+// ══ ZIP ══
+async function baixarZIP(){
+  toast('Preparando...');
+  if(typeof JSZip==='undefined'){
+    await new Promise(res=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload=res;document.head.appendChild(s);
+    });
   }
-  abrirOverlay('overlayCompras');
-}
-
-function buscarPorEmail() {
-  const email = (document.getElementById('loginEmail')?.value || '').trim().toLowerCase();
-  if (!/\S+@\S+\.\S+/.test(email)) { mostrarToast('E-mail inválido'); return; }
-  const usuarios = lerUsuarios();
-  if (!usuarios[email] || !usuarios[email].compras?.length) {
-    document.getElementById('comprasConteudo').innerHTML = `
-      <div style="text-align:center;padding:20px 0">
-        <div style="font-size:40px;margin-bottom:10px">📭</div>
-        <div style="font-size:14px;font-weight:700;color:#aaa;margin-bottom:16px">Nenhuma compra encontrada para este e-mail</div>
-        <input id="loginEmail" type="email" class="form-input" placeholder="Tente outro e-mail"
-          style="margin-bottom:10px" autocomplete="email"
-          onkeydown="if(event.key==='Enter')buscarPorEmail()">
-        <button class="btn-primary" onclick="buscarPorEmail()" style="margin-bottom:0">BUSCAR</button>
-      </div>`;
-    return;
+  const zip=new JSZip();
+  const pasta=zip.folder('Para_Sempre_Pai');
+  for(let i=0;i<slides.length;i++){
+    const blob=await new Promise(r=>slides[i].toBlob(r,'image/jpeg',.92));
+    const nome=i===0?'01_capa':i===slides.length-1?`0${i+1}_mensagem`:`0${String(i+1).padStart(2,'0')}_foto`;
+    pasta.file(nome+'.jpg',blob);
   }
-  // Encontrou — loga e mostra compras
-  usuarioAtual = { email, nome: usuarios[email].nome, tel: usuarios[email].tel };
-  salvarSessao(email);
-  mostrarUsuarioLogado();
-  renderCompras();
+  pasta.file('COMO_POSTAR.txt',
+    'COMO POSTAR NO INSTAGRAM\n\n1. Abra o Instagram\n2. Toque em + → Publicação\n3. Ícone de múltiplas fotos\n4. Selecione todas em ordem\n5. Publique com uma legenda ❤️');
+  const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='Para_Sempre_Pai.zip';a.click();
+  toast('Download iniciado ✦');
 }
 
-function renderCompras() {
-  const usuarios = lerUsuarios();
-  const user = usuarios[usuarioAtual.email];
-  const compras = user?.compras || [];
-  const primeiroNome = user?.nome?.split(' ')[0] || '';
-
-  document.getElementById('comprasSubtitulo').textContent =
-    `${primeiroNome} · ${compras.length} compra${compras.length!==1?'s':''}`;
-
-  if (!compras.length) {
-    document.getElementById('comprasConteudo').innerHTML =
-      `<div class="compras-empty"><span>📭</span>Nenhuma compra ainda.<br>Escolha seus craques!</div>`;
-    return;
-  }
-
-  document.getElementById('comprasConteudo').innerHTML = compras.map(c => {
-    const dt = new Date(c.ts).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
-
-    const jogsSel = c.jogadorIds
-      ? JOGADORES.filter(j => c.jogadorIds.includes(j.id))
-      : JOGADORES; // combo
-
-    const itensHtml = jogsSel.length
-      ? jogsSel.map(j => {
-          const img = j.img ? `<img src="${j.img}">` : j.emoji || '⚽';
-          return `<div class="compra-item">${img} ${j.nome}</div>`;
-        }).join('')
-      : c.itens.map(i => `<div class="compra-item">⚽ ${i}</div>`).join('');
-
-    // Verifica se algum jogador da compra tem PDF disponível na loja
-    const temPdf = jogsSel.some(j => j.pdf && j.pdf.length > 10);
-
-    return `<div class="compra-card">
-      <div class="compra-header">
-        <span class="compra-data">🗓 ${dt}</span>
-        <span class="compra-total">${fmt(c.total)}</span>
-      </div>
-      <div class="compra-itens">${itensHtml}</div>
-      <button class="${temPdf ? 'btn-baixar' : 'btn-baixar sem-pdf'}"
-        onclick="${temPdf ? `baixarPDFsCompra('${c.id}')` : 'void(0)'}">
-        ${temPdf ? '⬇️ BAIXAR PDF' : '📄 PDF em breve'}
-      </button>
-    </div>`;
-  }).join('');
-}
-
-function baixarPDFsCompra(compraId) {
-  const usuarios = lerUsuarios();
-  const user = usuarios[usuarioAtual?.email];
-  const compra = (user?.compras||[]).find(c=>c.id===compraId);
-  if (!compra) return;
-
-  const jogsSel = compra.jogadorIds
-    ? JOGADORES.filter(j=>compra.jogadorIds.includes(j.id)&&j.pdf)
-    : JOGADORES.filter(j=>j.pdf); // combo = todos
-
-  if (!jogsSel.length) { mostrarToast('PDF ainda não disponível'); return; }
-
-  jogsSel.forEach((j,i)=>{
-    setTimeout(()=>{
-      const a=document.createElement('a');
-      a.href=j.pdf;
-      a.download=`Copa-Craft-${j.nome.replace(/\s/g,'-')}.pdf`;
-      a.click();
-    }, i*600);
-  });
-  mostrarToast(`⬇️ Baixando ${jogsSel.length} PDF(s)!`);
-}
-
-// ── HELPERS ──
-let _scrollY = 0;
-
-function abrirOverlay(id) {
-  // Salva posição do scroll antes de travar
-  _scrollY = window.scrollY;
-  document.body.classList.add('modal-aberto');
-  document.body.style.top = `-${_scrollY}px`;
-  document.getElementById(id).classList.add('show');
-}
-
-function fecharOverlay(id, e) {
-  if (e && e.target.id !== id) return;
-  document.getElementById(id).classList.remove('show');
-  // Só destrava se não houver outro modal aberto
-  if (!document.querySelector('.overlay.show')) {
-    document.body.classList.remove('modal-aberto');
-    document.body.style.top = '';
-    window.scrollTo(0, _scrollY);
-  }
-}
-function mostrarEtapa(id){
-  ['etapaDados','etapaPix','etapaSucesso'].forEach(e=>
-    document.getElementById(e).style.display=e===id?'block':'none');
-}
-
-// ── TOAST ──
-function mostrarToast(msg){
+// ══ HELPERS ══
+function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);
 }
-
-// ── BLOQUEIA ZOOM POR GESTO (iOS/Android) ──
-document.addEventListener('touchstart', function(e){
-  if(e.touches.length > 1) e.preventDefault();
-}, {passive:false});
-document.addEventListener('touchmove', function(e){
-  if(e.touches.length > 1) e.preventDefault();
-}, {passive:false});
-let lastTouch = 0;
-document.addEventListener('touchend', function(e){
-  const now = Date.now();
-  if(now - lastTouch < 300) e.preventDefault(); // bloqueia double-tap zoom
-  lastTouch = now;
-}, {passive:false});
-
-// ── INIT ──
-iniciarSessao();
-renderGrid();
+document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+let _lt=0;
+document.addEventListener('touchend',e=>{const n=Date.now();if(n-_lt<300)e.preventDefault();_lt=n;},{passive:false});
 </script>
 </body>
 </html>
