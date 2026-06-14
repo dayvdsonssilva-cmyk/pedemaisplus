@@ -510,6 +510,12 @@ h1 em{
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ANTI-PRINT OVERLAY */
+#antiPrintOverlay{
+  position:fixed;inset:0;background:#000;z-index:99999;
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;padding:40px;text-align:center;
+}
 /* ══ CROP MODAL ══ */
 .crop-over{position:fixed;inset:0;background:rgba(14,11,8,.97);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;backdrop-filter:blur(4px)}
 .crop-over.show{display:flex}
@@ -722,10 +728,9 @@ h1 em{
 <!-- ════════ TELA 2: PREVIEW + PAGAMENTO MP ════════ -->
 <div id="tela2" style="display:none">
 <div class="page">
-  <div class="hero" style="padding-top:48px">
-    <div class="eyebrow">Feito com amor</div>
-    <h1 style="font-size:44px">Uma prévia<em>especial</em></h1>
-    <p class="hero-sub" style="margin-bottom:20px">O primeiro slide é seu.<br>Complete para receber todos.</p>
+  <div style="padding-top:64px;padding-bottom:8px;text-align:center">
+    <div class="eyebrow" style="margin-bottom:6px">Feito com amor</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--branco);font-style:italic">Sua prévia <em style="color:var(--ouro)">especial</em></div>
   </div>
 </div>
 
@@ -790,32 +795,33 @@ h1 em{
 <!-- MINIATURAS (scroll horizontal) -->
 <div class="slides-scroll" id="slidesScroll" style="padding-bottom:8px"></div>
 
-<!-- CARD PAGAMENTO (botão + QR tudo junto) -->
-<div id="cardPagamento"></div>
-<div class="page">
-  <div style="text-align:center;background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:28px 20px;margin-bottom:16px;">
-    <div style="font-size:36px;margin-bottom:14px">🕊️</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--branco);margin-bottom:10px;line-height:1.3;">Guardar essa memória<br><em style="color:var(--ouro)">para sempre</em></div>
-    <p style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:22px">Seu carrossel está pronto.<br>Baixe os slides e compartilhe<br>esse amor com quem você quiser.</p>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:var(--ouro);line-height:1;margin-bottom:4px;">R$19,90</div>
-    <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:22px;">acesso completo · 10 slides</div>
-    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">Receber meus slides ✦</button>
-    <p style="font-size:11px;color:var(--cinza);margin-top:12px;opacity:.6;">Pagamento seguro · liberação imediata</p>
+</div>
 
-    <!-- PIX INLINE (aparece após clicar) -->
+<!-- ════════ TELA 2.5: PAGAMENTO ════════ -->
+<div id="telaPagamento" style="display:none">
+<div class="page" style="padding-top:20px">
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--branco);margin-bottom:4px">
+      Guardar essa memória<br><em style="color:var(--ouro)">para sempre</em>
+    </div>
+  </div>
+  <div style="background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:24px 20px;margin-bottom:16px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:600;color:var(--ouro);line-height:1;margin-bottom:4px">R$19,90</div>
+    <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px">acesso completo · 10 slides</div>
+    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">Receber meus slides ✦</button>
+    <p style="font-size:11px;color:var(--cinza);margin-top:10px;opacity:.6">Pagamento seguro · liberação imediata</p>
+
+    <!-- PIX INLINE -->
     <div id="pixArea" style="display:none;margin-top:20px">
       <div style="height:1px;background:rgba(200,169,110,.15);margin-bottom:20px"></div>
-      <!-- QR Code -->
       <div id="qrBox" style="display:none;margin-bottom:14px">
-        <img id="qrImg" style="width:180px;height:180px;border-radius:12px;border:1px solid rgba(200,169,110,.2);display:block;margin:0 auto">
+        <img id="qrImg" style="width:200px;height:200px;border-radius:12px;border:1px solid rgba(200,169,110,.2);display:block;margin:0 auto">
       </div>
-      <!-- Código copia e cola -->
       <div id="pixCodigo" style="display:none;margin-bottom:10px">
-        <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Código PIX</div>
-        <div id="pixCodigoTxt" style="background:rgba(14,11,8,.7);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--creme);font-family:monospace;word-break:break-all;text-align:left;max-height:54px;overflow:hidden;border:1px solid rgba(200,169,110,.15);"></div>
+        <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Código PIX copia e cola</div>
+        <div id="pixCodigoTxt" style="background:rgba(14,11,8,.7);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--creme);font-family:monospace;word-break:break-all;text-align:left;max-height:54px;overflow:hidden;border:1px solid rgba(200,169,110,.15)"></div>
       </div>
       <button class="btn-copy" onclick="copiarPix()" style="margin-bottom:14px">✦ Copiar código PIX</button>
-      <!-- Status -->
       <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px">
         <div class="ring" style="width:18px;height:18px;border-width:1.5px;flex-shrink:0"></div>
         <div style="font-size:12px;color:var(--cinza)" id="statusTxt">Aguardando pagamento...</div>
@@ -823,6 +829,7 @@ h1 em{
       <button class="btn ghost" onclick="confirmarManual()" style="font-size:14px;padding:12px">Já realizei o pagamento</button>
     </div>
   </div>
+  <button class="btn ghost" onclick="voltarPreview()" style="margin-bottom:20px">‹ Voltar à prévia</button>
 </div>
 </div>
 
@@ -1575,14 +1582,14 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
   if(tipo==='foto'&&fotoUrl){
     const img=await loadImg(fotoUrl);
     // Área da foto — sem distorção, fit-cover
-    const ax=50,ay=70,aw=S-100,ah=700;
+    const ax=50,ay=60,aw=S-100,ah=740;
     const sc=Math.max(aw/img.width,ah/img.height);
     const iw=img.width*sc,ih=img.height*sc;
     x.save();
     x.beginPath();rrect(x,ax,ay,aw,ah,16);x.clip();
     x.drawImage(img,ax+(aw-iw)/2,ay+(ah-ih)/2,iw,ih);
     // Gradiente na base da foto
-    const g=x.createLinearGradient(0,ay+ah-260,0,ay+ah);
+    const g=x.createLinearGradient(0,ay+ah-220,0,ay+ah);
     g.addColorStop(0,'transparent');g.addColorStop(1,m.bg+'f0');
     x.fillStyle=g;x.fillRect(ax,ay+ah-260,aw,260);
     x.restore();
@@ -1617,7 +1624,7 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
     x.fillStyle=m.tx;
     x.font=`italic 300 52px Cormorant Garamond,serif`;
     x.textAlign='center';
-    wrapTxt(x,texto,S/2,810,S-100,64);
+    wrapTxt(x,texto,S/2,870,S-80,58);
     x.shadowBlur=0; x.shadowOffsetY=0;
   }
 
@@ -1698,14 +1705,20 @@ function mostrarTela2(){
 function renderInstaPreview(){
   const c = slides[slideAtual];
   if(!c) return;
-  const frame = document.getElementById('instaCanvas');
-  const size  = document.getElementById('instaFrame').offsetWidth || 340;
-  frame.width  = size;
-  frame.height = size;
+  const frame   = document.getElementById('instaCanvas');
+  const instaEl = document.getElementById('instaFrame');
+  const cssSize = instaEl.getBoundingClientRect().width || 340;
+  const dpr     = Math.min(window.devicePixelRatio || 1, 3); // máx 3x
+  const size    = Math.round(cssSize * dpr);
+  frame.width   = size;
+  frame.height  = size;
+  frame.style.width  = cssSize + 'px';
+  frame.style.height = cssSize + 'px';
   const ctx = frame.getContext('2d');
+  ctx.scale(dpr, dpr);
 
-  // Desenha o slide
-  ctx.drawImage(c, 0, 0, size, size);
+  // Desenha o slide em alta resolução
+  ctx.drawImage(c, 0, 0, cssSize, cssSize);
 
   // ── MARCA D'ÁGUA adaptativa (preta no fundo claro, branca nos escuros) ──
   const m = MOLDURAS[molduraSel];
@@ -1713,15 +1726,17 @@ function renderInstaPreview(){
   const wmCor   = bgClaro ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.13)';
   ctx.save();
   ctx.globalAlpha = 1;
-  ctx.translate(size/2, size/2);
+  const wSize = cssSize;
+  ctx.translate(wSize/2, wSize/2);
   ctx.rotate(-Math.PI/5);
   ctx.fillStyle = wmCor;
-  ctx.font = `bold ${size*0.052}px sans-serif`;
+  ctx.font = `bold ${wSize*0.052}px sans-serif`;
   ctx.textAlign = 'center';
-  [[-size*.28,0],[0,0],[size*.28,0],[-size*.14,size*.22],[size*.14,-size*.22]].forEach(([x,y])=>{
+  [[-wSize*.28,0],[0,0],[wSize*.28,0],[-wSize*.14,wSize*.22],[wSize*.14,-wSize*.22]].forEach(([x,y])=>{
     ctx.fillText('parasemprepai.com', x, y);
   });
   ctx.restore();
+  ctx.setTransform(1,0,0,1,0,0); // reset scale
 
   // Dots
   const dots = document.getElementById('instaDots');
@@ -1853,6 +1868,7 @@ async function confirmarManual(){
 function liberarDownload(){
   clearInterval(pollingTimer);
   document.getElementById('tela2').style.display='none';
+  document.getElementById('telaPagamento').style.display='none';
   document.getElementById('tela3').classList.add('show');
   // Atualiza texto da pasta
   const pt = document.getElementById('pastaTxt');
@@ -2078,10 +2094,17 @@ document.addEventListener('visibilitychange', ()=>{
 // ══ FUNÇÕES TELA 2 ══
 function irParaPagamento(){
   document.getElementById('bottomBarPreview').style.display='none';
-  // Scroll até o card de pagamento
-  const card = document.getElementById('cardPagamento');
-  if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
-  else document.querySelector('#tela2 .page')?.scrollIntoView({behavior:'smooth'});
+  document.getElementById('tela2').style.display='none';
+  document.getElementById('telaPagamento').style.display='none';
+  document.getElementById('telaPagamento').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function voltarPreview(){
+  document.getElementById('telaPagamento').style.display='none';
+  document.getElementById('tela2').style.display='block';
+  document.getElementById('bottomBarPreview').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function refazerTudo(){
@@ -2089,6 +2112,7 @@ function refazerTudo(){
   // Reset estado
   fotos=[]; slides=[]; molduraSel=0; etapa=1; slideAtual=0;
   document.getElementById('tela2').style.display='none';
+  document.getElementById('telaPagamento').style.display='none';
   document.getElementById('tela1').style.display='block';
   document.getElementById('bottomBarPreview').style.display='none';
   // Reset etapa 1
