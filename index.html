@@ -1746,6 +1746,83 @@ function wrapTxt(x,t,cx,cy,mw,lh){
   if(line)x.fillText(line,cx,y);
 }
 
+// ══ CARROSSEL FLUIDO ══
+let carouselBuilt = false;
+
+function construirCarrossel(){
+  const track    = document.getElementById('carouselTrack');
+  const viewport = document.getElementById('carouselViewport');
+  if(!track || !slides.length) return;
+
+  const cssSize = viewport.getBoundingClientRect().width || 340;
+  const dpr     = Math.min(window.devicePixelRatio || 1, 3);
+
+  track.innerHTML = '';
+  // Largura total do track = N slides
+  track.style.width = (cssSize * slides.length) + 'px';
+
+  slides.forEach((slide, i) => {
+    const canvas  = document.createElement('canvas');
+    const pxSize  = Math.round(cssSize * dpr);
+    canvas.width  = pxSize;
+    canvas.height = pxSize;
+    canvas.style.cssText = `width:${cssSize}px;height:${cssSize}px;flex-shrink:0;display:block`;
+    const ctx = canvas.getContext('2d');
+    ctx.save(); ctx.scale(dpr, dpr);
+    ctx.drawImage(slide, 0, 0, cssSize, cssSize);
+
+    // Marca d'água
+    const m = MOLDURAS[molduraSel];
+    const bgClaro = m.bg==='#F5EFE6';
+    const wmCor   = bgClaro ? 'rgba(0,0,0,0.11)' : 'rgba(255,255,255,0.11)';
+    ctx.translate(cssSize/2, cssSize/2);
+    ctx.rotate(-Math.PI/5);
+    ctx.fillStyle = wmCor;
+    ctx.font = `bold ${cssSize*0.05}px sans-serif`;
+    ctx.textAlign = 'center';
+    [[-cssSize*.28,0],[0,0],[cssSize*.28,0],[-cssSize*.14,cssSize*.22],[cssSize*.14,-cssSize*.22]]
+      .forEach(([x,y])=>{ ctx.fillText('parasemprepai.com',x,y); });
+    ctx.restore();
+
+    // Cadeado nos bloqueados (não é o 1º)
+    if(i > 0){
+      ctx.fillStyle = 'rgba(14,11,8,.45)';
+      ctx.fillRect(0, 0, cssSize, cssSize);
+      ctx.font = `${cssSize * .12}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🔒', cssSize/2, cssSize/2);
+    }
+
+    track.appendChild(canvas);
+  });
+
+  carouselBuilt = true;
+  irParaSlide(0, false);
+  renderDots();
+}
+
+function irParaSlide(idx, animado=true){
+  const track    = document.getElementById('carouselTrack');
+  const viewport = document.getElementById('carouselViewport');
+  if(!track || !viewport) return;
+  slideAtual = Math.max(0, Math.min(slides.length - 1, idx));
+  const cssSize  = viewport.getBoundingClientRect().width || 340;
+  track.style.transition = animado
+    ? 'transform .38s cubic-bezier(.4,0,.2,1)'
+    : 'none';
+  track.style.transform = `translateX(-${slideAtual * cssSize}px)`;
+  renderDots();
+}
+
+function renderDots(){
+  const dots = document.getElementById('instaDots');
+  if(!dots) return;
+  dots.innerHTML = slides.map((_,i)=>
+    `<div class="insta-dot ${i===slideAtual?'ativo':''}"></div>`
+  ).join('');
+}
+
 // ══ PREVIEW INSTAGRAM ══
 let slideAtual = 0;
 
@@ -1782,48 +1859,8 @@ function mostrarTela2(){
 }
 
 function renderInstaPreview(){
-  const c = slides[slideAtual];
-  if(!c) return;
-  const frame   = document.getElementById('instaCanvas');
-  const instaEl = document.getElementById('instaFrame');
-  const cssSize = instaEl.getBoundingClientRect().width || 340;
-  const dpr     = Math.min(window.devicePixelRatio || 1, 3); // máx 3x
-  const size    = Math.round(cssSize * dpr);
-  frame.width   = size;
-  frame.height  = size;
-  frame.style.width  = cssSize + 'px';
-  frame.style.height = cssSize + 'px';
-  const ctx = frame.getContext('2d');
-  ctx.scale(dpr, dpr);
-
-  // Desenha o slide em alta resolução
-  ctx.drawImage(c, 0, 0, cssSize, cssSize);
-
-  // ── MARCA D'ÁGUA adaptativa (preta no fundo claro, branca nos escuros) ──
-  const m = MOLDURAS[molduraSel];
-  const bgClaro = m.bg==='#F5EFE6' || m.bg==='#fafaf8';
-  const wmCor   = bgClaro ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.13)';
-  ctx.save();
-  ctx.globalAlpha = 1;
-  const wSize = cssSize;
-  ctx.translate(wSize/2, wSize/2);
-  ctx.rotate(-Math.PI/5);
-  ctx.fillStyle = wmCor;
-  ctx.font = `bold ${wSize*0.052}px sans-serif`;
-  ctx.textAlign = 'center';
-  [[-wSize*.28,0],[0,0],[wSize*.28,0],[-wSize*.14,wSize*.22],[wSize*.14,-wSize*.22]].forEach(([x,y])=>{
-    ctx.fillText('parasemprepai.com', x, y);
-  });
-  ctx.restore();
-  ctx.setTransform(1,0,0,1,0,0); // reset scale
-
-  // Dots
-  const dots = document.getElementById('instaDots');
-  dots.innerHTML = slides.map((_,i)=>
-    `<div class="insta-dot ${i===slideAtual?'ativo':''}"></div>`
-  ).join('');
-  document.getElementById('slidesCounter').textContent = `${slideAtual+1} / ${slides.length}`;
-  initSwipe();
+  // Compatibilidade — usa carrossel
+  if(carouselBuilt) irParaSlide(slideAtual, true);
 }
 
 function navSlide(dir){ irParaSlide(slideAtual+dir); }
