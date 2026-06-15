@@ -6,7 +6,7 @@
 <title>Para Sempre Pai</title>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -885,9 +885,9 @@ h1 em{
     </div>
   </div>
   <div style="background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:24px 20px;margin-bottom:16px;text-align:center">
-    <div style="font-family:'Inter',sans-serif;font-size:56px;font-weight:700;color:var(--ouro);line-height:1;margin-bottom:4px;font-variant-numeric:lining-nums tabular-nums">R$11,99</div>
+    <div style="font-family:'Playfair Display',serif;font-size:54px;font-weight:500;color:var(--ouro);line-height:1;margin-bottom:4px;font-variant-numeric:lining-nums">R$11,99</div>
     <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px">acesso completo · 10 slides</div>
-    <button class="btn" id="btnPagar" onclick="iniciarPagamento()" style="font-family:'Inter',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px">Eternizar agora por R$11,99 ✦</button>
+    <button class="btn" id="btnPagar" onclick="iniciarPagamento()" style="font-family:'Playfair Display',serif;font-size:17px;font-weight:500;letter-spacing:.3px">Eternizar agora por R$11,99 ✦</button>
     <p style="font-size:11px;color:var(--cinza);margin-top:10px;opacity:.6">Pagamento seguro · liberação imediata</p>
 
     <!-- PIX INLINE -->
@@ -1819,27 +1819,34 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
   }
 
   if(tipo==='foto'&&texto){
-    // Sombra para legibilidade sobre qualquer foto
-    x.shadowColor='rgba(0,0,0,0.8)';
-    x.shadowBlur=20;
+    x.shadowColor='rgba(0,0,0,0.85)';
+    x.shadowBlur=24;
     x.shadowOffsetY=2;
     x.fillStyle=m.tx;
-    x.font=`italic 300 52px Cormorant Garamond,serif`;
+    x.font=`italic 300 48px Cormorant Garamond,serif`;
     x.textAlign='center';
-    wrapTxt(x,texto,S/2,870,S-80,58);
+    // Começa em 900 — mais para baixo, longe da foto
+    wrapTxt(x,texto,S/2,900,S-80,56,2); // máx 2 linhas
     x.shadowBlur=0; x.shadowOffsetY=0;
   }
 
   if(tipo==='fim'){
-    // Sombra em texto do encerramento
     x.shadowColor='rgba(0,0,0,0.6)'; x.shadowBlur=16;
     x.fillStyle=m.tx;
     x.font=`italic 300 52px Cormorant Garamond,serif`;x.textAlign='center';
-    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-30,S-120,64);
+    // Frase começa mais ao centro
+    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-60,S-120,64);
     x.shadowBlur=0;
-    x.fillStyle=m.brd;x.font='30px serif';x.fillText('✦',S/2,S/2+80);
-    x.fillStyle=m.tx;x.font=`600 38px Cormorant Garamond,serif`;
-    x.fillText(nomePai,S/2,S/2+130);
+    // Linha separadora
+    x.strokeStyle=m.brd; x.lineWidth=1; x.globalAlpha=.3;
+    x.beginPath(); x.moveTo(S*.25,S*.78); x.lineTo(S*.75,S*.78); x.stroke();
+    x.globalAlpha=1;
+    // Ornamento
+    x.fillStyle=m.brd; x.font='26px serif';
+    x.fillText('✦',S/2,S*.84);
+    // Nome bem embaixo, separado
+    x.fillStyle=m.tx; x.font=`600 32px Cormorant Garamond,serif`;
+    x.fillText(nomePai,S/2,S*.92);
   }
 
   // SEM rodapé — removido
@@ -1858,12 +1865,14 @@ function rrect(x,rx,ry,w,h,r){
   x.beginPath();x.roundRect(rx,ry,w,h,r);
 }
 
-function wrapTxt(x,t,cx,cy,mw,lh){
-  const words=t.split(' ');let line='',y=cy;
+function wrapTxt(x,t,cx,cy,mw,lh,maxLinhas=99){
+  const words=t.split(' ');let line='',y=cy,linhas=0;
   for(const w of words){
     const test=line?line+' '+w:w;
     if(x.measureText(test).width>mw&&line){
-      x.fillText(line,cx,y);line=w;y+=lh;
+      x.fillText(line,cx,y);
+      line=w;y+=lh;linhas++;
+      if(linhas>=maxLinhas){if(w)x.fillText(line+'…',cx,y);return;}
     }else{line=test;}
   }
   if(line)x.fillText(line,cx,y);
