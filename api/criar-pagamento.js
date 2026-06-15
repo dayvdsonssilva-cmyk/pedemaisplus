@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   try {
     // Pagamento PIX direto — retorna QR Code imediato
     const body = {
-      transaction_amount: 19.90,
+      transaction_amount: 11.99,
       description: `Para Sempre Pai — ${nomePai || 'Homenagem'}`,
       payment_method_id: 'pix',
       payer: {
