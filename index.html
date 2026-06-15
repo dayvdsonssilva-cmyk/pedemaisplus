@@ -260,9 +260,9 @@ h1 em{
   width:100%;padding:17px;
   background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
   color:var(--noite);
-  font-family:'Cormorant Garamond',serif;
-  font-size:20px;font-weight:600;
-  letter-spacing:1.5px;border:none;
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:500;
+  letter-spacing:.3px;border:none;
   border-radius:12px;cursor:pointer;
   transition:.2s;-webkit-tap-highlight-color:transparent;
   position:relative;overflow:hidden;
@@ -603,7 +603,70 @@ h1 em{
   display:none;flex-direction:column;align-items:center;
   justify-content:center;gap:16px;padding:40px;text-align:center;
 }
-/* ══ CROP MODAL ══ */
+/* ══ EDITAR FRASES ══ */
+.editar-fab{
+  position:fixed;bottom:90px;left:20px;z-index:160;
+  background:rgba(200,169,110,.15);
+  border:1px solid rgba(200,169,110,.35);
+  color:var(--ouro);
+  font-family:'Playfair Display',serif;
+  font-size:13px;font-weight:500;
+  padding:9px 14px;border-radius:10px;
+  cursor:pointer;backdrop-filter:blur(8px);
+  display:none;align-items:center;gap:6px;
+  -webkit-tap-highlight-color:transparent;transition:.2s;
+}
+.editar-fab.show{display:flex}
+.editar-fab:active{background:rgba(200,169,110,.25)}
+
+.editar-overlay{
+  position:fixed;inset:0;background:rgba(14,11,8,.96);
+  z-index:800;display:none;flex-direction:column;
+  backdrop-filter:blur(10px);
+}
+.editar-overlay.show{display:flex}
+.editar-header{
+  padding:16px 18px;
+  border-bottom:1px solid rgba(200,169,110,.12);
+  display:flex;align-items:center;gap:12px;
+}
+.editar-titulo{
+  font-family:'Playfair Display',serif;
+  font-size:20px;color:var(--ouro);flex:1;font-weight:500;
+}
+.editar-fechar{
+  background:none;border:none;
+  color:var(--cinza);font-size:22px;cursor:pointer;padding:4px;
+}
+.editar-body{
+  flex:1;overflow-y:auto;
+  padding:16px 18px 100px;
+}
+.frase-item{margin-bottom:14px}
+.frase-lbl{
+  font-size:10px;color:var(--ouro);
+  letter-spacing:1.5px;text-transform:uppercase;
+  display:block;margin-bottom:6px;opacity:.7;
+}
+.frase-textarea{
+  width:100%;padding:12px 14px;
+  background:rgba(200,169,110,.04);
+  border:1px solid rgba(200,169,110,.2);
+  border-radius:10px;font-size:14px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;color:var(--creme);
+  outline:none;resize:none;line-height:1.5;
+  transition:.2s;
+}
+.frase-textarea:focus{border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.06)}
+.editar-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  padding:12px 18px 24px;
+  background:linear-gradient(to top,rgba(14,11,8,1) 70%,transparent);
+  pointer-events:none;
+}
+.editar-footer .btn{pointer-events:all;max-width:430px;margin:0 auto;display:block}
+
 .crop-over{position:fixed;inset:0;background:rgba(14,11,8,.97);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;backdrop-filter:blur(4px)}
 .crop-over.show{display:flex}
 .crop-titulo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--ouro);letter-spacing:1px;text-align:center}
@@ -989,6 +1052,23 @@ h1 em{
       <button class="btn-entrar-galeria" onclick="voltarLoginGaleria()">Tentar novamente</button>
     </div>
 
+  </div>
+</div>
+
+<!-- ════ EDITAR FRASES FAB ════ -->
+<button class="editar-fab" id="editarFab" onclick="abrirEditarFrases()">
+  ✏️ Editar frases
+</button>
+
+<!-- ════ MODAL EDITAR FRASES ════ -->
+<div class="editar-overlay" id="editarOverlay">
+  <div class="editar-header">
+    <div class="editar-titulo">✏️ Editar frases</div>
+    <button class="editar-fechar" onclick="fecharEditarFrases()">✕</button>
+  </div>
+  <div class="editar-body" id="editarBody"></div>
+  <div class="editar-footer">
+    <button class="btn" onclick="salvarFrases()">Aplicar e regenerar slides ✦</button>
   </div>
 </div>
 
@@ -1740,6 +1820,7 @@ async function gerarCarrossel(){
   try{
     setMsg('Escrevendo com o coração...');
     const ded=await gptDedicatoria(nomeF,nomePai,mem);
+    frasesGeradas = ded; // ← salva para edição posterior
     const m=MOLDURAS[molduraSel];
     setMsg('Montando a capa...');
     slides.push(await gerarSlide(null,'capa',m,nomePai,nomeF,''));
@@ -1878,6 +1959,72 @@ function wrapTxt(x,t,cx,cy,mw,lh,maxLinhas=99){
   if(line)x.fillText(line,cx,y);
 }
 
+// ══ FRASES GERADAS (editáveis) ══
+let frasesGeradas = { frases: [], mensagem: '' };
+
+function abrirEditarFrases(){
+  const body = document.getElementById('editarBody');
+  body.innerHTML = '';
+
+  // Campos para cada frase
+  frasesGeradas.frases.forEach((f, i) => {
+    body.innerHTML += `
+      <div class="frase-item">
+        <label class="frase-lbl">Frase do slide ${i+2}</label>
+        <textarea class="frase-textarea" id="frase_${i}" rows="2">${f}</textarea>
+      </div>`;
+  });
+
+  // Campo mensagem final
+  body.innerHTML += `
+    <div class="frase-item">
+      <label class="frase-lbl">Mensagem final (último slide)</label>
+      <textarea class="frase-textarea" id="frase_msg" rows="3">${frasesGeradas.mensagem}</textarea>
+    </div>`;
+
+  document.getElementById('editarOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharEditarFrases(){
+  document.getElementById('editarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+async function salvarFrases(){
+  // Lê os campos editados
+  frasesGeradas.frases = frasesGeradas.frases.map((_,i) =>
+    document.getElementById(`frase_${i}`)?.value.trim() || _
+  );
+  frasesGeradas.mensagem = document.getElementById('frase_msg')?.value.trim() || frasesGeradas.mensagem;
+
+  fecharEditarFrases();
+
+  // Regenera os slides com as frases novas
+  document.getElementById('loading').classList.add('show');
+  setMsg('Aplicando suas frases...');
+  slides = [];
+  try {
+    const m      = MOLDURAS[molduraSel];
+    const nomeF  = document.getElementById('nomeF')?.value.trim() || '';
+    const nomePai= document.getElementById('nomePai')?.value.trim() || '';
+    slides.push(await gerarSlide(null, 'capa', m, nomePai, nomeF, ''));
+    for(let i = 0; i < Math.min(fotos.length, 7); i++){
+      const fotoSrc = fotos[i].base64 || fotos[i].url;
+      slides.push(await gerarSlide(fotoSrc, 'foto', m, nomePai, nomeF, frasesGeradas.frases[i]||''));
+    }
+    slides.push(await gerarSlide(null, 'fim', m, nomePai, nomeF, frasesGeradas.mensagem));
+    document.getElementById('loading').classList.remove('show');
+    carouselBuilt = false;
+    setTimeout(() => { construirCarrossel(); initSwipe(); }, 80);
+    toast('✦ Frases aplicadas!');
+  } catch(e){
+    document.getElementById('loading').classList.remove('show');
+    toast('Erro ao regenerar. Tente novamente.');
+    console.error(e);
+  }
+}
+
 // ══ CARROSSEL FLUIDO ══
 let carouselBuilt = false;
 
@@ -1975,9 +2122,11 @@ function mostrarTela2(){
 
   // Constrói o carrossel após o DOM estar visível
   setTimeout(()=>{ construirCarrossel(); initSwipe(); },80);
-  // Mostra bottom bar da preview
+  // Mostra bottom bar da preview e FAB de edição
   const bbp=document.getElementById('bottomBarPreview');
   if(bbp) bbp.style.display='block';
+  const fab=document.getElementById('editarFab');
+  if(fab) fab.classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
