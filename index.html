@@ -801,7 +801,7 @@ h1 em{
 <div class="bottom-bar-fixo" id="bottomBarPreview" style="display:none">
   <div class="btn-duplo">
     <button class="btn" onclick="irParaPagamento()" style="font-size:18px;padding:15px">
-      Receber meus slides agora ✦
+      Guardar essa memória 🕊️
     </button>
     <button class="btn ghost" onclick="refazerTudo()" style="font-size:15px;padding:11px;margin-top:0">
       ↩ Refazer do início
@@ -885,9 +885,9 @@ h1 em{
     </div>
   </div>
   <div style="background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:24px 20px;margin-bottom:16px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:600;color:var(--ouro);line-height:1;margin-bottom:4px">R$19,90</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:600;color:var(--ouro);line-height:1;margin-bottom:4px">R$11,99</div>
     <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px">acesso completo · 10 slides</div>
-    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">Receber meus slides ✦</button>
+    <button class="btn" id="btnPagar" onclick="iniciarPagamento()">Eternizar agora por R$11,99 ✦</button>
     <p style="font-size:11px;color:var(--cinza);margin-top:10px;opacity:.6">Pagamento seguro · liberação imediata</p>
 
     <!-- PIX INLINE -->
@@ -1536,56 +1536,179 @@ function confirmarCropEdit(idx){
 
 // ══ MOLDURAS ══
 const MOLDURAS=[
-  {n:'Eterno',  bg:'#0E0B08',brd:'#C8A96E',tx:'#F5EFE6'},
-  {n:'Luz',     bg:'#F5EFE6',brd:'#A8864A',tx:'#1A1410'},
-  {n:'Sepia',   bg:'#1E1208',brd:'#C8A96E',tx:'#E8DDD0'},
-  {n:'Noite',   bg:'#080810',brd:'#8EA9C8',tx:'#D0E0F5'},
-  {n:'Rosa',    bg:'#12080E',brd:'#C87EA9',tx:'#F5D0E8'},
-  {n:'Cinza',   bg:'#0C0C0C',brd:'#A0A0A0',tx:'#E8E8E8'},
+  // Escuras
+  {n:'Eterno',    bg:'#0E0B08', brd:'#C8A96E', tx:'#F5EFE6', brd2:'#8A6A3A'},
+  {n:'Carvão',    bg:'#141414', brd:'#E8E8E8', tx:'#FFFFFF',  brd2:'#888'},
+  {n:'Meia Noite',bg:'#050510', brd:'#6E9EC8', tx:'#D0E8F5',  brd2:'#3A6A8A'},
+  // Quentes
+  {n:'Âmbar',     bg:'#1A0E00', brd:'#E8A840', tx:'#FFF0D0',  brd2:'#A06820'},
+  {n:'Sépia',     bg:'#1E1208', brd:'#C8A96E', tx:'#E8DDD0',  brd2:'#7A5830'},
+  {n:'Bordeaux',  bg:'#180810', brd:'#C87EA9', tx:'#F5D0E8',  brd2:'#7A3060'},
+  // Claras
+  {n:'Luz',       bg:'#F5EFE6', brd:'#A8864A', tx:'#1A1410',  brd2:'#C8A96E'},
+  {n:'Névoa',     bg:'#F0F4F8', brd:'#8A9AB0', tx:'#1A2030',  brd2:'#B0C0D0'},
+  {n:'Pergaminho',bg:'#F2E8D0', brd:'#8A6840', tx:'#2A1A08',  brd2:'#C8A870'},
 ];
 
 function renderMolduras(){
   const g=document.getElementById('moldurasGrid');
   g.innerHTML=MOLDURAS.map((m,i)=>`
-    <div class="moldura-opt ${i===molduraSel?'sel':''}" onclick="selMoldura(${i})">
-      <canvas id="pm${i}" width="120" height="120"></canvas>
+    <div class="moldura-opt ${i===molduraSel?'sel':''}" onclick="selMoldura(${i})" id="mopt${i}">
+      <canvas id="pm${i}" width="200" height="200"></canvas>
       <div class="moldura-nome">${m.n}</div>
     </div>`).join('');
   MOLDURAS.forEach((_,i)=>prevMoldura(i));
 }
 
 function prevMoldura(i){
-  const m=MOLDURAS[i];
-  const c=document.getElementById(`pm${i}`);
-  const x=c.getContext('2d');
-  const S=120;
-  x.fillStyle=m.bg;x.fillRect(0,0,S,S);
-  if(fotos.length){
-    const img=new Image();
-    img.onload=()=>{
-      const sc=Math.max(S*.7/img.width,S*.7/img.height);
-      const iw=img.width*sc,ih=img.height*sc;
+  const m = MOLDURAS[i];
+  const c = document.getElementById(`pm${i}`);
+  const x = c.getContext('2d');
+  const S = 200;
+
+  // Fundo
+  x.fillStyle=m.bg; x.fillRect(0,0,S,S);
+
+  // Foto real (se tiver) como slide completo
+  const fotoSrc = fotos.length ? (fotos[0].base64||fotos[0].url) : null;
+  if(fotoSrc){
+    const img = new Image();
+    img.onload = () => {
+      // Foto ocupa 65% superior
+      const fh = Math.round(S*0.62);
+      const sc = Math.max(S/img.width, fh/img.height);
+      const iw = img.width*sc, ih = img.height*sc;
       x.save();
-      x.beginPath();x.roundRect(10,10,S-20,S*0.6,4);x.clip();
-      x.drawImage(img,(S-iw)/2,(S*.35-ih)/2+8,iw,ih);
+      x.beginPath();
+      if(x.roundRect) x.roundRect(6,6,S-12,fh,4);
+      else x.rect(6,6,S-12,fh);
+      x.clip();
+      x.drawImage(img,(S-iw)/2,(fh-ih)/2+6,iw,ih);
+      // Gradiente sobre foto
+      const g2=x.createLinearGradient(0,fh-40,0,fh+6);
+      g2.addColorStop(0,'transparent'); g2.addColorStop(1,m.bg+'ee');
+      x.fillStyle=g2; x.fillRect(0,fh-40,S,50);
       x.restore();
-      desenharBordaPreview(x,m,S);
-    };img.src=fotos[0].url;
-  } else { desenharBordaPreview(x,m,S); }
+      _desenharOverlayPreview(x,m,S,fh);
+    };
+    img.src = fotoSrc;
+  } else {
+    _desenharOverlayPreview(x,m,S,S*0.62);
+  }
 }
 
-function desenharBordaPreview(x,m,S){
-  x.strokeStyle=m.brd;x.lineWidth=1.5;
-  x.strokeRect(4,4,S-8,S-8);
-  x.fillStyle=m.tx;x.font=`italic bold ${S*.11}px serif`;x.textAlign='center';
-  x.fillText('Pai',S/2,S*.82);
-  x.fillStyle=m.brd;x.font=`${S*.1}px serif`;
-  x.fillText('✦',S/2,S*.95);
+function _desenharOverlayPreview(x,m,S,fh){
+  // Borda dupla
+  x.strokeStyle=m.brd; x.lineWidth=2;
+  x.strokeRect(3,3,S-6,S-6);
+  x.strokeStyle=m.brd2||m.brd; x.lineWidth=0.8; x.globalAlpha=0.5;
+  x.strokeRect(7,7,S-14,S-14);
+  x.globalAlpha=1;
+
+  // Ornamento topo
+  x.fillStyle=m.brd; x.font=`${S*.09}px serif`; x.textAlign='center';
+  x.fillText('✦',S/2,S*.07);
+
+  // Frase
+  x.fillStyle=m.tx;
+  x.font=`italic ${S*.09}px Cormorant Garamond,serif`;
+  x.textAlign='center';
+  const frase = document.getElementById('nomePai')?.value.trim() || 'Pai';
+  x.fillText(`Para sempre, ${frase}`, S/2, fh + (S-fh)*0.45);
+
+  // Ornamento base
+  x.fillStyle=m.brd; x.font=`${S*.07}px serif`;
+  x.fillText('✦',S/2,S*0.95);
 }
 
 function selMoldura(i){
   molduraSel=i;
   document.querySelectorAll('.moldura-opt').forEach((el,j)=>el.classList.toggle('sel',j===i));
+  // Mostra preview grande ao selecionar
+  mostrarPreviewMoldura(i);
+}
+
+// Preview grande da moldura selecionada
+function mostrarPreviewMoldura(i){
+  let pv = document.getElementById('molduraPreviewGrande');
+  if(!pv){
+    pv = document.createElement('div');
+    pv.id = 'molduraPreviewGrande';
+    pv.style.cssText = [
+      'position:fixed','inset:0','z-index:700',
+      'background:rgba(14,11,8,.92)','backdrop-filter:blur(8px)',
+      'display:flex','flex-direction:column',
+      'align-items:center','justify-content:center','gap:16px','padding:24px'
+    ].join(';');
+    pv.onclick = (e)=>{ if(e.target===pv) pv.style.display='none'; };
+    document.body.appendChild(pv);
+  }
+  const m = MOLDURAS[i];
+  const S = Math.min(window.innerWidth-48, 360);
+  pv.innerHTML = `
+    <div style="font-family:'Cormorant Garamond',serif;font-size:14px;
+      color:rgba(200,169,110,.6);letter-spacing:2px;text-transform:uppercase">
+      Prévia — ${m.n}
+    </div>
+    <canvas id="pvCanvas" width="${S}" height="${S}"
+      style="border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.6)"></canvas>
+    <button onclick="document.getElementById('molduraPreviewGrande').style.display='none'"
+      style="background:var(--ouro);color:var(--noite);border:none;border-radius:10px;
+      padding:12px 28px;font-family:'Cormorant Garamond',serif;font-size:18px;cursor:pointer">
+      ✓ Usar esta moldura
+    </button>
+    <div style="font-size:11px;color:rgba(200,169,110,.4)">Toque fora para fechar</div>`;
+
+  // Desenha preview grande
+  const cv = document.getElementById('pvCanvas');
+  const ctx = cv.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio||1,2);
+  cv.width=S*dpr; cv.height=S*dpr;
+  cv.style.width=S+'px'; cv.style.height=S+'px';
+  ctx.scale(dpr,dpr);
+
+  ctx.fillStyle=m.bg; ctx.fillRect(0,0,S,S);
+  const fh = Math.round(S*0.62);
+  const fotoSrc = fotos.length ? (fotos[0].base64||fotos[0].url) : null;
+
+  const _desenharGrande = ()=>{
+    // Borda dupla
+    ctx.strokeStyle=m.brd; ctx.lineWidth=3; ctx.strokeRect(4,4,S-8,S-8);
+    ctx.strokeStyle=m.brd2||m.brd; ctx.lineWidth=1; ctx.globalAlpha=0.4;
+    ctx.strokeRect(10,10,S-20,S-20); ctx.globalAlpha=1;
+    // Ornamento topo
+    ctx.fillStyle=m.brd; ctx.font=`${S*.08}px serif`; ctx.textAlign='center';
+    ctx.fillText('✦',S/2,S*.065);
+    // Frase
+    ctx.fillStyle=m.tx;
+    ctx.font=`italic ${S*.075}px Cormorant Garamond,serif`;
+    const nomePai = document.getElementById('nomePai')?.value.trim()||'Pai';
+    ctx.fillText(`Para sempre, ${nomePai}`,S/2,fh+(S-fh)*.4);
+    // Ornamento base
+    ctx.fillStyle=m.brd; ctx.font=`${S*.06}px serif`;
+    ctx.fillText('✦',S/2,S*.95);
+  };
+
+  if(fotoSrc){
+    const img=new Image();
+    img.onload=()=>{
+      const sc=Math.max(S/img.width,fh/img.height);
+      const iw=img.width*sc,ih=img.height*sc;
+      ctx.save();
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(6,6,S-12,fh,6); else ctx.rect(6,6,S-12,fh);
+      ctx.clip();
+      ctx.drawImage(img,(S-iw)/2,(fh-ih)/2+6,iw,ih);
+      const g2=ctx.createLinearGradient(0,fh-60,0,fh+10);
+      g2.addColorStop(0,'transparent'); g2.addColorStop(1,m.bg+'f5');
+      ctx.fillStyle=g2; ctx.fillRect(0,fh-60,S,80);
+      ctx.restore();
+      _desenharGrande();
+    };
+    img.src=fotoSrc;
+  } else { _desenharGrande(); }
+
+  pv.style.display='flex';
 }
 
 // ══ ETAPAS ══
@@ -1926,7 +2049,7 @@ async function iniciarPagamento(){
   const nomeF  = document.getElementById('nomeF')?.value.trim()||'';
   const nomePai= document.getElementById('nomePai')?.value.trim()||'';
   const emailF = document.getElementById('emailF')?.value.trim()||usuarioAtual?.email||'';
-  registrarPedido({ id:pedidoId, nomeF, nomePai, email:emailF, total:19.90, status:'pending', ts:Date.now() });
+  registrarPedido({ id:pedidoId, nomeF, nomePai, email:emailF, total:11.99, status:'pending', ts:Date.now() });
   try{
     const r=await fetch('/api/criar-pagamento',{
       method:'POST',
@@ -1950,7 +2073,7 @@ async function iniciarPagamento(){
     document.getElementById('statusTxt').textContent='Aguardando seu pagamento...';
     iniciarPolling();
   }catch(e){
-    btn.disabled=false; btn.textContent='Receber meus slides ✦';
+    btn.disabled=false; btn.textContent='Eternizar agora por R$11,99 ✦';
     toast('Erro ao gerar PIX. Tente novamente.'); console.error(e);
   }
 }
