@@ -387,6 +387,93 @@ h1 em{
 }
 .audio-fab:active{transform:scale(.9)}
 
+
+/* ══ CARROSSEL FLUIDO ══ */
+.insta-wrapper{
+  padding:0 16px;
+  margin-bottom:4px;
+}
+.insta-post{
+  border-radius:14px;
+  overflow:hidden;
+  background:#111;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  user-select:none;
+  -webkit-user-select:none;
+}
+.insta-post-header{
+  padding:10px 12px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.insta-avatar-ring{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  padding:2px;flex-shrink:0;
+}
+.insta-avatar-inner{
+  width:100%;height:100%;border-radius:50%;
+  background:#111;display:flex;align-items:center;
+  justify-content:center;color:#fff;
+  font-family:'Inter',sans-serif;font-weight:700;font-size:13px;
+}
+/* VIEWPORT do carrossel — janela de 1 slide */
+.insta-carousel-viewport{
+  width:100%;
+  aspect-ratio:1;
+  overflow:hidden;
+  position:relative;
+  background:#000;
+}
+/* TRACK — todos os slides lado a lado */
+.insta-carousel-track{
+  display:flex;
+  height:100%;
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+.insta-carousel-track canvas{
+  flex-shrink:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+/* UI INFERIOR */
+.insta-post-footer{
+  padding:8px 12px 10px;
+}
+.insta-actions{
+  display:flex;align-items:center;gap:14px;margin-bottom:6px;
+}
+.insta-dots-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:4px;margin-bottom:6px;
+}
+.insta-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);transition:.3s}
+.insta-dot.ativo{background:#fff;width:6px;height:6px}
+.insta-legenda{font-size:11px;color:rgba(255,255,255,.5)}
+/* INDICADOR DE SWIPE */
+.swipe-hint{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;padding:6px 0 10px;
+  font-size:11px;color:rgba(200,169,110,.5);
+  letter-spacing:.5px;
+  animation:fadeHint 3s ease 1.5s forwards;
+  opacity:1;
+}
+@keyframes fadeHint{
+  0%{opacity:1} 70%{opacity:1} 100%{opacity:0}
+}
+.swipe-hint-arrow{
+  font-size:16px;
+  animation:swipeAnim 1.5s ease-in-out infinite;
+}
+@keyframes swipeAnim{
+  0%{transform:translateX(0);opacity:.4}
+  50%{transform:translateX(-8px);opacity:1}
+  100%{transform:translateX(0);opacity:.4}
+}
+
 /* HEADER FIXO */
 .header-fixo{
   position:fixed;top:0;left:0;right:0;z-index:150;
@@ -738,65 +825,49 @@ h1 em{
   </div>
 </div>
 
-<!-- SLIDES COM BLUR -->
-<!-- PREVIEW ESTILO INSTAGRAM -->
-<div style="padding:0 16px;margin-bottom:12px">
-  <!-- HEADER PERFIL INSTAGRAM -->
-  <div style="
-    background:#111;border-radius:14px 14px 0 0;
-    padding:10px 12px;display:flex;align-items:center;gap:10px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-  ">
-    <!-- Avatar -->
-    <div style="
-      width:32px;height:32px;border-radius:50%;
-      background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-      padding:2px;flex-shrink:0;
-    ">
-      <div id="instaAvatar" style="width:100%;height:100%;border-radius:50%;background:#111;
-        display:flex;align-items:center;justify-content:center;font-size:14px;
-        color:#fff;font-family:'Inter',sans-serif;font-weight:700;font-size:13px;">?</div>
+<!-- ══ CARROSSEL INSTAGRAM ══ -->
+<div class="insta-wrapper">
+  <div class="insta-post">
+    <!-- Header perfil -->
+    <div class="insta-post-header">
+      <div class="insta-avatar-ring">
+        <div class="insta-avatar-inner" id="instaAvatar">?</div>
+      </div>
+      <div style="flex:1">
+        <div id="instaUserName" style="font-size:12px;font-weight:700;color:#fff;line-height:1">você</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">Agora mesmo</div>
+      </div>
+      <div style="font-size:18px;color:rgba(255,255,255,.4);letter-spacing:2px">···</div>
     </div>
-    <!-- Nome + localização -->
-    <div style="flex:1">
-      <div id="instaUserName" style="font-size:12px;font-weight:700;color:#fff;line-height:1">você</div>
-      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">Agora mesmo</div>
-    </div>
-    <!-- ··· -->
-    <div style="font-size:18px;color:rgba(255,255,255,.5);letter-spacing:1px;line-height:1">···</div>
-  </div>
 
-  <!-- FRAME DO SLIDE -->
-  <div class="insta-frame" id="instaFrame" style="border-radius:0">
-    <canvas id="instaCanvas"></canvas>
-    <div class="insta-frame-ui">
-      <div class="insta-dots" id="instaDots"></div>
-      <div class="slides-counter" id="slidesCounter"></div>
-      <div class="insta-nav" style="display:none">
-        <button onclick="navSlide(-1)">‹</button>
-        <button onclick="navSlide(1)">›</button>
+    <!-- Viewport do carrossel -->
+    <div class="insta-carousel-viewport" id="carouselViewport">
+      <div class="insta-carousel-track" id="carouselTrack"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="insta-post-footer">
+      <div class="insta-actions">
+        <span style="font-size:22px;opacity:.5">🤍</span>
+        <span style="font-size:22px;opacity:.5">💬</span>
+        <span style="font-size:22px;opacity:.5">✈️</span>
+        <div class="insta-dots-row" id="instaDots" style="flex:1;margin:0"></div>
+        <span style="font-size:22px;opacity:.5">🔖</span>
+      </div>
+      <div class="insta-legenda">
+        <span id="instaLegendaUser" style="color:rgba(255,255,255,.8);font-weight:700">você</span>
+        &nbsp;<span id="instaLegenda">🕊️ Para sempre no meu coração</span>
       </div>
     </div>
   </div>
-
-  <!-- ACTIONS INSTAGRAM -->
-  <div style="
-    background:#111;border-radius:0 0 14px 14px;
-    padding:10px 12px 12px;
-  ">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
-      <span style="font-size:22px;filter:grayscale(1);opacity:.7">🤍</span>
-      <span style="font-size:22px;filter:grayscale(1);opacity:.7">💬</span>
-      <span style="font-size:22px;filter:grayscale(1);opacity:.7">✈️</span>
-      <span style="font-size:22px;filter:grayscale(1);opacity:.7;margin-left:auto">🔖</span>
-    </div>
-    <div style="font-size:11px;color:rgba(255,255,255,.5)">
-      <span id="instaLegendaUser" style="color:#fff;font-weight:700">você</span>
-      &nbsp;<span id="instaLegenda">🕊️ Para sempre no meu coração</span>
-    </div>
-  </div>
 </div>
-<!-- miniaturas removidas -->
+
+<!-- Indicador de swipe -->
+<div class="swipe-hint" id="swipeHint">
+  <span class="swipe-hint-arrow">←</span>
+  <span>deslize para ver os slides</span>
+  <span class="swipe-hint-arrow" style="transform:scaleX(-1)">←</span>
+</div>
 
 </div>
 
@@ -1702,8 +1773,8 @@ function mostrarTela2(){
   const leg = document.getElementById('instaLegenda');
   if(leg) leg.textContent = `🕊️ Pai, ${nomePai}, para sempre no meu coração`;
 
-  renderInstaPreview();
-  renderMiniaturasScroll();
+  // Constrói o carrossel após o DOM estar visível
+  setTimeout(()=>{ construirCarrossel(); initSwipe(); },80);
   // Mostra bottom bar da preview
   const bbp=document.getElementById('bottomBarPreview');
   if(bbp) bbp.style.display='block';
@@ -1755,32 +1826,64 @@ function renderInstaPreview(){
   initSwipe();
 }
 
-function navSlide(dir){
-  slideAtual = Math.max(0, Math.min(slides.length-1, slideAtual+dir));
-  renderInstaPreview();
-}
+function navSlide(dir){ irParaSlide(slideAtual+dir); }
 
-// ── SWIPE NO INSTAGRAM FRAME ──
-let swipeStartX=0, swipeStartY=0;
+// ── SWIPE FLUIDO NO CARROSSEL ──
+let swipeStartX=0, swipeStartY=0, swipeDragging=false;
+
 function initSwipe(){
-  const el = document.getElementById('instaFrame');
-  if(!el || el._swipeInit) return;
-  el._swipeInit = true;
+  const vp = document.getElementById('carouselViewport');
+  if(!vp || vp._swipeInit) return;
+  vp._swipeInit = true;
 
-  el.addEventListener('touchstart', e=>{
+  vp.addEventListener('touchstart', e=>{
     swipeStartX = e.touches[0].clientX;
     swipeStartY = e.touches[0].clientY;
+    swipeDragging = true;
+    // Remove transição durante o drag para seguir o dedo
+    const tr = document.getElementById('carouselTrack');
+    if(tr) tr.style.transition='none';
   }, {passive:true});
 
-  el.addEventListener('touchend', e=>{
+  vp.addEventListener('touchmove', e=>{
+    if(!swipeDragging) return;
+    const dx = e.touches[0].clientX - swipeStartX;
+    const dy = e.touches[0].clientY - swipeStartY;
+    if(Math.abs(dx) < Math.abs(dy)) return; // scroll vertical — ignora
+    const cssSize = vp.getBoundingClientRect().width || 340;
+    const base    = slideAtual * cssSize;
+    const tr      = document.getElementById('carouselTrack');
+    if(tr) tr.style.transform = `translateX(${-base + dx}px)`;
+  }, {passive:true});
+
+  vp.addEventListener('touchend', e=>{
+    if(!swipeDragging) return;
+    swipeDragging = false;
     const dx = e.changedTouches[0].clientX - swipeStartX;
     const dy = e.changedTouches[0].clientY - swipeStartY;
-    // Só conta como swipe horizontal se dx > dy e dx > 40px
-    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
-      if(dx < 0) navSlide(1);  // swipe esquerda = próximo
-      else        navSlide(-1); // swipe direita = anterior
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){
+      irParaSlide(dx < 0 ? slideAtual+1 : slideAtual-1, true);
+      // Esconde dica de swipe após primeiro uso
+      const hint = document.getElementById('swipeHint');
+      if(hint) hint.style.display='none';
+    } else {
+      irParaSlide(slideAtual, true); // volta para posição
     }
   }, {passive:true});
+
+  // Mouse (desktop)
+  vp.addEventListener('mousedown', e=>{
+    swipeStartX=e.clientX; swipeDragging=true;
+    const tr=document.getElementById('carouselTrack');
+    if(tr) tr.style.transition='none';
+  });
+  window.addEventListener('mouseup', e=>{
+    if(!swipeDragging) return;
+    swipeDragging=false;
+    const dx=e.clientX-swipeStartX;
+    if(Math.abs(dx)>50) irParaSlide(dx<0?slideAtual+1:slideAtual-1,true);
+    else irParaSlide(slideAtual,true);
+  });
 }
 
 function renderMiniaturasScroll(){ /* miniaturas removidas */ }
@@ -1877,13 +1980,15 @@ function liberarDownload(){
   // Atualiza texto da pasta
   const pt = document.getElementById('pastaTxt');
   if(pt) pt.textContent = `${slides.length} slides prontos para postar`;
-  // Remove cadeados das miniaturas
-  document.querySelectorAll('.slide-mini canvas').forEach(c=>c.style.filter='none');
-  document.querySelectorAll('.slide-mini > div').forEach(d=>{if(d.textContent==='🔒')d.remove();});
+  // Reconstrói carrossel sem cadeados
+  carouselBuilt=false;
+  slides.forEach=slides.forEach; // mantém slides
+  // força rebuilt sem cadeado
+  const trackEl=document.getElementById('carouselTrack');
+  if(trackEl){ const canvases=trackEl.querySelectorAll('canvas'); canvases.forEach((_,i)=>{ if(i>0){ const vp=document.getElementById('carouselViewport'); const css=vp?.getBoundingClientRect().width||340; const dpr=Math.min(window.devicePixelRatio||1,3); _.width=Math.round(css*dpr); _.height=Math.round(css*dpr); _.style.width=css+'px'; _.style.height=css+'px'; const ctx=_.getContext('2d'); ctx.scale(dpr,dpr); ctx.drawImage(slides[i],0,0,css,css); }}); }
   window.scrollTo({top:0,behavior:'smooth'});
   toast('✦ Carrossel liberado!');
-  // Remove cadeados do preview principal
-  slideAtual=0; renderInstaPreview();
+  slideAtual=0; irParaSlide(0,false);
 }
 
 // ══ ZIP ══
