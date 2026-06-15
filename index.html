@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<title>Para Sempre Pai</title>
+<title>Eternize IA</title>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
@@ -474,6 +474,24 @@ h1 em{
   100%{transform:translateX(0);opacity:.4}
 }
 
+
+/* SELETOR DE TIPO */
+.tipo-btn{
+  background:rgba(200,169,110,.08);
+  border:1px solid rgba(200,169,110,.2);
+  color:var(--cinza);
+  font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;
+  padding:7px 12px;border-radius:100px;
+  cursor:pointer;transition:.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tipo-btn:active,.tipo-btn.ativo{
+  background:rgba(200,169,110,.2);
+  border-color:var(--ouro);
+  color:var(--ouro);
+}
+
 /* HEADER FIXO */
 .header-fixo{
   position:fixed;top:0;left:0;right:0;z-index:150;
@@ -715,7 +733,7 @@ h1 em{
 
 <!-- HEADER FIXO -->
 <div class="header-fixo">
-  <div class="header-logo">🕊️ Para Sempre Pai</div>
+  <div class="header-logo">🕊️ Eternize IA</div>
   <button class="btn-meus-slides" onclick="abrirGaleria()">
     🖼️ Meus Slides
   </button>
@@ -752,14 +770,28 @@ h1 em{
 
   <!-- HERO COMPACTO -->
   <div style="padding-top:70px;padding-bottom:12px;text-align:center">
-    <div class="eyebrow" style="margin-bottom:4px">Dia dos Pais · 2026</div>
+    <div class="eyebrow" style="margin-bottom:8px">Homenagem com IA · 2026</div>
     <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--branco);line-height:1">
-      Para Sempre<br><em style="color:var(--ouro);font-size:52px;font-weight:600">Pai</em>
+      Eternize quem<br><em style="color:var(--ouro);font-size:52px;font-weight:600">você ama</em>
     </div>
-    <p style="font-size:12px;color:var(--cinza);margin-top:8px;line-height:1.5">
+    <p style="font-size:12px;color:var(--cinza);margin-top:8px;line-height:1.6">
       Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.
     </p>
-    <div class="divider" style="margin:12px 0 0"><span>✦</span></div>
+    <div class="divider" style="margin:14px 0 4px"><span>✦</span></div>
+
+    <!-- SELETOR DE HOMENAGEADO -->
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 12px;margin-top:4px" id="tipoSelector">
+      <button onclick="selecionarTipo('Pai','👨')"      class="tipo-btn ativo" id="tipo_pai">👨 Pai</button>
+      <button onclick="selecionarTipo('Mãe','👩')"      class="tipo-btn"       id="tipo_mae">👩 Mãe</button>
+      <button onclick="selecionarTipo('Avô','👴')"      class="tipo-btn"       id="tipo_avo">👴 Avô</button>
+      <button onclick="selecionarTipo('Avó','👵')"      class="tipo-btn"       id="tipo_avo2">👵 Avó</button>
+      <button onclick="selecionarTipo('Tio','🧔')"      class="tipo-btn"       id="tipo_tio">🧔 Tio</button>
+      <button onclick="selecionarTipo('Tia','👩')"      class="tipo-btn"       id="tipo_tia">🧕 Tia</button>
+      <button onclick="selecionarTipo('Irmão','🧑')"    class="tipo-btn"       id="tipo_irmao">🧑 Irmão</button>
+      <button onclick="selecionarTipo('Irmã','👧')"     class="tipo-btn"       id="tipo_irma">👧 Irmã</button>
+      <button onclick="selecionarTipo('Cônjuge','💑')"  class="tipo-btn"       id="tipo_conj">💑 Cônjuge</button>
+      <button onclick="selecionarTipo('Amigo','🤝')"    class="tipo-btn"       id="tipo_amigo">🤝 Amigo(a)</button>
+    </div>
   </div>
 
   <!-- STEPS COMPACTOS -->
@@ -841,8 +873,8 @@ h1 em{
         <input class="finp" id="telF" type="tel" placeholder="(35) 99999-0000" autocomplete="tel">
       </div>
       <div class="form-group">
-        <label class="flbl">Nome do seu pai</label>
-        <input class="finp" id="nomePai" type="text" placeholder="José" maxlength="40">
+        <label class="flbl flbl-nomepai" id="lblNomePai">Nome do(a) Pai</label>
+        <input class="finp" id="nomePai" type="text" placeholder="Nome do(a) Pai" maxlength="40">
       </div>
       <div class="form-group">
         <label class="flbl">Uma memória ou frase dele</label>
@@ -1384,6 +1416,24 @@ bgm.addEventListener('ended', ()=>{
 
 // ══ ESTADO ══
 let fotos=[],molduraSel=0,slides=[],etapa=1;
+let tipoSelecionado = { label:'Pai', emoji:'👨' };
+
+function selecionarTipo(label, emoji){
+  tipoSelecionado = { label, emoji };
+  // Remove ativo de todos
+  document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('ativo'));
+  // Acha e ativa o clicado
+  document.querySelectorAll('.tipo-btn').forEach(b=>{
+    if(b.textContent.includes(label)) b.classList.add('ativo');
+  });
+  // Atualiza placeholder do campo de nome
+  const nomePaiEl = document.getElementById('nomePaiInput2') || document.getElementById('nomePai');
+  if(nomePaiEl) nomePaiEl.placeholder = `Nome do(a) ${label}`;
+  const lbl = document.getElementById('lblNomePai');
+  if(lbl) lbl.textContent = `Nome do(a) ${label}`;
+  const inp = document.getElementById('nomePai');
+  if(inp) inp.placeholder = `Nome do(a) ${label}`;
+}
 
 // ══ UPLOAD + CROP ══
 let cropFila    = [];  // arquivos aguardando crop
@@ -1847,7 +1897,7 @@ async function gptDedicatoria(nomeF, nomePai, mem){
   const r = await fetch('/api/dedicatoria', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nomeF, nomePai, memoria: mem })
+    body: JSON.stringify({ nomeF, nomePai, memoria: mem, tipo: tipoSelecionado.label })
   });
   if(!r.ok) throw new Error('GPT ' + r.status);
   return r.json();
@@ -2414,7 +2464,7 @@ async function compartilharInstagram(){
       if(navigator.canShare({ files })){
         await navigator.share({
           files,
-          title:'Para Sempre Pai',
+          title:'Eternize IA',
           text:'Uma homenagem feita com amor 🕊️'
         });
         return;
