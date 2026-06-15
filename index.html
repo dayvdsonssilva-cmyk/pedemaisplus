@@ -1784,16 +1784,7 @@ function construirCarrossel(){
       .forEach(([x,y])=>{ ctx.fillText('parasemprepai.com',x,y); });
     ctx.restore();
 
-    // Cadeado nos bloqueados (não é o 1º)
-    if(i > 0){
-      ctx.fillStyle = 'rgba(14,11,8,.45)';
-      ctx.fillRect(0, 0, cssSize, cssSize);
-      ctx.font = `${cssSize * .12}px sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('🔒', cssSize/2, cssSize/2);
-    }
-
+    // Sem cadeado — marca d'água já protege
     track.appendChild(canvas);
   });
 
