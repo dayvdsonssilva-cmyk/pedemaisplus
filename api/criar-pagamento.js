@@ -1,54 +1,2454 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
-  res.setHeader('Access-Control-Allow-Origin', '*');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>Para Sempre Pai</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --creme:#F5EFE6;
+  --ouro:#C8A96E;
+  --ouro-esc:#A8864A;
+  --noite:#0E0B08;
+  --noite2:#1A1410;
+  --branco:#FDFAF6;
+  --cinza:#8A7B6E;
+}
+html{touch-action:pan-y;background:var(--noite);overflow-x:hidden}
+body{padding-bottom:90px;overflow-x:hidden;
+  font-family:'Inter',sans-serif;
+  background:var(--noite);
+  color:var(--creme);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
 
-  const MP_TOKEN = process.env.MP_ACCESS_TOKEN;
-  if (!MP_TOKEN) return res.status(500).json({ erro: 'Token MP não configurado' });
+/* ══════════════════════════════
+   PARTÍCULAS — DESTAQUE TOTAL
+══════════════════════════════ */
+#canvas-bg{
+  position:fixed;
+  inset:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:0;
+}
 
-  const { pedidoId, nomeF, nomePai, email } = req.body || {};
-  if (!pedidoId) return res.status(400).json({ erro: 'pedidoId obrigatório' });
+/* ══════════════════════════════
+   LAYOUT MOBILE
+══════════════════════════════ */
+.page{position:relative;z-index:10;max-width:430px;margin:0 auto;padding:0 20px}
 
-  const BASE_URL = process.env.SITE_URL || 'https://parasemprepai.vercel.app';
+/* HERO */
+.hero{
+  text-align:center;
+  padding:60px 0 24px;
+  position:relative;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:1px;height:48px;
+  background:linear-gradient(to bottom,transparent,var(--ouro));
+}
+.eyebrow{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:13px;
+  color:var(--ouro);
+  letter-spacing:5px;
+  text-transform:uppercase;
+  opacity:.7;
+  margin-bottom:20px;
+}
+h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px;
+  font-weight:300;
+  color:var(--branco);
+  line-height:1;
+  letter-spacing:-1px;
+}
+h1 em{
+  display:block;
+  font-style:italic;
+  font-size:68px;
+  color:var(--ouro);
+  line-height:.9;
+  font-weight:600;
+}
+.hero-sub{
+  font-size:13px;
+  color:var(--cinza);
+  letter-spacing:.3px;
+  line-height:1.6;
+  margin-top:20px;
+}
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:28px 0;
+}
+.divider::before,.divider::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,169,110,.3));
+}
+.divider::after{background:linear-gradient(270deg,transparent,rgba(200,169,110,.3))}
+.divider span{color:var(--ouro);font-size:14px;opacity:.6}
 
-  try {
-    // Pagamento PIX direto — retorna QR Code imediato
-    const body = {
-      transaction_amount: 11.99,
-      description: `Para Sempre Pai — ${nomePai || 'Homenagem'}`,
-      payment_method_id: 'pix',
-      payer: {
-        email: email || 'cliente@parasemprepai.com.br',
-        first_name: nomeF || 'Cliente',
-      },
-      external_reference: pedidoId,
-      notification_url: `${BASE_URL}/api/webhook`,
-    };
+/* STEPS HORIZONTAL */
+.steps{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  margin-bottom:32px;
+  padding:0 8px;
+}
+.step{
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;opacity:.35;transition:.4s;flex:1;
+}
+.step.ativo{opacity:1}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid rgba(200,169,110,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px;color:var(--ouro);
+  transition:.4s;
+  position:relative;z-index:1;
+}
+.step.ativo .step-dot{
+  background:var(--ouro);color:var(--noite);
+  border-color:var(--ouro);
+  box-shadow:0 0 20px rgba(200,169,110,.4);
+}
+.step-nome{font-size:9px;color:var(--cinza);letter-spacing:.5px;text-transform:uppercase}
+.step-line{flex:1;height:1px;background:rgba(200,169,110,.15);margin-top:-22px;position:relative;z-index:0}
 
-    const r = await fetch('https://api.mercadopago.com/v1/payments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MP_TOKEN}`,
-        'X-Idempotency-Key': pedidoId,
-      },
-      body: JSON.stringify(body)
-    });
+/* CARD */
+.card{
+  background:rgba(200,169,110,.04);
+  border:1px solid rgba(200,169,110,.12);
+  border-radius:18px;
+  padding:28px 22px;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,169,110,.4),transparent);
+}
 
-    const data = await r.json();
-    if (!r.ok) throw new Error(JSON.stringify(data));
+/* SECTION LABEL */
+.slbl{
+  font-size:9px;
+  color:var(--ouro);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  opacity:.7;
+  display:flex;align-items:center;gap:8px;
+}
+.slbl::after{content:'';flex:1;height:1px;background:rgba(200,169,110,.15)}
 
-    const pix = data.point_of_interaction?.transaction_data;
+/* UPLOAD */
+.upload-zone{
+  border:1px dashed rgba(200,169,110,.25);
+  border-radius:14px;
+  padding:32px 16px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s;
+  -webkit-tap-highlight-color:transparent;
+  background:rgba(200,169,110,.02);
+}
+.upload-zone:active{background:rgba(200,169,110,.06);border-color:var(--ouro)}
+.upload-zone .uico{font-size:28px;margin-bottom:10px;display:block;opacity:.5}
+.upload-zone .utxt{font-size:13px;color:var(--cinza)}
+.upload-zone .utxt strong{color:var(--ouro);font-weight:500}
+.upload-zone input{position:fixed;top:-999px;left:-999px;width:1px;height:1px;opacity:0;pointer-events:none}
 
-    return res.status(200).json({
-      paymentId:    data.id,
-      status:       data.status,
-      qrCode:       pix?.qr_code           || null,
-      qrCodeBase64: pix?.qr_code_base64    || null,
-      valor:        data.transaction_amount,
-    });
+/* GRID FOTOS */
+.fotos-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:14px;
+}
+.foto-thumb{
+  aspect-ratio:1;border-radius:10px;
+  overflow:hidden;position:relative;
+  border:1px solid rgba(200,169,110,.15);
+}
+.foto-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.foto-thumb .rm{
+  position:absolute;top:5px;right:5px;
+  background:rgba(14,11,8,.85);
+  border:none;color:var(--ouro);
+  width:22px;height:22px;border-radius:50%;
+  font-size:11px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.foto-add{
+  aspect-ratio:1;border-radius:10px;
+  border:1px dashed rgba(200,169,110,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:rgba(200,169,110,.3);
+  cursor:pointer;transition:.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.foto-add:active{border-color:var(--ouro);color:var(--ouro)}
 
-  } catch(e) {
-    console.error('MP erro:', e.message);
-    return res.status(500).json({ erro: e.message });
+/* MOLDURAS */
+.molduras-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.moldura-opt{
+  border-radius:12px;border:2px solid transparent;
+  cursor:pointer;overflow:hidden;position:relative;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+}
+.moldura-opt canvas{width:100%;aspect-ratio:1;display:block}
+.moldura-opt.sel{
+  border-color:var(--ouro);
+  box-shadow:0 0 0 3px rgba(200,169,110,.2),0 0 20px rgba(200,169,110,.15);
+}
+.moldura-nome{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(14,11,8,.8);
+  font-size:10px;color:var(--ouro);
+  text-align:center;padding:5px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+
+/* FORM */
+.form-group{margin-bottom:12px}
+.flbl{
+  font-size:9px;color:var(--ouro);
+  letter-spacing:1.5px;text-transform:uppercase;
+  display:block;margin-bottom:6px;opacity:.8;
+}
+.finp{
+  width:100%;padding:13px 16px;
+  background:rgba(200,169,110,.04);
+  border:1px solid rgba(200,169,110,.15);
+  border-radius:10px;font-size:14px;
+  font-family:'Inter',sans-serif;
+  color:var(--creme);outline:none;transition:.2s;
+  resize:none;
+}
+.finp::placeholder{color:rgba(200,169,110,.25)}
+.finp:focus{border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.06)}
+
+/* BOTÃO */
+.btn{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
+  color:var(--noite);
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;
+  letter-spacing:1.5px;border:none;
+  border-radius:12px;cursor:pointer;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
+}
+.btn::before{
+  content:'';position:absolute;
+  top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:.5s;
+}
+.btn:not(:disabled):active::before{left:100%}
+.btn:not(:disabled):active{transform:scale(.98)}
+.btn:disabled{opacity:.3;cursor:default}
+.btn.ghost{
+  background:none;
+  border:1px solid rgba(200,169,110,.3);
+  color:var(--ouro);
+  font-size:16px;
+  margin-top:10px;
+}
+
+/* LOADING */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(14,11,8,.95);
+  z-index:800;display:none;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:24px;
+  backdrop-filter:blur(12px);
+}
+.overlay.show{display:flex}
+.ring{
+  width:56px;height:56px;border-radius:50%;
+  border:1.5px solid rgba(200,169,110,.15);
+  border-top-color:var(--ouro);
+  animation:spin 1.4s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ring-txt{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--ouro);font-style:italic;
+}
+.ring-sub{font-size:12px;color:var(--cinza);letter-spacing:.5px}
+
+/* SLIDES PREVIEW */
+.slides-scroll{
+  display:flex;gap:12px;
+  overflow-x:auto;padding:4px 20px 16px;
+  scrollbar-width:none;margin:0 -20px;
+}
+.slides-scroll::-webkit-scrollbar{display:none}
+.slide-mini{
+  flex-shrink:0;width:140px;height:140px;
+  border-radius:12px;overflow:hidden;
+  border:1px solid rgba(200,169,110,.2);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.slide-mini canvas{width:100%;height:100%;display:block}
+
+/* PIX */
+.pix-box{
+  text-align:center;padding:28px 22px;
+  background:rgba(200,169,110,.05);
+  border:1px solid rgba(200,169,110,.2);
+  border-radius:18px;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.pix-box::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,169,110,.5),transparent);
+}
+.pix-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:56px;font-weight:600;
+  color:var(--ouro);line-height:1;
+  margin-bottom:4px;
+}
+.pix-lbl{font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+.pix-key{
+  background:rgba(14,11,8,.6);border-radius:8px;
+  padding:11px 14px;font-size:12px;
+  color:var(--creme);font-family:'Inter',monospace;
+  margin-bottom:14px;letter-spacing:.3px;
+  word-break:break-all;
+}
+.btn-copy{
+  background:none;border:1px solid rgba(200,169,110,.3);
+  color:var(--ouro);font-family:'Cormorant Garamond',serif;
+  font-size:17px;padding:11px;width:100%;
+  border-radius:10px;cursor:pointer;margin-bottom:12px;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+}
+.btn-copy:active{background:rgba(200,169,110,.08)}
+
+/* SUCESSO */
+.sucesso{
+  text-align:center;padding:60px 20px 40px;
+  display:none;
+}
+.sucesso.show{display:block}
+.sico{font-size:52px;margin-bottom:20px;display:block}
+.stit{
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:300;color:var(--branco);margin-bottom:6px;
+}
+.stit em{font-style:italic;color:var(--ouro)}
+.ssub{font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:32px}
+
+/* AUDIO */
+.audio-fab{
+  position:fixed;bottom:28px;right:20px;z-index:100;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(200,169,110,.12);
+  border:1px solid rgba(200,169,110,.25);
+  color:var(--ouro);font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(10px);
+  -webkit-tap-highlight-color:transparent;transition:.2s;
+}
+.audio-fab:active{transform:scale(.9)}
+
+
+/* ══ CARROSSEL FLUIDO ══ */
+.insta-wrapper{
+  padding:0 16px;
+  margin-bottom:4px;
+}
+.insta-post{
+  border-radius:14px;
+  overflow:hidden;
+  background:#111;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  user-select:none;
+  -webkit-user-select:none;
+}
+.insta-post-header{
+  padding:10px 12px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.insta-avatar-ring{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  padding:2px;flex-shrink:0;
+}
+.insta-avatar-inner{
+  width:100%;height:100%;border-radius:50%;
+  background:#111;display:flex;align-items:center;
+  justify-content:center;color:#fff;
+  font-family:'Inter',sans-serif;font-weight:700;font-size:13px;
+}
+/* VIEWPORT do carrossel — janela de 1 slide */
+.insta-carousel-viewport{
+  width:100%;
+  aspect-ratio:1;
+  overflow:hidden;
+  position:relative;
+  background:#000;
+}
+/* TRACK — todos os slides lado a lado */
+.insta-carousel-track{
+  display:flex;
+  height:100%;
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+.insta-carousel-track canvas{
+  flex-shrink:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+/* UI INFERIOR */
+.insta-post-footer{
+  padding:8px 12px 10px;
+}
+.insta-actions{
+  display:flex;align-items:center;gap:14px;margin-bottom:6px;
+}
+.insta-dots-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:4px;margin-bottom:6px;
+}
+.insta-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);transition:.3s}
+.insta-dot.ativo{background:#fff;width:6px;height:6px}
+.insta-legenda{font-size:11px;color:rgba(255,255,255,.5)}
+/* INDICADOR DE SWIPE */
+.swipe-hint{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;padding:6px 0 10px;
+  font-size:11px;color:rgba(200,169,110,.5);
+  letter-spacing:.5px;
+  animation:fadeHint 3s ease 1.5s forwards;
+  opacity:1;
+}
+@keyframes fadeHint{
+  0%{opacity:1} 70%{opacity:1} 100%{opacity:0}
+}
+.swipe-hint-arrow{
+  font-size:16px;
+  animation:swipeAnim 1.5s ease-in-out infinite;
+}
+@keyframes swipeAnim{
+  0%{transform:translateX(0);opacity:.4}
+  50%{transform:translateX(-8px);opacity:1}
+  100%{transform:translateX(0);opacity:.4}
+}
+
+/* HEADER FIXO */
+.header-fixo{
+  position:fixed;top:0;left:0;right:0;z-index:150;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;
+  background:rgba(14,11,8,.7);
+  border-bottom:1px solid rgba(200,169,110,.1);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.header-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;color:var(--ouro);letter-spacing:.5px;
+}
+.btn-meus-slides{
+  background:rgba(200,169,110,.12);
+  border:1px solid rgba(200,169,110,.3);
+  color:var(--ouro);
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px;padding:7px 14px;
+  border-radius:8px;cursor:pointer;
+  transition:.2s;-webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-meus-slides:active{background:rgba(200,169,110,.22)}
+
+/* MODAL GALERIA */
+.galeria-overlay{
+  position:fixed;inset:0;
+  background:rgba(14,11,8,.96);
+  z-index:500;display:none;
+  flex-direction:column;
+  backdrop-filter:blur(12px);
+}
+.galeria-overlay.show{display:flex}
+.galeria-header{
+  padding:16px 18px;
+  border-bottom:1px solid rgba(200,169,110,.12);
+  display:flex;align-items:center;gap:12px;
+}
+.galeria-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;color:var(--ouro);flex:1;
+}
+.btn-fechar-galeria{
+  background:none;border:none;
+  color:var(--cinza);font-size:22px;
+  cursor:pointer;padding:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.galeria-body{
+  flex:1;overflow-y:auto;
+  padding:20px 18px 40px;
+  max-width:430px;margin:0 auto;width:100%;
+}
+
+/* LOGIN GALERIA */
+.galeria-login{text-align:center;padding:20px 0}
+.galeria-login-ico{font-size:40px;margin-bottom:14px;display:block}
+.galeria-login-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;color:var(--branco);margin-bottom:6px;
+}
+.galeria-login-sub{font-size:13px;color:var(--cinza);margin-bottom:24px;line-height:1.6}
+.g-inp{
+  width:100%;padding:13px 16px;
+  background:rgba(200,169,110,.05);
+  border:1px solid rgba(200,169,110,.2);
+  border-radius:10px;font-size:14px;
+  font-family:'Inter',sans-serif;color:var(--creme);
+  outline:none;margin-bottom:12px;
+}
+.g-inp::placeholder{color:rgba(200,169,110,.25)}
+.g-inp:focus{border-color:rgba(200,169,110,.5)}
+.btn-entrar-galeria{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
+  color:var(--noite);font-family:'Cormorant Garamond',serif;
+  font-size:19px;font-weight:600;border:none;border-radius:12px;cursor:pointer;
+}
+.galeria-erro{font-size:12px;color:#e07070;margin-top:10px;min-height:16px}
+
+/* SLIDES DA GALERIA */
+.galeria-slides-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px;margin-top:4px;
+}
+.galeria-slide{
+  border-radius:12px;overflow:hidden;
+  border:1px solid rgba(200,169,110,.15);
+  cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.galeria-slide canvas{width:100%;display:block}
+.galeria-slide-num{
+  position:absolute;bottom:6px;right:8px;
+  font-size:10px;color:rgba(200,169,110,.6);
+  font-family:'Cormorant Garamond',serif;
+}
+.galeria-nome{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;color:var(--branco);margin-bottom:4px;
+}
+.galeria-sub{font-size:12px;color:var(--cinza);margin-bottom:18px}
+.btn-dl-todos{
+  width:100%;padding:14px;margin-bottom:16px;
+  background:linear-gradient(135deg,var(--ouro),var(--ouro-esc));
+  color:var(--noite);font-family:'Cormorant Garamond',serif;
+  font-size:19px;font-weight:600;border:none;border-radius:12px;cursor:pointer;
+}
+
+.toast{
+  position:fixed;bottom:88px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--ouro);color:var(--noite);
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;padding:9px 22px;
+  border-radius:100px;opacity:0;
+  transition:all .3s;z-index:999;
+  white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ANTI-PRINT OVERLAY */
+#antiPrintOverlay{
+  position:fixed;inset:0;background:#000;z-index:99999;
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;padding:40px;text-align:center;
+}
+/* ══ CROP MODAL ══ */
+.crop-over{position:fixed;inset:0;background:rgba(14,11,8,.97);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;backdrop-filter:blur(4px)}
+.crop-over.show{display:flex}
+.crop-titulo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--ouro);letter-spacing:1px;text-align:center}
+.crop-info{font-size:12px;color:var(--cinza);text-align:center;line-height:1.5}
+.crop-stage{position:relative;width:min(85vw,360px);aspect-ratio:1;overflow:hidden;border-radius:14px;background:#000;touch-action:none;cursor:grab;border:2px solid rgba(200,169,110,.3)}
+.crop-stage:active{cursor:grabbing}
+.crop-stage img{position:absolute;transform-origin:center center;will-change:transform;user-select:none;-webkit-user-drag:none;pointer-events:none;max-width:none;max-height:none}
+.crop-grid-lines{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(rgba(200,169,110,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,110,.15) 1px,transparent 1px);background-size:33.33% 33.33%}
+.crop-border{position:absolute;inset:0;pointer-events:none;z-index:3;border:2px solid rgba(200,169,110,.5);border-radius:12px}
+.crop-zoom-row{display:flex;align-items:center;gap:10px;width:min(85vw,360px)}
+.crop-zoom-lbl{font-size:11px;color:var(--cinza);white-space:nowrap}
+.crop-zoom-inp{flex:1;accent-color:var(--ouro)}
+.crop-btns{display:flex;gap:10px;width:min(85vw,360px)}
+.crop-btn{flex:1;padding:13px;border:none;border-radius:12px;font-family:'Cormorant Garamond',serif;font-size:18px;cursor:pointer}
+.crop-btn-ok{background:var(--ouro);color:var(--noite)}
+.crop-btn-can{background:rgba(200,169,110,.1);color:var(--cinza)}
+.crop-prog{font-size:12px;color:var(--cinza);font-family:'Cormorant Garamond',serif;font-style:italic}
+
+/* BOTTOM BAR FIXA */
+.bottom-bar-fixo{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:180;
+  padding:12px 20px 28px;
+  background:linear-gradient(to top, rgba(14,11,8,1) 70%, transparent);
+  pointer-events:none;
+}
+.bottom-bar-fixo .btn,
+.bottom-bar-fixo button{
+  pointer-events:all;
+  max-width:430px;
+  display:block;
+  margin:0 auto;
+}
+.bottom-bar-fixo .btn-duplo{
+  pointer-events:all;
+  max-width:430px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER FIXO -->
+<div class="header-fixo">
+  <div class="header-logo">🕊️ Para Sempre Pai</div>
+  <button class="btn-meus-slides" onclick="abrirGaleria()">
+    🖼️ Meus Slides
+  </button>
+</div>
+
+<!-- CANVAS DE PARTÍCULAS -->
+<canvas id="canvas-bg"></canvas>
+
+<!-- AUDIO -->
+<audio id="bgm" loop preload="auto">
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+<button class="audio-fab" id="audioBtn" onclick="toggleAudio()" title="Tocar música">🎵</button>
+
+<!-- Toque para iniciar (aparece só se autoplay bloqueado) -->
+<div id="audioPrompt" style="
+  position:fixed;bottom:80px;right:16px;z-index:200;
+  background:rgba(200,169,110,.15);
+  border:1px solid rgba(200,169,110,.4);
+  border-radius:12px;padding:10px 14px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:14px;color:var(--ouro);
+  text-align:center;line-height:1.4;
+  backdrop-filter:blur(8px);
+  display:none;cursor:pointer;
+  animation:fadeInUp .5s ease;
+" onclick="toggleAudio();this.style.display='none'">
+  🎵 Toque para<br>ouvir a música
+</div>
+
+<!-- ════════ TELA 1 ════════ -->
+<div id="tela1">
+<div class="page">
+
+  <!-- HERO COMPACTO -->
+  <div style="padding-top:70px;padding-bottom:12px;text-align:center">
+    <div class="eyebrow" style="margin-bottom:4px">Dia dos Pais · 2026</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--branco);line-height:1">
+      Para Sempre<br><em style="color:var(--ouro);font-size:52px;font-weight:600">Pai</em>
+    </div>
+    <p style="font-size:12px;color:var(--cinza);margin-top:8px;line-height:1.5">
+      Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.
+    </p>
+    <div class="divider" style="margin:12px 0 0"><span>✦</span></div>
+  </div>
+
+  <!-- STEPS COMPACTOS -->
+  <div class="steps" style="margin-bottom:16px">
+    <div class="step ativo" id="s1">
+      <div class="step-dot">1</div>
+      <div class="step-nome">Fotos</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s2">
+      <div class="step-dot">2</div>
+      <div class="step-nome">Moldura</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s3">
+      <div class="step-dot">3</div>
+      <div class="step-nome">Memória</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="s4">
+      <div class="step-dot">4</div>
+      <div class="step-nome">Baixar</div>
+    </div>
+  </div>
+
+  <!-- ETAPA 1: FOTOS -->
+  <div id="etapa1">
+    <div class="card">
+      <div class="slbl" style="justify-content:space-between">
+        <span>Adicione as fotos</span>
+        <span id="fotoContador" style="font-size:11px;color:var(--ouro);opacity:.7">0 / 10</span>
+      </div>
+      <!-- Zona de upload (some quando tem fotos) -->
+      <div class="upload-zone" id="uploadZone" onclick="triggerUpload()">
+        <span class="uico">🕊️</span>
+        <p class="utxt"><strong>Toque para escolher fotos</strong></p>
+        <p class="utxt" style="margin-top:6px;font-size:12px;opacity:.6">Exatamente 10 fotos · JPG ou PNG</p>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+      </div>
+      <!-- Grid de fotos -->
+      <div class="fotos-grid" id="fotosGrid" style="display:none"></div>
+      <!-- Aviso de quantidade -->
+      <div id="fotoAviso" style="display:none;text-align:center;margin-top:10px;
+        font-size:12px;color:var(--ouro);font-style:italic;opacity:.8"></div>
+    </div>
+    </div>
+
+<div class="bottom-bar-fixo" id="bottomBar1">
+  <button class="btn" id="btnP1" disabled onclick="irEtapa(2)">Continuar →</button>
+</div>
+
+  <!-- ETAPA 2: MOLDURA -->
+  <div id="etapa2" style="display:none">
+    <div class="card">
+      <div class="slbl">Escolha a moldura</div>
+      <div class="molduras-grid" id="moldurasGrid"></div>
+    </div>
+    </div>
+
+<div class="bottom-bar-fixo" id="bottomBar2" style="display:none">
+  <button class="btn" onclick="irEtapa(3)">Continuar →</button>
+</div>
+
+  <!-- ETAPA 3: MEMÓRIA -->
+  <div id="etapa3" style="display:none">
+    <div class="card">
+      <div class="slbl">Sobre ele</div>
+      <div class="form-group">
+        <label class="flbl">Seu nome</label>
+        <input class="finp" id="nomeF" type="text" placeholder="Maria" maxlength="40" autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label class="flbl">Seu e-mail</label>
+        <input class="finp" id="emailF" type="email" placeholder="maria@email.com" autocomplete="email"
+          onblur="criarCadastro()">
+      </div>
+      <div class="form-group">
+        <label class="flbl">WhatsApp (opcional)</label>
+        <input class="finp" id="telF" type="tel" placeholder="(35) 99999-0000" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label class="flbl">Nome do seu pai</label>
+        <input class="finp" id="nomePai" type="text" placeholder="José" maxlength="40">
+      </div>
+      <div class="form-group">
+        <label class="flbl">Uma memória ou frase dele</label>
+        <textarea class="finp" id="memoria" rows="3"
+          placeholder="Ex: Ele sempre dizia que o amor verdadeiro não tem distância..."></textarea>
+      </div>
+    </div>
+    </div>
+
+<div class="bottom-bar-fixo" id="bottomBar3" style="display:none">
+  <button class="btn" onclick="gerarCarrossel()">Criar meu carrossel ✦</button>
+</div>
+  </div>
+
+</div>
+</div>
+
+<!-- BOTTOM BAR TELA 2 -->
+<div class="bottom-bar-fixo" id="bottomBarPreview" style="display:none">
+  <div class="btn-duplo">
+    <button class="btn" onclick="irParaPagamento()" style="font-size:18px;padding:15px">
+      Guardar essa memória 🕊️
+    </button>
+    <button class="btn ghost" onclick="refazerTudo()" style="font-size:15px;padding:11px;margin-top:0">
+      ↩ Refazer do início
+    </button>
+  </div>
+</div>
+
+<!-- ════════ LOADING ════════ -->
+<div class="overlay" id="loading">
+  <div class="ring"></div>
+  <div class="ring-txt">Criando com carinho...</div>
+  <div class="ring-sub" id="loadMsg">Preparando suas fotos</div>
+</div>
+
+<!-- ════════ TELA 2: PREVIEW + PAGAMENTO MP ════════ -->
+<div id="tela2" style="display:none">
+<div class="page">
+  <div style="padding-top:64px;padding-bottom:8px;text-align:center">
+    <div class="eyebrow" style="margin-bottom:6px">Feito com amor</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--branco);font-style:italic">Sua prévia <em style="color:var(--ouro)">especial</em></div>
+  </div>
+</div>
+
+<!-- ══ CARROSSEL INSTAGRAM ══ -->
+<div class="insta-wrapper">
+  <div class="insta-post">
+    <!-- Header perfil -->
+    <div class="insta-post-header">
+      <div class="insta-avatar-ring">
+        <div class="insta-avatar-inner" id="instaAvatar">?</div>
+      </div>
+      <div style="flex:1">
+        <div id="instaUserName" style="font-size:12px;font-weight:700;color:#fff;line-height:1">você</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px">Agora mesmo</div>
+      </div>
+      <div style="font-size:18px;color:rgba(255,255,255,.4);letter-spacing:2px">···</div>
+    </div>
+
+    <!-- Viewport do carrossel -->
+    <div class="insta-carousel-viewport" id="carouselViewport">
+      <div class="insta-carousel-track" id="carouselTrack"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="insta-post-footer">
+      <div class="insta-actions">
+        <span style="font-size:22px;opacity:.5">🤍</span>
+        <span style="font-size:22px;opacity:.5">💬</span>
+        <span style="font-size:22px;opacity:.5">✈️</span>
+        <div class="insta-dots-row" id="instaDots" style="flex:1;margin:0"></div>
+        <span style="font-size:22px;opacity:.5">🔖</span>
+      </div>
+      <div class="insta-legenda">
+        <span id="instaLegendaUser" style="color:rgba(255,255,255,.8);font-weight:700">você</span>
+        &nbsp;<span id="instaLegenda">🕊️ Para sempre no meu coração</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Indicador de swipe -->
+<div class="swipe-hint" id="swipeHint">
+  <span class="swipe-hint-arrow">←</span>
+  <span>deslize para ver os slides</span>
+  <span class="swipe-hint-arrow" style="transform:scaleX(-1)">←</span>
+</div>
+
+</div>
+
+<!-- ════════ TELA 2.5: PAGAMENTO ════════ -->
+<div id="telaPagamento" style="display:none">
+<div class="page" style="padding-top:20px">
+  <!-- Frase emocional -->
+  <div style="text-align:center;margin-bottom:20px;padding:0 8px">
+    <div style="font-size:32px;margin-bottom:10px">🕊️</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--branco);line-height:1.4;margin-bottom:6px">
+      "A distância que nos separa<br>não apaga o amor que ficou."
+    </div>
+    <div style="font-size:11px;color:var(--cinza);letter-spacing:1px">
+      Guarde essa memória para sempre ✦
+    </div>
+  </div>
+  <div style="background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:18px;padding:24px 20px;margin-bottom:16px;text-align:center">
+    <div style="font-family:'Inter',sans-serif;font-size:56px;font-weight:700;color:var(--ouro);line-height:1;margin-bottom:4px;font-variant-numeric:lining-nums tabular-nums">R$11,99</div>
+    <div style="font-size:11px;color:var(--cinza);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px">acesso completo · 10 slides</div>
+    <button class="btn" id="btnPagar" onclick="iniciarPagamento()" style="font-family:'Inter',sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px">Eternizar agora por R$11,99 ✦</button>
+    <p style="font-size:11px;color:var(--cinza);margin-top:10px;opacity:.6">Pagamento seguro · liberação imediata</p>
+
+    <!-- PIX INLINE -->
+    <div id="pixArea" style="display:none;margin-top:20px">
+      <div style="height:1px;background:rgba(200,169,110,.15);margin-bottom:20px"></div>
+      <div id="qrBox" style="display:none;margin-bottom:14px">
+        <img id="qrImg" style="width:200px;height:200px;border-radius:12px;border:1px solid rgba(200,169,110,.2);display:block;margin:0 auto">
+      </div>
+      <div id="pixCodigo" style="display:none;margin-bottom:10px">
+        <div style="font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Código PIX copia e cola</div>
+        <div id="pixCodigoTxt" style="background:rgba(14,11,8,.7);border-radius:8px;padding:10px 12px;font-size:10px;color:var(--creme);font-family:monospace;word-break:break-all;text-align:left;max-height:54px;overflow:hidden;border:1px solid rgba(200,169,110,.15)"></div>
+      </div>
+      <button class="btn-copy" onclick="copiarPix()" style="margin-bottom:14px">✦ Copiar código PIX</button>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px">
+        <div class="ring" style="width:18px;height:18px;border-width:1.5px;flex-shrink:0"></div>
+        <div style="font-size:12px;color:var(--cinza)" id="statusTxt">Aguardando pagamento...</div>
+      </div>
+      <button class="btn ghost" onclick="confirmarManual()" style="font-size:14px;padding:12px">Já realizei o pagamento</button>
+    </div>
+  </div>
+  <button class="btn ghost" onclick="voltarPreview()" style="margin-bottom:20px">‹ Voltar à prévia</button>
+</div>
+</div>
+
+<!-- ════════ TELA 3: SUCESSO ════════ -->
+<div class="sucesso" id="tela3">
+<div class="page">
+  <span class="sico">🕊️</span>
+  <div class="stit">Feito com<em>amor</em></div>
+  <p class="ssub">Seus slides estão prontos.<br>Poste e eternize essa memória.</p>
+  <div class="divider"><span>✦</span></div>
+
+  <!-- PASTA COM SLIDES -->
+  <div class="pasta-card" onclick="abrirGaleria()">
+    <div class="pasta-ico">📁</div>
+    <div class="pasta-info">
+      <div class="pasta-nome">Minha homenagem</div>
+      <div class="pasta-qtd" id="pastaTxt">slides prontos</div>
+    </div>
+    <div style="color:var(--ouro);font-size:18px">›</div>
+  </div>
+
+  <!-- PUBLICAR NO INSTAGRAM -->
+  <button onclick="compartilharInstagram()" style="
+    width:100%;padding:16px;margin-bottom:12px;
+    background:linear-gradient(135deg,#E1306C,#833AB4,#F77737);
+    color:#fff;font-family:'Cormorant Garamond',serif;
+    font-size:20px;font-weight:600;border:none;
+    border-radius:12px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  ">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    Publicar agora no Instagram
+  </button>
+
+  <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Salvar no celular (PNG)</button>
+  <p style="font-size:10px;color:rgba(138,123,110,.4)">10 slides · 1080×1080px</p>
+</div>
+</div>
+
+<!-- ════════ MODAL MEUS SLIDES ════════ -->
+<div class="galeria-overlay" id="galeriaOverlay">
+  <div class="galeria-header">
+    <div class="galeria-titulo">🖼️ Meus Slides</div>
+    <button class="btn-fechar-galeria" onclick="fecharGaleria()">✕</button>
+  </div>
+  <div class="galeria-body">
+
+    <!-- ESTADO: LOGIN -->
+    <div id="galeriaLogin">
+      <div class="galeria-login">
+        <span class="galeria-login-ico">🕊️</span>
+        <div class="galeria-login-titulo">Acessar meus slides</div>
+        <p class="galeria-login-sub">Digite o e-mail ou WhatsApp<br>que você usou na compra</p>
+        <input class="g-inp" id="galeriaContato" type="text"
+          placeholder="E-mail ou telefone..."
+          onkeydown="if(event.key==='Enter')buscarSlides()">
+        <button class="btn-entrar-galeria" onclick="buscarSlides()">Ver meus slides →</button>
+        <div class="galeria-erro" id="galeriaErro"></div>
+      </div>
+    </div>
+
+    <!-- ESTADO: SLIDES -->
+    <div id="galeriaSlides" style="display:none">
+      <div class="galeria-nome" id="galeriaNome"></div>
+      <div class="galeria-sub" id="galeriaSub"></div>
+      <button class="btn-dl-todos" onclick="baixarZIPGaleria()">⬇ Baixar todos os slides</button>
+      <div class="galeria-slides-grid" id="galeriaSlidesGrid"></div>
+      <button class="btn-ghost" onclick="sairGaleria()" style="width:100%;margin-top:16px;padding:12px;border-radius:10px;background:none;border:1px solid rgba(200,169,110,.2);color:var(--cinza);font-size:13px;cursor:pointer;">
+        Sair desta conta
+      </button>
+    </div>
+
+    <!-- ESTADO: VAZIO -->
+    <div id="galeriaVazio" style="display:none;text-align:center;padding:40px 0">
+      <div style="font-size:40px;margin-bottom:14px">📭</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--branco);margin-bottom:8px">Nenhuma compra encontrada</div>
+      <p style="font-size:13px;color:var(--cinza);margin-bottom:20px">Tente outro e-mail ou telefone</p>
+      <button class="btn-entrar-galeria" onclick="voltarLoginGaleria()">Tentar novamente</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════ CROP MODAL ════ -->
+<div class="crop-over" id="cropOver">
+  <div class="crop-titulo">✂️ Ajustar foto</div>
+  <div class="crop-info">Arraste para reposicionar · Pinça para zoom<br>A foto será recortada em quadrado</div>
+  <div class="crop-prog" id="cropProg"></div>
+  <div class="crop-stage" id="cropStage">
+    <img id="cropImg" draggable="false">
+    <div class="crop-grid-lines"></div>
+    <div class="crop-border"></div>
+    <!-- Zona segura: indica onde as frases vão aparecer -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:28%;
+      background:linear-gradient(to top,rgba(14,11,8,.55),transparent);
+      pointer-events:none;z-index:4;border-radius:0 0 12px 12px;
+      display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;">
+      <div style="font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase">
+        ↑ área da frase
+      </div>
+    </div>
+  </div>
+  <div class="crop-zoom-row">
+    <span class="crop-zoom-lbl">🔍 Zoom</span>
+    <input type="range" class="crop-zoom-inp" id="cropZoom" min="0.5" max="4" step="0.01" value="1" oninput="aplicarCropTransform()">
+  </div>
+  <div class="crop-btns">
+    <button class="crop-btn crop-btn-can" onclick="cancelarCrop()">Cancelar</button>
+    <button class="crop-btn crop-btn-ok" onclick="confirmarCrop()">✓ Usar essa</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ CADASTRO / USUÁRIOS ══
+const LS_USERS   = 'psp_usuarios';
+const LS_PEDIDOS = 'psp_pedidos';
+const LS_SESS    = 'psp_sessao';
+
+function lerUsuarios(){ try{return JSON.parse(localStorage.getItem(LS_USERS)||'{}')}catch(e){return{}} }
+function salvarUsuarios(u){ try{localStorage.setItem(LS_USERS,JSON.stringify(u))}catch(e){} }
+function lerSessao(){ try{return localStorage.getItem(LS_SESS)||null}catch(e){return null} }
+function salvarSessao(e){ try{e?localStorage.setItem(LS_SESS,e):localStorage.removeItem(LS_SESS)}catch(ex){} }
+
+let usuarioAtual = null;
+
+function upsertUsuario(nome, email, tel){
+  if(!email) return;
+  const users = lerUsuarios();
+  if(!users[email]) users[email] = { nome, tel, compras:[] };
+  else { if(nome) users[email].nome=nome; if(tel) users[email].tel=tel; }
+  salvarUsuarios(users);
+  salvarSessao(email);
+  usuarioAtual = { email, nome: users[email].nome, tel: users[email].tel };
+}
+
+function registrarPedido(pedido){
+  // Salva na lista global de pedidos (admin)
+  try{
+    const lista = JSON.parse(localStorage.getItem(LS_PEDIDOS)||'[]');
+    const idx   = lista.findIndex(p=>p.id===pedido.id);
+    if(idx>=0) lista[idx]={...lista[idx],...pedido};
+    else lista.unshift(pedido);
+    localStorage.setItem(LS_PEDIDOS, JSON.stringify(lista.slice(0,500)));
+  }catch(e){}
+
+  // Salva também no perfil do usuário
+  if(!usuarioAtual?.email) return;
+  const users = lerUsuarios();
+  if(!users[usuarioAtual.email]) return;
+  const compras = users[usuarioAtual.email].compras||[];
+  const ci = compras.findIndex(c=>c.id===pedido.id);
+  if(ci>=0) compras[ci]={...compras[ci],...pedido};
+  else compras.unshift(pedido);
+  users[usuarioAtual.email].compras = compras;
+  salvarUsuarios(users);
+}
+
+// Inicia sessão se já tiver e-mail salvo
+function iniciarSessao(){
+  const email = lerSessao();
+  if(!email) return;
+  const users = lerUsuarios();
+  if(users[email]){
+    usuarioAtual = { email, nome:users[email].nome, tel:users[email].tel };
+    // Pré-preenche formulário
+    const nf=document.getElementById('nomeF'); if(nf&&!nf.value) nf.value=usuarioAtual.nome||'';
+    const ef=document.getElementById('emailF'); if(ef&&!ef.value) ef.value=email;
+    const tf=document.getElementById('telF'); if(tf&&!tf.value) tf.value=usuarioAtual.tel||'';
   }
 }
+
+// ══════════════════════════════════════
+// PARTÍCULAS COM CANVAS — DESTAQUE TOTAL
+// ══════════════════════════════════════
+const cvs = document.getElementById('canvas-bg');
+const ctx2 = cvs.getContext('2d');
+let W, H, particulas = [];
+
+function resizeCanvas(){
+  W = cvs.width  = window.innerWidth;
+  H = cvs.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Tipos de partícula para variedade visual
+function criarParticula(){
+  const tipo = Math.random() < 0.3 ? 'estrela' : Math.random() < 0.5 ? 'chama' : 'ponto';
+  return {
+    x: Math.random() * W,
+    y: H + Math.random() * 200,
+    vy: -(0.4 + Math.random() * 1.2),       // sobe
+    vx: (Math.random() - .5) * 0.5,          // drift lateral suave
+    size: tipo==='estrela' ? 2+Math.random()*3 : 1+Math.random()*2,
+    opacidade: 0,
+    opMax: tipo==='estrela' ? .8+Math.random()*.2 : .35+Math.random()*.45,
+    fase: 'in',                               // in | vivo | out
+    vida: 0,
+    vidaMax: 180 + Math.random()*300,
+    tipo,
+    pulso: Math.random() * Math.PI * 2,      // fase do pulso
+    brilho: Math.random() < 0.4,             // partícula com glow extra
+  };
+}
+
+// Inicializa com partículas espalhadas
+for(let i=0;i<60;i++){
+  const p = criarParticula();
+  p.y = Math.random() * H;   // espalhadas na tela já no início
+  p.vida = Math.random() * p.vidaMax;
+  p.opacidade = p.opMax * 0.5;
+  particulas.push(p);
+}
+
+function desenharEstrela(cx, x, y, r, op, cor){
+  const spikes=4, outer=r, inner=r*0.4;
+  cx.save();
+  cx.globalAlpha=op;
+  cx.fillStyle=cor;
+  cx.translate(x,y);
+  cx.rotate(Math.PI/4);
+  cx.beginPath();
+  for(let i=0;i<spikes*2;i++){
+    const ang=(i*Math.PI)/spikes;
+    const rad = i%2===0 ? outer : inner;
+    i===0 ? cx.moveTo(Math.cos(ang)*rad,Math.sin(ang)*rad)
+           : cx.lineTo(Math.cos(ang)*rad,Math.sin(ang)*rad);
+  }
+  cx.closePath();cx.fill();cx.restore();
+}
+
+function loopParticulas(){
+  ctx2.clearRect(0,0,W,H);
+
+  // Adiciona novas quando necessário
+  while(particulas.length < 70) particulas.push(criarParticula());
+
+  particulas.forEach((p,i)=>{
+    p.vida++;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.pulso += 0.04;
+
+    // Fade in/out
+    if(p.fase==='in'){
+      p.opacidade = Math.min(p.opacidade + 0.015, p.opMax);
+      if(p.opacidade >= p.opMax * 0.9) p.fase='vivo';
+    } else if(p.fase==='vivo'){
+      // Pulso suave
+      p.opacidade = p.opMax * (0.7 + 0.3*Math.sin(p.pulso));
+      if(p.vida > p.vidaMax) p.fase='out';
+    } else {
+      p.opacidade = Math.max(0, p.opacidade - 0.012);
+      if(p.opacidade <= 0){
+        particulas.splice(i,1);return;
+      }
+    }
+
+    // Reposiciona se sair pela lateral ou topo
+    if(p.y < -50 || p.x < -20 || p.x > W+20){
+      particulas.splice(i,1);return;
+    }
+
+    const cor = '#C8A96E';
+
+    // Glow extra para partículas brilhantes
+    if(p.brilho){
+      ctx2.save();
+      ctx2.globalAlpha = p.opacidade * 0.25;
+      ctx2.shadowColor  = '#C8A96E';
+      ctx2.shadowBlur   = p.size * 8;
+      ctx2.fillStyle    = cor;
+      ctx2.beginPath();
+      ctx2.arc(p.x,p.y,p.size*2,0,Math.PI*2);
+      ctx2.fill();
+      ctx2.restore();
+    }
+
+    if(p.tipo==='estrela'){
+      desenharEstrela(ctx2, p.x, p.y, p.size, p.opacidade, cor);
+      // Raios cruzados para estrelas grandes
+      if(p.size > 3){
+        ctx2.save();
+        ctx2.globalAlpha = p.opacidade * .4;
+        ctx2.strokeStyle = cor;
+        ctx2.lineWidth   = .5;
+        ctx2.beginPath();
+        ctx2.moveTo(p.x-p.size*2.5,p.y); ctx2.lineTo(p.x+p.size*2.5,p.y);
+        ctx2.moveTo(p.x,p.y-p.size*2.5); ctx2.lineTo(p.x,p.y+p.size*2.5);
+        ctx2.stroke();
+        ctx2.restore();
+      }
+    } else if(p.tipo==='chama'){
+      // Forma de chama: oval vertical
+      ctx2.save();
+      ctx2.globalAlpha=p.opacidade;
+      ctx2.fillStyle=cor;
+      ctx2.beginPath();
+      ctx2.ellipse(p.x,p.y,p.size*.6,p.size,0,0,Math.PI*2);
+      ctx2.fill();
+      ctx2.restore();
+    } else {
+      // Ponto simples
+      ctx2.save();
+      ctx2.globalAlpha=p.opacidade;
+      ctx2.fillStyle=cor;
+      ctx2.beginPath();
+      ctx2.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx2.fill();
+      ctx2.restore();
+    }
+  });
+
+  // Nebulosa de fundo suave — manchas douradas difusas
+  ctx2.save();
+  const t = Date.now()*0.0003;
+  const grd = ctx2.createRadialGradient(
+    W*(.3+.1*Math.sin(t)), H*.25, 0,
+    W*(.3+.1*Math.sin(t)), H*.25, W*.4
+  );
+  grd.addColorStop(0,'rgba(200,169,110,0.025)');
+  grd.addColorStop(1,'transparent');
+  ctx2.fillStyle=grd;
+  ctx2.fillRect(0,0,W,H);
+
+  const grd2 = ctx2.createRadialGradient(
+    W*(.7+.08*Math.cos(t*.7)), H*.7, 0,
+    W*(.7+.08*Math.cos(t*.7)), H*.7, W*.35
+  );
+  grd2.addColorStop(0,'rgba(200,140,80,0.02)');
+  grd2.addColorStop(1,'transparent');
+  ctx2.fillStyle=grd2;
+  ctx2.fillRect(0,0,W,H);
+  ctx2.restore();
+
+  requestAnimationFrame(loopParticulas);
+}
+loopParticulas();
+
+// ══ AUDIO — loop automático ══
+let audioOn    = false;
+let audioMuted = false; // usuário desligou manualmente
+const bgm   = document.getElementById('bgm');
+const btn   = document.getElementById('audioBtn');
+const prompt= document.getElementById('audioPrompt');
+
+bgm.volume = 0.7;
+
+function iniciarAudio(){
+  if(audioOn || audioMuted) return; // respeita escolha do usuário
+  bgm.play().then(()=>{
+    audioOn = true;
+    btn.textContent  = '🔇';
+    prompt.style.display = 'none';
+  }).catch(()=>{
+    prompt.style.display = 'block';
+  });
+}
+
+function toggleAudio(){
+  if(audioOn){
+    bgm.pause();
+    btn.textContent = '🎵';
+    audioOn  = false;
+    audioMuted = true; // marcou manualmente
+  } else {
+    audioMuted = false;
+    bgm.play().then(()=>{
+      audioOn = true;
+      btn.textContent = '🔇';
+      prompt.style.display = 'none';
+    }).catch(()=>{});
+  }
+}
+
+// Tenta tocar no primeiro evento — só se não foi desligado manualmente
+['touchstart','click'].forEach(ev=>{
+  document.addEventListener(ev, function handler(e){
+    // Não dispara se o clique foi no botão de audio
+    if(e.target.id==='audioBtn'||e.target.closest?.('#audioBtn')) return;
+    iniciarAudio();
+    if(audioOn) document.removeEventListener(ev, handler);
+  }, {once:false, passive:true});
+});
+
+setTimeout(()=>{ if(!audioOn && !audioMuted) iniciarAudio(); }, 1200);
+
+bgm.addEventListener('ended', ()=>{
+  if(!audioMuted){ bgm.currentTime=0; bgm.play().catch(()=>{}); }
+});
+
+// ══ ESTADO ══
+let fotos=[],molduraSel=0,slides=[],etapa=1;
+
+// ══ UPLOAD + CROP ══
+let cropFila    = [];  // arquivos aguardando crop
+let cropAtual   = null;
+let cropState   = { scale:1, x:0, y:0, dragging:false, startX:0, startY:0 };
+
+function triggerUpload(){
+  if(fotos.length >= 10){ toast('Máximo de 10 fotos atingido'); return; }
+  const inp=document.getElementById('fileInput');
+  inp.value=''; inp.onchange=handleFiles; inp.click();
+}
+
+async function handleFiles(e){
+  const restante = 10 - fotos.length;
+  const novos    = [...e.target.files].slice(0, restante);
+  if(!novos.length) return;
+  // Coloca na fila de crop
+  cropFila = novos.map(f=>({ file:f, url: URL.createObjectURL(f) }));
+  proximoCrop();
+}
+
+function proximoCrop(){
+  if(!cropFila.length){ renderFotos(); return; }
+  cropAtual = cropFila.shift();
+  abrirCropModal(cropAtual.url, cropFila.length);
+}
+
+function abrirCropModal(url, restNaFila){
+  const totalPendente = cropFila.length + 1;
+  const idx = fotos.length + 1;
+  document.getElementById('cropProg').textContent =
+    `Foto ${idx} de ${idx + cropFila.length} — ajuste e confirme`;
+
+  const img = document.getElementById('cropImg');
+  img.onload = () => {
+    const stage   = document.getElementById('cropStage');
+    const stageW  = stage.getBoundingClientRect().width || 300;
+    const fitScale = Math.max(stageW / img.naturalWidth, stageW / img.naturalHeight);
+    cropState = { scale: fitScale, x:0, y:0, dragging:false, startX:0, startY:0 };
+    const zi = document.getElementById('cropZoom');
+    zi.min   = (fitScale * 0.95).toFixed(3);
+    zi.max   = (fitScale * 4).toFixed(3);
+    zi.value = fitScale.toFixed(3);
+    aplicarCropTransform();
+    document.getElementById('cropOver').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  img.src = url;
+}
+
+function aplicarCropTransform(){
+  const img   = document.getElementById('cropImg');
+  const scale = parseFloat(document.getElementById('cropZoom').value);
+  cropState.scale = scale;
+  // Limita arraste para não mostrar borda
+  const stage    = document.getElementById('cropStage');
+  const stageW   = stage.getBoundingClientRect().width || 300;
+  const imgW     = img.naturalWidth  * scale;
+  const imgH     = img.naturalHeight * scale;
+  const maxX     = Math.max(0,(imgW - stageW)/2);
+  const maxY     = Math.max(0,(imgH - stageW)/2);
+  cropState.x    = Math.max(-maxX, Math.min(maxX, cropState.x));
+  cropState.y    = Math.max(-maxY, Math.min(maxY, cropState.y));
+  img.style.position      = 'absolute';
+  img.style.left          = '50%';
+  img.style.top           = '50%';
+  img.style.transform     = `translate(calc(-50% + ${cropState.x}px), calc(-50% + ${cropState.y}px)) scale(${scale})`;
+  img.style.transformOrigin = 'center center';
+}
+
+// ── DRAG mouse ──
+const cropStageEl = document.getElementById('cropStage');
+function onCD(ex,ey){ cropState.dragging=true; cropState.startX=ex-cropState.x; cropState.startY=ey-cropState.y; }
+function onCM(ex,ey){ if(!cropState.dragging)return; cropState.x=ex-cropState.startX; cropState.y=ey-cropState.startY; aplicarCropTransform(); }
+function onCU(){ cropState.dragging=false; }
+cropStageEl.addEventListener('mousedown', e=>{e.preventDefault();onCD(e.clientX,e.clientY);});
+cropStageEl.addEventListener('mousemove', e=>onCM(e.clientX,e.clientY));
+cropStageEl.addEventListener('mouseup',   onCU);
+cropStageEl.addEventListener('mouseleave',onCU);
+// ── DRAG touch ──
+cropStageEl.addEventListener('touchstart', e=>{e.preventDefault();onCD(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+cropStageEl.addEventListener('touchmove',  e=>{e.preventDefault();onCM(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+cropStageEl.addEventListener('touchend',   onCU);
+// ── PINCH ──
+let lastPinch=0;
+cropStageEl.addEventListener('touchstart',e=>{if(e.touches.length===2) lastPinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
+cropStageEl.addEventListener('touchmove',e=>{
+  if(e.touches.length!==2)return;
+  const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+  const zi=document.getElementById('cropZoom');
+  zi.value=Math.min(Math.max(parseFloat(zi.value)*(d/lastPinch),parseFloat(zi.min)),parseFloat(zi.max));
+  lastPinch=d; aplicarCropTransform();
+},{passive:true});
+
+function cancelarCrop(){
+  // Pula esta foto, vai para a próxima da fila
+  URL.revokeObjectURL(cropAtual?.url);
+  cropAtual=null;
+  document.getElementById('cropOver').classList.remove('show');
+  document.body.style.overflow='';
+  proximoCrop();
+}
+
+function confirmarCrop(){
+  const img      = document.getElementById('cropImg');
+  const stageEl  = document.getElementById('cropStage');
+  const stageW   = stageEl.getBoundingClientRect().width || 300;
+  const OUTPUT   = 1080;
+  const scale    = cropState.scale;
+
+  const canvas   = document.createElement('canvas');
+  canvas.width   = OUTPUT; canvas.height = OUTPUT;
+  const ctx      = canvas.getContext('2d');
+
+  const imgDrawW = img.naturalWidth  * scale;
+  const imgDrawH = img.naturalHeight * scale;
+  const imgLeft  = stageW/2 + cropState.x - imgDrawW/2;
+  const imgTop   = stageW/2 + cropState.y - imgDrawH/2;
+  const srcX     = -imgLeft / scale;
+  const srcY     = -imgTop  / scale;
+  const srcW     = stageW   / scale;
+  const srcH     = stageW   / scale;
+
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, OUTPUT, OUTPUT);
+
+  const b64 = canvas.toDataURL('image/jpeg', 0.92);
+  fotos.push({ url: cropAtual.url, base64: b64, croppada: true });
+
+  document.getElementById('cropOver').classList.remove('show');
+  document.body.style.overflow='';
+  // Não revogar aqui — ainda precisamos da URL para exibir
+  cropAtual = null;
+
+  renderFotos();
+  proximoCrop(); // próxima da fila
+}
+
+function renderFotos(){
+  const grid = document.getElementById('fotosGrid');
+  const zone = document.getElementById('uploadZone');
+  const aviso= document.getElementById('fotoAviso');
+  const cont = document.getElementById('fotoContador');
+  const btn  = document.getElementById('btnP1');
+
+  cont.textContent = `${fotos.length} / 10`;
+
+  if(!fotos.length){
+    grid.style.display='none'; zone.style.display='block';
+    aviso.style.display='none'; btn.disabled=true; return;
+  }
+  zone.style.display='none'; grid.style.display='grid';
+
+  let h = fotos.map((f,i)=>`
+    <div class="foto-thumb" style="position:relative">
+      <img src="${f.url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px">
+      <button class="rm" onclick="rmFoto(${i})" style="position:absolute;top:5px;right:5px;
+        background:rgba(14,11,8,.85);border:none;color:var(--ouro);
+        width:22px;height:22px;border-radius:50%;font-size:11px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="recortarFoto(${i})" style="position:absolute;bottom:5px;right:5px;
+        background:rgba(200,169,110,.85);border:none;color:var(--noite);
+        font-size:10px;font-weight:700;padding:3px 6px;border-radius:6px;cursor:pointer;">✂️</button>
+    </div>`).join('');
+
+  if(fotos.length < 10)
+    h += `<div class="foto-add" onclick="triggerUpload()" style="
+      aspect-ratio:1;border-radius:10px;
+      border:1px dashed rgba(200,169,110,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;color:rgba(200,169,110,.4);cursor:pointer;">+</div>`;
+
+  grid.innerHTML = h;
+
+  // Aviso
+  if(fotos.length < 10){
+    aviso.style.display='block';
+    aviso.textContent = `Adicione mais ${10 - fotos.length} foto${10-fotos.length>1?'s':''} para continuar`;
+    btn.disabled = true;
+  } else {
+    aviso.style.display='none';
+    btn.disabled = false;
+  }
+}
+
+function rmFoto(i){
+  fotos.splice(i,1);
+  renderFotos();
+}
+
+// Recortar uma foto já adicionada
+function recortarFoto(i){
+  cropAtual = { ...fotos[i], idx: i };
+  const img = document.getElementById('cropImg');
+  img.onload = () => {
+    const stage  = document.getElementById('cropStage');
+    const sw     = stage.getBoundingClientRect().width || 300;
+    const fit    = Math.max(sw/img.naturalWidth, sw/img.naturalHeight);
+    cropState    = { scale:fit, x:0, y:0, dragging:false, startX:0, startY:0 };
+    const zi     = document.getElementById('cropZoom');
+    zi.min=(fit*.95).toFixed(3); zi.max=(fit*4).toFixed(3); zi.value=fit.toFixed(3);
+    aplicarCropTransform();
+    document.getElementById('cropProg').textContent = `Recortando foto ${i+1}`;
+    // Override: salvar vai substituir no índice
+    document.querySelector('.crop-btn-ok').onclick = ()=>confirmarCropEdit(i);
+    document.getElementById('cropOver').classList.add('show');
+    document.body.style.overflow='hidden';
+  };
+  img.src = fotos[i].url;
+}
+
+function confirmarCropEdit(idx){
+  const img    = document.getElementById('cropImg');
+  const stageEl= document.getElementById('cropStage');
+  const stageW = stageEl.getBoundingClientRect().width||300;
+  const OUTPUT = 1080; const scale=cropState.scale;
+  const canvas = document.createElement('canvas');
+  canvas.width=OUTPUT; canvas.height=OUTPUT;
+  const ctx=canvas.getContext('2d');
+  const imgDrawW=img.naturalWidth*scale, imgDrawH=img.naturalHeight*scale;
+  const imgLeft=stageW/2+cropState.x-imgDrawW/2, imgTop=stageW/2+cropState.y-imgDrawH/2;
+  ctx.drawImage(img,-imgLeft/scale,-imgTop/scale,stageW/scale,stageW/scale,0,0,OUTPUT,OUTPUT);
+  fotos[idx].base64 = canvas.toDataURL('image/jpeg',.92);
+  document.getElementById('cropOver').classList.remove('show');
+  document.body.style.overflow='';
+  // Restaura o onclick original
+  document.querySelector('.crop-btn-ok').onclick = confirmarCrop;
+  renderFotos();
+  toast('✦ Foto ajustada!');
+}
+
+// ══ MOLDURAS ══
+const MOLDURAS=[
+  // Escuras
+  {n:'Eterno',    bg:'#0E0B08', brd:'#C8A96E', tx:'#F5EFE6', brd2:'#8A6A3A'},
+  {n:'Carvão',    bg:'#141414', brd:'#E8E8E8', tx:'#FFFFFF',  brd2:'#888'},
+  {n:'Meia Noite',bg:'#050510', brd:'#6E9EC8', tx:'#D0E8F5',  brd2:'#3A6A8A'},
+  // Quentes
+  {n:'Âmbar',     bg:'#1A0E00', brd:'#E8A840', tx:'#FFF0D0',  brd2:'#A06820'},
+  {n:'Sépia',     bg:'#1E1208', brd:'#C8A96E', tx:'#E8DDD0',  brd2:'#7A5830'},
+  {n:'Bordeaux',  bg:'#180810', brd:'#C87EA9', tx:'#F5D0E8',  brd2:'#7A3060'},
+  // Claras
+  {n:'Luz',       bg:'#F5EFE6', brd:'#A8864A', tx:'#1A1410',  brd2:'#C8A96E'},
+  {n:'Névoa',     bg:'#F0F4F8', brd:'#8A9AB0', tx:'#1A2030',  brd2:'#B0C0D0'},
+  {n:'Pergaminho',bg:'#F2E8D0', brd:'#8A6840', tx:'#2A1A08',  brd2:'#C8A870'},
+];
+
+function renderMolduras(){
+  const g=document.getElementById('moldurasGrid');
+  g.innerHTML=MOLDURAS.map((m,i)=>`
+    <div class="moldura-opt ${i===molduraSel?'sel':''}" onclick="selMoldura(${i})" id="mopt${i}">
+      <canvas id="pm${i}" width="200" height="200"></canvas>
+      <div class="moldura-nome">${m.n}</div>
+    </div>`).join('');
+  MOLDURAS.forEach((_,i)=>prevMoldura(i));
+}
+
+function prevMoldura(i){
+  const m = MOLDURAS[i];
+  const c = document.getElementById(`pm${i}`);
+  const x = c.getContext('2d');
+  const S = 200;
+
+  // Fundo
+  x.fillStyle=m.bg; x.fillRect(0,0,S,S);
+
+  // Foto real (se tiver) como slide completo
+  const fotoSrc = fotos.length ? (fotos[0].base64||fotos[0].url) : null;
+  if(fotoSrc){
+    const img = new Image();
+    img.onload = () => {
+      // Foto ocupa 65% superior
+      const fh = Math.round(S*0.62);
+      const sc = Math.max(S/img.width, fh/img.height);
+      const iw = img.width*sc, ih = img.height*sc;
+      x.save();
+      x.beginPath();
+      if(x.roundRect) x.roundRect(6,6,S-12,fh,4);
+      else x.rect(6,6,S-12,fh);
+      x.clip();
+      x.drawImage(img,(S-iw)/2,(fh-ih)/2+6,iw,ih);
+      // Gradiente sobre foto
+      const g2=x.createLinearGradient(0,fh-40,0,fh+6);
+      g2.addColorStop(0,'transparent'); g2.addColorStop(1,m.bg+'ee');
+      x.fillStyle=g2; x.fillRect(0,fh-40,S,50);
+      x.restore();
+      _desenharOverlayPreview(x,m,S,fh);
+    };
+    img.src = fotoSrc;
+  } else {
+    _desenharOverlayPreview(x,m,S,S*0.62);
+  }
+}
+
+function _desenharOverlayPreview(x,m,S,fh){
+  // Borda dupla
+  x.strokeStyle=m.brd; x.lineWidth=2;
+  x.strokeRect(3,3,S-6,S-6);
+  x.strokeStyle=m.brd2||m.brd; x.lineWidth=0.8; x.globalAlpha=0.5;
+  x.strokeRect(7,7,S-14,S-14);
+  x.globalAlpha=1;
+
+  // Ornamento topo
+  x.fillStyle=m.brd; x.font=`${S*.09}px serif`; x.textAlign='center';
+  x.fillText('✦',S/2,S*.07);
+
+  // Frase
+  x.fillStyle=m.tx;
+  x.font=`italic ${S*.09}px Cormorant Garamond,serif`;
+  x.textAlign='center';
+  const frase = document.getElementById('nomePai')?.value.trim() || 'Pai';
+  x.fillText(`Para sempre, ${frase}`, S/2, fh + (S-fh)*0.45);
+
+  // Ornamento base
+  x.fillStyle=m.brd; x.font=`${S*.07}px serif`;
+  x.fillText('✦',S/2,S*0.95);
+}
+
+function selMoldura(i){
+  molduraSel=i;
+  document.querySelectorAll('.moldura-opt').forEach((el,j)=>el.classList.toggle('sel',j===i));
+  // Mostra preview grande ao selecionar
+  mostrarPreviewMoldura(i);
+}
+
+// Preview grande da moldura selecionada
+function mostrarPreviewMoldura(i){
+  let pv = document.getElementById('molduraPreviewGrande');
+  if(!pv){
+    pv = document.createElement('div');
+    pv.id = 'molduraPreviewGrande';
+    pv.style.cssText = [
+      'position:fixed','inset:0','z-index:700',
+      'background:rgba(14,11,8,.92)','backdrop-filter:blur(8px)',
+      'display:flex','flex-direction:column',
+      'align-items:center','justify-content:center','gap:16px','padding:24px'
+    ].join(';');
+    pv.onclick = (e)=>{ if(e.target===pv) pv.style.display='none'; };
+    document.body.appendChild(pv);
+  }
+  const m = MOLDURAS[i];
+  const S = Math.min(window.innerWidth-48, 360);
+  pv.innerHTML = `
+    <div style="font-family:'Cormorant Garamond',serif;font-size:14px;
+      color:rgba(200,169,110,.6);letter-spacing:2px;text-transform:uppercase">
+      Prévia — ${m.n}
+    </div>
+    <canvas id="pvCanvas" width="${S}" height="${S}"
+      style="border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.6)"></canvas>
+    <button onclick="document.getElementById('molduraPreviewGrande').style.display='none'"
+      style="background:var(--ouro);color:var(--noite);border:none;border-radius:10px;
+      padding:12px 28px;font-family:'Cormorant Garamond',serif;font-size:18px;cursor:pointer">
+      ✓ Usar esta moldura
+    </button>
+    <div style="font-size:11px;color:rgba(200,169,110,.4)">Toque fora para fechar</div>`;
+
+  // Desenha preview grande
+  const cv = document.getElementById('pvCanvas');
+  const ctx = cv.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio||1,2);
+  cv.width=S*dpr; cv.height=S*dpr;
+  cv.style.width=S+'px'; cv.style.height=S+'px';
+  ctx.scale(dpr,dpr);
+
+  ctx.fillStyle=m.bg; ctx.fillRect(0,0,S,S);
+  const fh = Math.round(S*0.62);
+  const fotoSrc = fotos.length ? (fotos[0].base64||fotos[0].url) : null;
+
+  const _desenharGrande = ()=>{
+    // Borda dupla
+    ctx.strokeStyle=m.brd; ctx.lineWidth=3; ctx.strokeRect(4,4,S-8,S-8);
+    ctx.strokeStyle=m.brd2||m.brd; ctx.lineWidth=1; ctx.globalAlpha=0.4;
+    ctx.strokeRect(10,10,S-20,S-20); ctx.globalAlpha=1;
+    // Ornamento topo
+    ctx.fillStyle=m.brd; ctx.font=`${S*.08}px serif`; ctx.textAlign='center';
+    ctx.fillText('✦',S/2,S*.065);
+    // Frase
+    ctx.fillStyle=m.tx;
+    ctx.font=`italic ${S*.075}px Cormorant Garamond,serif`;
+    const nomePai = document.getElementById('nomePai')?.value.trim()||'Pai';
+    ctx.fillText(`Para sempre, ${nomePai}`,S/2,fh+(S-fh)*.4);
+    // Ornamento base
+    ctx.fillStyle=m.brd; ctx.font=`${S*.06}px serif`;
+    ctx.fillText('✦',S/2,S*.95);
+  };
+
+  if(fotoSrc){
+    const img=new Image();
+    img.onload=()=>{
+      const sc=Math.max(S/img.width,fh/img.height);
+      const iw=img.width*sc,ih=img.height*sc;
+      ctx.save();
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(6,6,S-12,fh,6); else ctx.rect(6,6,S-12,fh);
+      ctx.clip();
+      ctx.drawImage(img,(S-iw)/2,(fh-ih)/2+6,iw,ih);
+      const g2=ctx.createLinearGradient(0,fh-60,0,fh+10);
+      g2.addColorStop(0,'transparent'); g2.addColorStop(1,m.bg+'f5');
+      ctx.fillStyle=g2; ctx.fillRect(0,fh-60,S,80);
+      ctx.restore();
+      _desenharGrande();
+    };
+    img.src=fotoSrc;
+  } else { _desenharGrande(); }
+
+  pv.style.display='flex';
+}
+
+// ══ ETAPAS ══
+function irEtapa(n){
+  document.getElementById(`etapa${etapa}`).style.display='none';
+  // Esconde todas as bottom bars
+  [1,2,3].forEach(i=>{const b=document.getElementById(`bottomBar${i}`);if(b)b.style.display='none';});
+  etapa=n;
+  document.getElementById(`etapa${n}`).style.display='block';
+  // Mostra a bottom bar da etapa atual
+  const bb=document.getElementById(`bottomBar${n}`);if(bb)bb.style.display='block';
+  [1,2,3,4].forEach(j=>document.getElementById(`s${j}`)?.classList.toggle('ativo',j<=n));
+  if(n===2)renderMolduras();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ GERAR ══
+async function gerarCarrossel(){
+  const nomeF  = document.getElementById('nomeF').value.trim();
+  const emailF = document.getElementById('emailF')?.value.trim()||'';
+  const nomePai= document.getElementById('nomePai').value.trim();
+  const mem    = document.getElementById('memoria').value.trim();
+  if(!nomeF)  { toast('Informe seu nome'); return; }
+  if(!emailF||!/\S+@\S+\.\S+/.test(emailF)) { toast('Informe um e-mail válido'); return; }
+  if(!nomePai){ toast('Informe o nome do seu pai'); return; }
+  upsertUsuario(nomeF, emailF, document.getElementById('telF')?.value.trim()||'');
+  document.getElementById('loading').classList.add('show');
+  slides=[];
+  try{
+    setMsg('Escrevendo com o coração...');
+    const ded=await gptDedicatoria(nomeF,nomePai,mem);
+    const m=MOLDURAS[molduraSel];
+    setMsg('Montando a capa...');
+    slides.push(await gerarSlide(null,'capa',m,nomePai,nomeF,''));
+    for(let i=0;i<Math.min(fotos.length,7);i++){
+      setMsg(`Processando foto ${i+1} de ${Math.min(fotos.length,7)}...`);
+      // Usa base64 croppada se disponível, senão url original
+      const fotoSrc = fotos[i].base64 || fotos[i].url;
+      slides.push(await gerarSlide(fotoSrc,'foto',m,nomePai,nomeF,ded.frases[i]||''));
+    }
+    setMsg('Finalizando...');
+    slides.push(await gerarSlide(null,'fim',m,nomePai,nomeF,ded.mensagem));
+    document.getElementById('loading').classList.remove('show');
+    mostrarTela2();
+  }catch(e){
+    document.getElementById('loading').classList.remove('show');
+    console.error(e);toast('Erro ao gerar. Tente novamente.');
+  }
+}
+
+function setMsg(t){document.getElementById('loadMsg').textContent=t;}
+
+// ══ GPT via serverless (chave fica no Vercel, não exposta) ══
+async function gptDedicatoria(nomeF, nomePai, mem){
+  const r = await fetch('/api/dedicatoria', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nomeF, nomePai, memoria: mem })
+  });
+  if(!r.ok) throw new Error('GPT ' + r.status);
+  return r.json();
+}
+
+// ══ CANVAS SLIDE 1080x1080 ══
+async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
+  const S=1080,c=document.createElement('canvas');
+  c.width=S;c.height=S;
+  const x=c.getContext('2d');
+
+  // Fundo
+  x.fillStyle=m.bg;x.fillRect(0,0,S,S);
+
+  if(tipo==='foto'&&fotoUrl){
+    const img=await loadImg(fotoUrl);
+    // Área da foto — sem distorção, fit-cover
+    const ax=50,ay=60,aw=S-100,ah=740;
+    const sc=Math.max(aw/img.width,ah/img.height);
+    const iw=img.width*sc,ih=img.height*sc;
+    x.save();
+    x.beginPath();rrect(x,ax,ay,aw,ah,16);x.clip();
+    x.drawImage(img,ax+(aw-iw)/2,ay+(ah-ih)/2,iw,ih);
+    // Gradiente na base da foto
+    const g=x.createLinearGradient(0,ay+ah-220,0,ay+ah);
+    g.addColorStop(0,'transparent');g.addColorStop(1,m.bg+'f0');
+    x.fillStyle=g;x.fillRect(ax,ay+ah-260,aw,260);
+    x.restore();
+  }
+
+  // Borda dupla decorativa
+  x.strokeStyle=m.brd;x.lineWidth=3;rrect(x,28,28,S-56,S-56,22);x.stroke();
+  x.strokeStyle=m.brd;x.lineWidth=.8;x.globalAlpha=.4;
+  rrect(x,42,42,S-84,S-84,14);x.stroke();x.globalAlpha=1;
+
+  // Ornamento topo
+  x.fillStyle=m.brd;x.font='32px serif';x.textAlign='center';
+  x.fillText('✦',S/2,78);
+
+  if(tipo==='capa'){
+    x.fillStyle=m.tx;
+    x.font=`italic 600 ${S*.11}px Cormorant Garamond,serif`;x.textAlign='center';
+    x.fillText(nomePai,S/2,S/2-30);
+    x.fillStyle=m.brd;x.font='32px serif';x.fillText('✦',S/2,S/2+30);
+    x.fillStyle=m.tx;
+    x.font=`italic 300 38px Cormorant Garamond,serif`;
+    x.fillText('Para sempre em nosso coração',S/2,S/2+90);
+    x.fillStyle=m.brd;x.font='26px sans-serif';
+    x.fillText('de '+nomeF,S/2,S/2+140);
+  }
+
+  if(tipo==='foto'&&texto){
+    // Sombra para legibilidade sobre qualquer foto
+    x.shadowColor='rgba(0,0,0,0.8)';
+    x.shadowBlur=20;
+    x.shadowOffsetY=2;
+    x.fillStyle=m.tx;
+    x.font=`italic 300 52px Cormorant Garamond,serif`;
+    x.textAlign='center';
+    wrapTxt(x,texto,S/2,870,S-80,58);
+    x.shadowBlur=0; x.shadowOffsetY=0;
+  }
+
+  if(tipo==='fim'){
+    // Sombra em texto do encerramento
+    x.shadowColor='rgba(0,0,0,0.6)'; x.shadowBlur=16;
+    x.fillStyle=m.tx;
+    x.font=`italic 300 52px Cormorant Garamond,serif`;x.textAlign='center';
+    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-30,S-120,64);
+    x.shadowBlur=0;
+    x.fillStyle=m.brd;x.font='30px serif';x.fillText('✦',S/2,S/2+80);
+    x.fillStyle=m.tx;x.font=`600 38px Cormorant Garamond,serif`;
+    x.fillText(nomePai,S/2,S/2+130);
+  }
+
+  // SEM rodapé — removido
+
+  return c;
+}
+
+function loadImg(url){
+  return new Promise((res,rej)=>{
+    const i=new Image();i.crossOrigin='anonymous';
+    i.onload=()=>res(i);i.onerror=rej;i.src=url;
+  });
+}
+
+function rrect(x,rx,ry,w,h,r){
+  x.beginPath();x.roundRect(rx,ry,w,h,r);
+}
+
+function wrapTxt(x,t,cx,cy,mw,lh){
+  const words=t.split(' ');let line='',y=cy;
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(x.measureText(test).width>mw&&line){
+      x.fillText(line,cx,y);line=w;y+=lh;
+    }else{line=test;}
+  }
+  if(line)x.fillText(line,cx,y);
+}
+
+// ══ CARROSSEL FLUIDO ══
+let carouselBuilt = false;
+
+function construirCarrossel(){
+  const track    = document.getElementById('carouselTrack');
+  const viewport = document.getElementById('carouselViewport');
+  if(!track || !slides.length) return;
+
+  const cssSize = viewport.getBoundingClientRect().width || 340;
+  const dpr     = Math.min(window.devicePixelRatio || 1, 3);
+
+  track.innerHTML = '';
+  // Largura total do track = N slides
+  track.style.width = (cssSize * slides.length) + 'px';
+
+  slides.forEach((slide, i) => {
+    const canvas  = document.createElement('canvas');
+    const pxSize  = Math.round(cssSize * dpr);
+    canvas.width  = pxSize;
+    canvas.height = pxSize;
+    canvas.style.cssText = `width:${cssSize}px;height:${cssSize}px;flex-shrink:0;display:block`;
+    const ctx = canvas.getContext('2d');
+    ctx.save(); ctx.scale(dpr, dpr);
+    ctx.drawImage(slide, 0, 0, cssSize, cssSize);
+
+    // Marca d'água
+    const m = MOLDURAS[molduraSel];
+    const bgClaro = m.bg==='#F5EFE6';
+    const wmCor   = bgClaro ? 'rgba(0,0,0,0.11)' : 'rgba(255,255,255,0.11)';
+    ctx.translate(cssSize/2, cssSize/2);
+    ctx.rotate(-Math.PI/5);
+    ctx.fillStyle = wmCor;
+    ctx.font = `bold ${cssSize*0.05}px sans-serif`;
+    ctx.textAlign = 'center';
+    [[-cssSize*.28,0],[0,0],[cssSize*.28,0],[-cssSize*.14,cssSize*.22],[cssSize*.14,-cssSize*.22]]
+      .forEach(([x,y])=>{ ctx.fillText('parasemprepai.com',x,y); });
+    ctx.restore();
+
+    // Sem cadeado — marca d'água já protege
+    track.appendChild(canvas);
+  });
+
+  carouselBuilt = true;
+  irParaSlide(0, false);
+  renderDots();
+}
+
+function irParaSlide(idx, animado=true){
+  const track    = document.getElementById('carouselTrack');
+  const viewport = document.getElementById('carouselViewport');
+  if(!track || !viewport) return;
+  slideAtual = Math.max(0, Math.min(slides.length - 1, idx));
+  const cssSize  = viewport.getBoundingClientRect().width || 340;
+  track.style.transition = animado
+    ? 'transform .38s cubic-bezier(.4,0,.2,1)'
+    : 'none';
+  track.style.transform = `translateX(-${slideAtual * cssSize}px)`;
+  renderDots();
+}
+
+function renderDots(){
+  const dots = document.getElementById('instaDots');
+  if(!dots) return;
+  dots.innerHTML = slides.map((_,i)=>
+    `<div class="insta-dot ${i===slideAtual?'ativo':''}"></div>`
+  ).join('');
+}
+
+// ══ PREVIEW INSTAGRAM ══
+let slideAtual = 0;
+
+function mostrarTela2(){
+  // Esconde bottom bars da etapa 1-3
+  [1,2,3].forEach(i=>{const b=document.getElementById(`bottomBar${i}`);if(b)b.style.display='none';});
+  document.getElementById('tela1').style.display='none';
+  document.getElementById('tela2').style.display='block';
+  slideAtual = 0;
+
+  // Atualiza perfil fake com dados da pessoa
+  const nomeF   = document.getElementById('nomeF')?.value.trim() || 'você';
+  const nomePai = document.getElementById('nomePai')?.value.trim() || 'Pai';
+  // Username: nome em minúsculo sem espaço
+  const username = nomeF.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_');
+  // Inicial para o avatar
+  const inicial = nomeF.charAt(0).toUpperCase();
+
+  const av = document.getElementById('instaAvatar');
+  if(av){ av.textContent = inicial; av.style.fontSize='13px'; }
+  const un = document.getElementById('instaUserName');
+  if(un) un.textContent = username;
+  const lu = document.getElementById('instaLegendaUser');
+  if(lu) lu.textContent = username;
+  const leg = document.getElementById('instaLegenda');
+  if(leg) leg.textContent = `🕊️ Pai, ${nomePai}, para sempre no meu coração`;
+
+  // Constrói o carrossel após o DOM estar visível
+  setTimeout(()=>{ construirCarrossel(); initSwipe(); },80);
+  // Mostra bottom bar da preview
+  const bbp=document.getElementById('bottomBarPreview');
+  if(bbp) bbp.style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderInstaPreview(){
+  // Compatibilidade — usa carrossel
+  if(carouselBuilt) irParaSlide(slideAtual, true);
+}
+
+function navSlide(dir){ irParaSlide(slideAtual+dir); }
+
+// ── SWIPE FLUIDO NO CARROSSEL ──
+let swipeStartX=0, swipeStartY=0, swipeDragging=false;
+
+function initSwipe(){
+  const vp = document.getElementById('carouselViewport');
+  if(!vp || vp._swipeInit) return;
+  vp._swipeInit = true;
+
+  vp.addEventListener('touchstart', e=>{
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+    swipeDragging = true;
+    // Remove transição durante o drag para seguir o dedo
+    const tr = document.getElementById('carouselTrack');
+    if(tr) tr.style.transition='none';
+  }, {passive:true});
+
+  vp.addEventListener('touchmove', e=>{
+    if(!swipeDragging) return;
+    const dx = e.touches[0].clientX - swipeStartX;
+    const dy = e.touches[0].clientY - swipeStartY;
+    if(Math.abs(dx) < Math.abs(dy)) return; // scroll vertical — ignora
+    const cssSize = vp.getBoundingClientRect().width || 340;
+    const base    = slideAtual * cssSize;
+    const tr      = document.getElementById('carouselTrack');
+    if(tr) tr.style.transform = `translateX(${-base + dx}px)`;
+  }, {passive:true});
+
+  vp.addEventListener('touchend', e=>{
+    if(!swipeDragging) return;
+    swipeDragging = false;
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){
+      irParaSlide(dx < 0 ? slideAtual+1 : slideAtual-1, true);
+      // Esconde dica de swipe após primeiro uso
+      const hint = document.getElementById('swipeHint');
+      if(hint) hint.style.display='none';
+    } else {
+      irParaSlide(slideAtual, true); // volta para posição
+    }
+  }, {passive:true});
+
+  // Mouse (desktop)
+  vp.addEventListener('mousedown', e=>{
+    swipeStartX=e.clientX; swipeDragging=true;
+    const tr=document.getElementById('carouselTrack');
+    if(tr) tr.style.transition='none';
+  });
+  window.addEventListener('mouseup', e=>{
+    if(!swipeDragging) return;
+    swipeDragging=false;
+    const dx=e.clientX-swipeStartX;
+    if(Math.abs(dx)>50) irParaSlide(dx<0?slideAtual+1:slideAtual-1,true);
+    else irParaSlide(slideAtual,true);
+  });
+}
+
+function renderMiniaturasScroll(){ /* miniaturas removidas */ }
+
+// ══ PAGAMENTO PIX INLINE ══
+let pedidoId='', pixStr='', pollingTimer=null, paymentMPId=null;
+
+async function iniciarPagamento(){
+  const btn=document.getElementById('btnPagar');
+  btn.disabled=true; btn.textContent='Gerando PIX...';
+  pedidoId = 'PSP'+Date.now().toString(36).toUpperCase();
+  const nomeF  = document.getElementById('nomeF')?.value.trim()||'';
+  const nomePai= document.getElementById('nomePai')?.value.trim()||'';
+  const emailF = document.getElementById('emailF')?.value.trim()||usuarioAtual?.email||'';
+  registrarPedido({ id:pedidoId, nomeF, nomePai, email:emailF, total:11.99, status:'pending', ts:Date.now() });
+  try{
+    const r=await fetch('/api/criar-pagamento',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ pedidoId, nomeF, nomePai, email:emailF })
+    });
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.erro||'Erro MP');
+    paymentMPId=data.paymentId;
+    pixStr=data.qrCode||'';
+    document.getElementById('btnPagar').style.display='none';
+    document.getElementById('pixArea').style.display='block';
+    if(data.qrCodeBase64){
+      document.getElementById('qrImg').src='data:image/png;base64,'+data.qrCodeBase64;
+      document.getElementById('qrBox').style.display='block';
+    }
+    if(pixStr){
+      document.getElementById('pixCodigoTxt').textContent=pixStr;
+      document.getElementById('pixCodigo').style.display='block';
+    }
+    document.getElementById('statusTxt').textContent='Aguardando seu pagamento...';
+    iniciarPolling();
+  }catch(e){
+    btn.disabled=false; btn.textContent='Eternizar agora por R$11,99 ✦';
+    toast('Erro ao gerar PIX. Tente novamente.'); console.error(e);
+  }
+}
+
+function copiarPix(){
+  if(!pixStr) return;
+  navigator.clipboard?.writeText(pixStr).catch(()=>{
+    const el=document.getElementById('pixCodigoTxt');
+    const r=document.createRange(); r.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+  });
+  toast('✦ Código PIX copiado!');
+}
+
+function iniciarPolling(){
+  if(pollingTimer) clearInterval(pollingTimer);
+  pollingTimer=setInterval(verificarStatus,5000);
+}
+
+async function verificarStatus(){
+  if(!pedidoId) return;
+  try{
+    const r=await fetch(`/api/webhook?pedido=${pedidoId}`);
+    const d=await r.json();
+    if(d.status==='approved'){
+      clearInterval(pollingTimer);
+      registrarPedido({ id:pedidoId, status:'approved', paymentId:paymentMPId });
+      liberarDownload();
+    } else if(d.status==='rejected'){
+      clearInterval(pollingTimer);
+      document.getElementById('statusTxt').textContent='Não foi desta vez. Tente novamente.';
+      document.getElementById('btnPagar').style.display='block';
+      document.getElementById('btnPagar').disabled=false;
+      document.getElementById('btnPagar').textContent='Tentar novamente';
+      document.getElementById('pixArea').style.display='none';
+    }
+  }catch(e){ /* silencioso */ }
+}
+
+async function confirmarManual(){
+  document.getElementById('statusTxt').textContent='Verificando...';
+  await verificarStatus();
+  let n=0;
+  const t=setInterval(async()=>{ n++; await verificarStatus(); if(n>=3) clearInterval(t); },2000);
+}
+
+function liberarDownload(){
+  clearInterval(pollingTimer);
+  document.getElementById('tela2').style.display='none';
+  document.getElementById('telaPagamento').style.display='none';
+  document.getElementById('tela3').classList.add('show');
+  // Atualiza texto da pasta
+  const pt = document.getElementById('pastaTxt');
+  if(pt) pt.textContent = `${slides.length} slides prontos para postar`;
+  // Reconstrói carrossel sem cadeados
+  carouselBuilt=false;
+  slides.forEach=slides.forEach; // mantém slides
+  // força rebuilt sem cadeado
+  const trackEl=document.getElementById('carouselTrack');
+  if(trackEl){ const canvases=trackEl.querySelectorAll('canvas'); canvases.forEach((_,i)=>{ if(i>0){ const vp=document.getElementById('carouselViewport'); const css=vp?.getBoundingClientRect().width||340; const dpr=Math.min(window.devicePixelRatio||1,3); _.width=Math.round(css*dpr); _.height=Math.round(css*dpr); _.style.width=css+'px'; _.style.height=css+'px'; const ctx=_.getContext('2d'); ctx.scale(dpr,dpr); ctx.drawImage(slides[i],0,0,css,css); }}); }
+  window.scrollTo({top:0,behavior:'smooth'});
+  toast('✦ Carrossel liberado!');
+  slideAtual=0; irParaSlide(0,false);
+}
+
+// ══ ZIP ══
+async function baixarZIP(){
+  toast('Preparando...');
+  if(typeof JSZip==='undefined'){
+    await new Promise(res=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload=res;document.head.appendChild(s);
+    });
+  }
+  const zip=new JSZip();
+  const pasta=zip.folder('Para_Sempre_Pai');
+  for(let i=0;i<slides.length;i++){
+    const blob=await new Promise(r=>slides[i].toBlob(r,'image/jpeg',.92));
+    const nome=i===0?'01_capa':i===slides.length-1?`0${i+1}_mensagem`:`0${String(i+1).padStart(2,'0')}_foto`;
+    pasta.file(nome+'.jpg',blob);
+  }
+  pasta.file('COMO_POSTAR.txt',
+    'COMO POSTAR NO INSTAGRAM\n\n1. Abra o Instagram\n2. Toque em + → Publicação\n3. Ícone de múltiplas fotos\n4. Selecione todas em ordem\n5. Publique com uma legenda ❤️');
+  const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='Para_Sempre_Pai.zip';a.click();
+  toast('Download iniciado ✦');
+}
+
+// ══ GALERIA — MEUS SLIDES ══
+let galeriaUsuario = null;
+let galeriaSlidesCache = []; // slides em canvas da sessão atual
+
+function abrirGaleria(){
+  // Verifica se tem compra aprovada
+  const jaAprovado = usuarioAtual && (() => {
+    const users = lerUsuarios();
+    const u = users[usuarioAtual.email];
+    return (u?.compras||[]).some(c=>c.status==='approved');
+  })();
+
+  if(jaAprovado && slides.length > 0){
+    galeriaUsuario     = usuarioAtual;
+    galeriaSlidesCache = slides;
+    mostrarSlidesGaleria();
+  } else if(jaAprovado){
+    galeriaUsuario     = usuarioAtual;
+    galeriaSlidesCache = slides;
+    mostrarSlidesGaleria();
+  } else {
+    mostrarEstadoGaleria('login');
+  }
+  document.getElementById('galeriaOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharGaleria(){
+  document.getElementById('galeriaOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function mostrarEstadoGaleria(estado){
+  document.getElementById('galeriaLogin').style.display  = estado==='login'  ? 'block' : 'none';
+  document.getElementById('galeriaSlides').style.display = estado==='slides' ? 'block' : 'none';
+  document.getElementById('galeriaVazio').style.display  = estado==='vazio'  ? 'block' : 'none';
+}
+
+function buscarSlides(){
+  const contato = (document.getElementById('galeriaContato').value||'').trim().toLowerCase();
+  if(!contato){ document.getElementById('galeriaErro').textContent='Digite seu e-mail ou telefone'; return; }
+
+  const users = lerUsuarios();
+  let email = null;
+
+  if(users[contato]){ email = contato; }
+  else {
+    const tel = contato.replace(/\D/g,'');
+    for(const [e,u] of Object.entries(users)){
+      const uTel = (u.tel||'').replace(/\D/g,'');
+      if(uTel && uTel===tel){ email=e; break; }
+    }
+  }
+
+  if(!email || !users[email]){
+    document.getElementById('galeriaErro').textContent='Nenhuma compra encontrada para este contato';
+    return;
+  }
+
+  const user    = users[email];
+  // ← SÓ COMPRAS APROVADAS
+  const compras = (user.compras||[]).filter(c=>c.status==='approved');
+
+  if(!compras.length){
+    document.getElementById('galeriaErro').textContent='Nenhuma compra confirmada encontrada';
+    return;
+  }
+
+  galeriaUsuario     = { email, nome: user.nome, tel: user.tel };
+  galeriaSlidesCache = slides;
+  salvarSessao(email);
+  usuarioAtual = galeriaUsuario;
+  mostrarSlidesGaleria();
+}
+
+// ══ COMPARTILHAR INSTAGRAM ══
+async function compartilharInstagram(){
+  if(!slides.length){ toast('Nenhum slide gerado'); return; }
+
+  // Web Share API — funciona no mobile
+  if(navigator.share && navigator.canShare){
+    try{
+      const blobs = await Promise.all(
+        slides.slice(0,5).map(c=>new Promise(r=>c.toBlob(r,'image/jpeg',.92)))
+      );
+      const files = blobs.map((b,i)=>new File([b],`para_sempre_pai_${i+1}.jpg`,{type:'image/jpeg'}));
+      if(navigator.canShare({ files })){
+        await navigator.share({
+          files,
+          title:'Para Sempre Pai',
+          text:'Uma homenagem feita com amor 🕊️'
+        });
+        return;
+      }
+    }catch(e){ if(e.name!=='AbortError') console.error(e); return; }
+  }
+
+  // Fallback: baixa e orienta abrir no Instagram
+  toast('Baixando slides para postar no Instagram...');
+  await baixarZIP();
+  setTimeout(()=>{
+    toast('Abra o Instagram → + → selecione os slides em ordem');
+  }, 1500);
+}
+
+function mostrarSlidesGaleria(){
+  mostrarEstadoGaleria('slides');
+
+  const primeiroNome = (galeriaUsuario?.nome||'').split(' ')[0];
+  document.getElementById('galeriaNome').textContent = primeiroNome ? `Olá, ${primeiroNome} 🕊️` : 'Seus slides';
+
+  const users   = lerUsuarios();
+  const user    = users[galeriaUsuario?.email]||{};
+  const compras = (user.compras||[]).filter(c=>c.status==='approved'||c.status==='pago');
+  document.getElementById('galeriaSub').textContent = `${compras.length} compra(s) · deslize para ver`;
+
+  const grid = document.getElementById('galeriaSlidesGrid');
+  grid.innerHTML = '';
+
+  // Se tem slides na sessão atual, mostra eles
+  if(galeriaSlidesCache.length > 0){
+    galeriaSlidesCache.forEach((c,i)=>{
+      const div = document.createElement('div');
+      div.className = 'galeria-slide';
+      const mini = document.createElement('canvas');
+      const size = Math.floor((window.innerWidth - 56) / 2);
+      mini.width = size; mini.height = size;
+      mini.getContext('2d').drawImage(c, 0, 0, size, size);
+      div.appendChild(mini);
+      const num = document.createElement('div');
+      num.className = 'galeria-slide-num';
+      num.textContent = `${i+1}/${galeriaSlidesCache.length}`;
+      div.appendChild(num);
+      div.onclick = () => baixarSlideUnico(i);
+      grid.appendChild(div);
+    });
+  } else {
+    // Sem slides em memória — mostra mensagem para regenerar
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:24px 0">
+      <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.7">
+        Seus slides foram gerados em outra sessão.<br>
+        Para baixar novamente, <strong style="color:var(--ouro)">refaça o carrossel gratuitamente</strong><br>
+        — o pagamento já está confirmado.
+      </div>
+    </div>`;
+  }
+}
+
+async function baixarSlideUnico(i){
+  if(!galeriaSlidesCache[i]) return;
+  const blob = await new Promise(r=>galeriaSlidesCache[i].toBlob(r,'image/jpeg',.92));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Para_Sempre_Pai_slide_${String(i+1).padStart(2,'0')}.jpg`;
+  a.click();
+  toast('✦ Slide baixado!');
+}
+
+async function baixarZIPGaleria(){
+  if(!galeriaSlidesCache.length){ toast('Refaça o carrossel para baixar'); return; }
+  await baixarZIP();
+}
+
+function voltarLoginGaleria(){
+  document.getElementById('galeriaErro').textContent='';
+  document.getElementById('galeriaContato').value='';
+  mostrarEstadoGaleria('login');
+}
+
+function sairGaleria(){
+  galeriaUsuario = null;
+  usuarioAtual   = null;
+  salvarSessao(null);
+  galeriaSlidesCache = [];
+  voltarLoginGaleria();
+  toast('Sessão encerrada');
+}
+
+// Screenshot iOS (via visibilitychange)
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='hidden') mostrarTelaAntiPrint();
+});
+
+// ══ FUNÇÕES TELA 2 ══
+function irParaPagamento(){
+  document.getElementById('bottomBarPreview').style.display='none';
+  document.getElementById('tela2').style.display='none';
+  document.getElementById('telaPagamento').style.display='none';
+  document.getElementById('telaPagamento').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function voltarPreview(){
+  document.getElementById('telaPagamento').style.display='none';
+  document.getElementById('tela2').style.display='block';
+  document.getElementById('bottomBarPreview').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function refazerTudo(){
+  if(!confirm('Recomeçar do início? As fotos e slides atuais serão perdidos.')) return;
+  // Reset estado
+  fotos=[]; slides=[]; molduraSel=0; etapa=1; slideAtual=0;
+  document.getElementById('tela2').style.display='none';
+  document.getElementById('telaPagamento').style.display='none';
+  document.getElementById('tela1').style.display='block';
+  document.getElementById('bottomBarPreview').style.display='none';
+  // Reset etapa 1
+  [1,2,3].forEach(i=>{
+    const e=document.getElementById(`etapa${i}`);
+    if(e) e.style.display=i===1?'block':'none';
+    const b=document.getElementById(`bottomBar${i}`);
+    if(b) b.style.display=i===1?'block':'none';
+  });
+  [1,2,3,4].forEach(j=>document.getElementById(`s${j}`)?.classList.toggle('ativo',j===1));
+  // Limpa fotos grid
+  document.getElementById('fotosGrid').innerHTML='';
+  document.getElementById('fotosGrid').style.display='none';
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('fotoContador').textContent='0 / 10';
+  document.getElementById('btnP1').disabled=true;
+  // Limpa form
+  ['nomeF','emailF','telF','nomePai','memoria'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ INIT SESSÃO ══
+iniciarSessao();
+
+// ══ HELPERS ══
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);
+}
+// ══ PROTEÇÃO ANTI-PRINT ══
+// Tela preta ao tirar print
+function mostrarTelaAntiPrint(){
+  let overlay = document.getElementById('antiPrintOverlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'antiPrintOverlay';
+    overlay.style.cssText = [
+      'position:fixed','inset:0','background:#000','z-index:9999',
+      'display:flex','flex-direction:column','align-items:center',
+      'justify-content:center','gap:20px','padding:40px',
+      'text-align:center'
+    ].join(';');
+    overlay.innerHTML = `
+      <div style="font-size:48px">🕊️</div>
+      <div style="font-family:Cormorant Garamond,serif;font-size:28px;color:#C8A96E;line-height:1.2">
+        Feito com muito amor
+      </div>
+      <div style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;max-width:300px">
+        Prints perdem a qualidade e a magia desse momento.<br>
+        Para ter todos os slides em alta resolução,<br>
+        <strong style="color:#C8A96E">baixe seu carrossel completo.</strong>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.3);margin-top:8px">Toque para fechar</div>`;
+    overlay.onclick = ()=>{ overlay.style.display='none'; };
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+  setTimeout(()=>{ overlay.style.display='none'; }, 4000);
+}
+
+// CSS @media print
+const antiPrint=document.createElement('style');
+antiPrint.textContent='@media print{body{display:none!important}}';
+document.head.appendChild(antiPrint);
+
+// Bloqueia print screen e screenshot
+document.addEventListener('keyup', e=>{
+  if(e.key==='PrintScreen'){ navigator.clipboard?.writeText('').catch(()=>{}); mostrarTelaAntiPrint(); }
+});
+document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+let _lt=0;
+document.addEventListener('touchend',e=>{const n=Date.now();if(n-_lt<300)e.preventDefault();_lt=n;},{passive:false});
+</script>
+</body>
+</html>
