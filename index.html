@@ -2283,9 +2283,9 @@ async function confirmarManual(){
 
 function liberarDownload(){
   clearInterval(pollingTimer);
-  document.getElementById('tela2').style.display='none';
   document.getElementById('telaPagamento').style.display='none';
   document.getElementById('tela3').classList.add('show');
+  document.getElementById('editarFab')?.classList.remove('show');
   // Atualiza texto da pasta
   const pt = document.getElementById('pastaTxt');
   if(pt) pt.textContent = `${slides.length} slides prontos para postar`;
@@ -2512,8 +2512,8 @@ document.addEventListener('visibilitychange', ()=>{
 // ══ FUNÇÕES TELA 2 ══
 function irParaPagamento(){
   document.getElementById('bottomBarPreview').style.display='none';
+  document.getElementById('editarFab')?.classList.remove('show');
   document.getElementById('tela2').style.display='none';
-  document.getElementById('telaPagamento').style.display='none';
   document.getElementById('telaPagamento').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -2522,18 +2522,19 @@ function voltarPreview(){
   document.getElementById('telaPagamento').style.display='none';
   document.getElementById('tela2').style.display='block';
   document.getElementById('bottomBarPreview').style.display='block';
+  document.getElementById('editarFab')?.classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function refazerTudo(){
   if(!confirm('Recomeçar do início? As fotos e slides atuais serão perdidos.')) return;
-  // Reset estado
   fotos=[]; slides=[]; molduraSel=0; etapa=1; slideAtual=0;
+  frasesGeradas={frases:[],mensagem:''};
   document.getElementById('tela2').style.display='none';
   document.getElementById('telaPagamento').style.display='none';
   document.getElementById('tela1').style.display='block';
   document.getElementById('bottomBarPreview').style.display='none';
-  // Reset etapa 1
+  document.getElementById('editarFab')?.classList.remove('show');
   [1,2,3].forEach(i=>{
     const e=document.getElementById(`etapa${i}`);
     if(e) e.style.display=i===1?'block':'none';
@@ -2541,13 +2542,11 @@ function refazerTudo(){
     if(b) b.style.display=i===1?'block':'none';
   });
   [1,2,3,4].forEach(j=>document.getElementById(`s${j}`)?.classList.toggle('ativo',j===1));
-  // Limpa fotos grid
   document.getElementById('fotosGrid').innerHTML='';
   document.getElementById('fotosGrid').style.display='none';
   document.getElementById('uploadZone').style.display='block';
   document.getElementById('fotoContador').textContent='0 / 10';
   document.getElementById('btnP1').disabled=true;
-  // Limpa form
   ['nomeF','emailF','telF','nomePai','memoria'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
