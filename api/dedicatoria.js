@@ -27,25 +27,40 @@ export default async function handler(req, res) {
         messages: [{
           role: 'user',
           content: `Você é ${nomeF} e quer homenagear ${artigo} ${tipo} ${nomePai} que já faleceu.
-Escreva frases curtas, emocionantes e em PRIMEIRA PESSOA — como se você estivesse falando DIRETAMENTE com ${pronome}.
 ${memoria ? `Memória especial: ${memoria}` : ''}
 
-CORRETO: "${tipo}, te amo para sempre.", "Sinto sua falta todo dia, ${tipo}.", "Obrigado por tudo que me ensinou."
-ERRADO: "${nomeF} ama ${artigo} ${tipo}.", "${nomePai} é lembrado com carinho."
+Escreva 7 frases curtas e MUITO variadas em primeira pessoa para slides de foto.
+Cada frase deve ter um SENTIMENTO DIFERENTE e uma ESTRUTURA DIFERENTE.
+
+REGRA MAIS IMPORTANTE: NÃO repita a palavra "${tipo}" mais de 1 vez no total das 7 frases.
+Use "você", "teu", "tua", "seu", "sua", "te" para se referir à pessoa.
+
+Distribua assim:
+- 2 frases sobre saudade
+- 2 frases sobre amor eterno  
+- 2 frases sobre gratidão
+- 1 frase sobre memória/legado
+
+EXEMPLOS PERFEITOS:
+"A saudade dói, mas o amor cura."
+"Você vive em cada memória que guardo."
+"Te carrego no coração para sempre."
+"Obrigado por tudo que me ensinou."
+"Sua ausência deixou um espaço imenso."
+"O amor que você me deu não tem fim."
+"Nunca esquecerei seu sorriso e seu abraço."
 
 Responda APENAS em JSON sem markdown:
 {
   "frases": ["frase1","frase2","frase3","frase4","frase5","frase6","frase7"],
-  "mensagem": "mensagem final de 2 linhas em primeira pessoa, de ${nomeF} para ${nomePai}"
+  "mensagem": "mensagem final de 2 linhas emocionante mencionando ${tipo} e ${nomePai}, assinada por ${nomeF}"
 }
 
-Regras OBRIGATÓRIAS:
-- SEMPRE em primeira pessoa — você fala COM ${pronome}
-- Use "${tipo}" com carinho nas frases (não o nome ${nomePai})
-- Máximo 8 palavras por frase
-- Português brasileiro
-- Frases que causam arrepio e lágrimas
-- Exemplos: "${tipo}, a saudade dói mas o amor cura.", "Você vive em mim, ${tipo}.", "Obrigado por ser ${artigo} herói.", "${tipo}, nunca vou te esquecer."`
+Regras adicionais:
+- Máximo 9 palavras por frase
+- Português brasileiro natural
+- NUNCA começar duas frases com a mesma palavra
+- A palavra "${tipo}" pode aparecer no MÁXIMO 1 vez nas 7 frases`
         }]
       })
     });
