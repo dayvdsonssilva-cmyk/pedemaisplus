@@ -903,7 +903,17 @@ h1 em{
     <button class="btn" onclick="irParaPagamento()" style="font-size:18px;padding:15px">
       Guardar essa memória 🕊️
     </button>
-    <button class="btn ghost" onclick="refazerTudo()" style="font-size:15px;padding:11px;margin-top:0">
+    <button onclick="abrirEditarFrases()" style="
+      width:100%;max-width:430px;display:block;margin:0 auto;
+      padding:11px;border-radius:12px;
+      background:rgba(200,169,110,.1);
+      border:1px solid rgba(200,169,110,.3);
+      color:var(--ouro);
+      font-family:'Playfair Display',serif;
+      font-size:15px;font-weight:500;
+      cursor:pointer;-webkit-tap-highlight-color:transparent;
+    ">✏️ Editar as frases</button>
+    <button class="btn ghost" onclick="refazerTudo()" style="font-size:14px;padding:10px;margin-top:0">
       ↩ Refazer do início
     </button>
   </div>
@@ -1092,10 +1102,7 @@ h1 em{
   </div>
 </div>
 
-<!-- ════ EDITAR FRASES FAB ════ -->
-<button class="editar-fab" id="editarFab" onclick="abrirEditarFrases()">
-  ✏️ Editar frases
-</button>
+<!-- ════ EDITAR FRASES FAB (removido — botão agora na bottom bar) ════ -->
 
 <!-- ════ MODAL EDITAR FRASES ════ -->
 <div class="editar-overlay" id="editarOverlay">
