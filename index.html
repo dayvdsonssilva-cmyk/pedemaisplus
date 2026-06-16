@@ -400,6 +400,7 @@ h1 em{
   box-shadow:0 8px 32px rgba(0,0,0,.5);
   user-select:none;
   -webkit-user-select:none;
+  /* 4:5 format */
 }
 .insta-post-header{
   padding:10px 12px;
@@ -420,7 +421,7 @@ h1 em{
 /* VIEWPORT do carrossel — janela de 1 slide */
 .insta-carousel-viewport{
   width:100%;
-  aspect-ratio:1;
+  aspect-ratio:4/5;
   overflow:hidden;
   position:relative;
   background:#000;
@@ -1043,7 +1044,7 @@ h1 em{
   </button>
 
   <button class="btn" onclick="baixarZIP()" style="margin-bottom:14px">⬇ Salvar no celular (PNG)</button>
-  <p style="font-size:10px;color:rgba(138,123,110,.4)">10 slides · 1080×1080px</p>
+  <p style="font-size:10px;color:rgba(138,123,110,.4)">10 slides · 1080×1350px · Formato 4:5</p>
 </div>
 </div>
 
@@ -1688,7 +1689,7 @@ function renderMolduras(){
   const g=document.getElementById('moldurasGrid');
   g.innerHTML=MOLDURAS.map((m,i)=>`
     <div class="moldura-opt ${i===molduraSel?'sel':''}" onclick="selMoldura(${i})" id="mopt${i}">
-      <canvas id="pm${i}" width="200" height="200"></canvas>
+      <canvas id="pm${i}" width="160" height="200"></canvas>
       <div class="moldura-nome">${m.n}</div>
     </div>`).join('');
   MOLDURAS.forEach((_,i)=>prevMoldura(i));
@@ -1698,10 +1699,10 @@ function prevMoldura(i){
   const m = MOLDURAS[i];
   const c = document.getElementById(`pm${i}`);
   const x = c.getContext('2d');
-  const S = 200;
+  const S = 160; const PH = 200;
 
   // Fundo
-  x.fillStyle=m.bg; x.fillRect(0,0,S,S);
+  x.fillStyle=m.bg; x.fillRect(0,0,S,PH);
 
   // Foto real (se tiver) como slide completo
   const fotoSrc = fotos.length ? (fotos[0].base64||fotos[0].url) : null;
@@ -1909,48 +1910,48 @@ async function gptDedicatoria(nomeF, nomePai, mem){
 
 // ══ CANVAS SLIDE 1080x1080 ══
 async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
-  const S=1080,c=document.createElement('canvas');
-  c.width=S;c.height=S;
+  const S=1080,H=1350,c=document.createElement('canvas');
+  c.width=S;c.height=H;
   const x=c.getContext('2d');
 
   // Fundo
-  x.fillStyle=m.bg;x.fillRect(0,0,S,S);
+  x.fillStyle=m.bg;x.fillRect(0,0,S,H);
 
   if(tipo==='foto'&&fotoUrl){
     const img=await loadImg(fotoUrl);
     // Área da foto — sem distorção, fit-cover
-    const ax=50,ay=60,aw=S-100,ah=740;
+    const ax=50,ay=60,aw=S-100,ah=900;
     const sc=Math.max(aw/img.width,ah/img.height);
     const iw=img.width*sc,ih=img.height*sc;
     x.save();
     x.beginPath();rrect(x,ax,ay,aw,ah,16);x.clip();
     x.drawImage(img,ax+(aw-iw)/2,ay+(ah-ih)/2,iw,ih);
     // Gradiente na base da foto
-    const g=x.createLinearGradient(0,ay+ah-220,0,ay+ah);
+    const g=x.createLinearGradient(0,ay+ah-280,0,ay+ah);
     g.addColorStop(0,'transparent');g.addColorStop(1,m.bg+'f0');
     x.fillStyle=g;x.fillRect(ax,ay+ah-260,aw,260);
     x.restore();
   }
 
   // Borda dupla decorativa
-  x.strokeStyle=m.brd;x.lineWidth=3;rrect(x,28,28,S-56,S-56,22);x.stroke();
+  x.strokeStyle=m.brd;x.lineWidth=3;rrect(x,28,28,S-56,H-56,22);x.stroke();
   x.strokeStyle=m.brd;x.lineWidth=.8;x.globalAlpha=.4;
-  rrect(x,42,42,S-84,S-84,14);x.stroke();x.globalAlpha=1;
+  rrect(x,42,42,S-84,H-84,14);x.stroke();x.globalAlpha=1;
 
   // Ornamento topo
   x.fillStyle=m.brd;x.font='32px serif';x.textAlign='center';
-  x.fillText('✦',S/2,78);
+  x.fillText('✦',S/2,72);
 
   if(tipo==='capa'){
     x.fillStyle=m.tx;
     x.font=`italic 600 ${S*.11}px Cormorant Garamond,serif`;x.textAlign='center';
-    x.fillText(nomePai,S/2,S/2-30);
-    x.fillStyle=m.brd;x.font='32px serif';x.fillText('✦',S/2,S/2+30);
+    x.fillText(nomePai,S/2,H/2-60);
+    x.fillStyle=m.brd;x.font='32px serif';x.fillText('✦',S/2,H/2+0);
     x.fillStyle=m.tx;
     x.font=`italic 300 38px Cormorant Garamond,serif`;
-    x.fillText('Para sempre em nosso coração',S/2,S/2+90);
+    x.fillText('Para sempre em nosso coração',S/2,H/2+60);
     x.fillStyle=m.brd;x.font='26px sans-serif';
-    x.fillText('de '+nomeF,S/2,S/2+140);
+    x.fillText('de '+nomeF,S/2,H/2+110);
   }
 
   if(tipo==='foto'&&texto){
@@ -1961,7 +1962,7 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
     x.font=`italic 300 48px Cormorant Garamond,serif`;
     x.textAlign='center';
     // Começa em 900 — mais para baixo, longe da foto
-    wrapTxt(x,texto,S/2,900,S-80,56,2); // máx 2 linhas
+    wrapTxt(x,texto,S/2,1050,S-80,56,2); // máx 2 linhas
     x.shadowBlur=0; x.shadowOffsetY=0;
   }
 
@@ -1969,19 +1970,15 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
     x.shadowColor='rgba(0,0,0,0.6)'; x.shadowBlur=16;
     x.fillStyle=m.tx;
     x.font=`italic 300 52px Cormorant Garamond,serif`;x.textAlign='center';
-    // Frase começa mais ao centro
-    wrapTxt(x,texto||'Com amor eterno.',S/2,S/2-60,S-120,64);
+    wrapTxt(x,texto||'Com amor eterno.',S/2,H/2-80,S-120,64);
     x.shadowBlur=0;
-    // Linha separadora
     x.strokeStyle=m.brd; x.lineWidth=1; x.globalAlpha=.3;
-    x.beginPath(); x.moveTo(S*.25,S*.78); x.lineTo(S*.75,S*.78); x.stroke();
+    x.beginPath(); x.moveTo(S*.25,H*.72); x.lineTo(S*.75,H*.72); x.stroke();
     x.globalAlpha=1;
-    // Ornamento
     x.fillStyle=m.brd; x.font='26px serif';
-    x.fillText('✦',S/2,S*.84);
-    // Nome bem embaixo, separado
+    x.fillText('✦',S/2,H*.78);
     x.fillStyle=m.tx; x.font=`600 32px Cormorant Garamond,serif`;
-    x.fillText(nomePai,S/2,S*.92);
+    x.fillText(nomePai,S/2,H*.85);
   }
 
   // SEM rodapé — removido
@@ -2088,27 +2085,28 @@ function construirCarrossel(){
   if(!track || !slides.length) return;
 
   const cssSize = viewport.getBoundingClientRect().width || 340;
+  const cssH    = Math.round(cssSize * 5/4); // 4:5
   const dpr     = Math.min(window.devicePixelRatio || 1, 3);
 
   track.innerHTML = '';
-  // Largura total do track = N slides
   track.style.width = (cssSize * slides.length) + 'px';
 
   slides.forEach((slide, i) => {
     const canvas  = document.createElement('canvas');
     const pxSize  = Math.round(cssSize * dpr);
+    const pxH = Math.round(cssH * dpr);
     canvas.width  = pxSize;
-    canvas.height = pxSize;
-    canvas.style.cssText = `width:${cssSize}px;height:${cssSize}px;flex-shrink:0;display:block`;
+    canvas.height = pxH;
+    canvas.style.cssText = `width:${cssSize}px;height:${cssH}px;flex-shrink:0;display:block`;
     const ctx = canvas.getContext('2d');
     ctx.save(); ctx.scale(dpr, dpr);
-    ctx.drawImage(slide, 0, 0, cssSize, cssSize);
+    ctx.drawImage(slide, 0, 0, cssSize, cssH);
 
     // Marca d'água
     const m = MOLDURAS[molduraSel];
     const bgClaro = m.bg==='#F5EFE6';
     const wmCor   = bgClaro ? 'rgba(0,0,0,0.11)' : 'rgba(255,255,255,0.11)';
-    ctx.translate(cssSize/2, cssSize/2);
+    ctx.translate(cssSize/2, cssH/2);
     ctx.rotate(-Math.PI/5);
     ctx.fillStyle = wmCor;
     ctx.font = `bold ${cssSize*0.05}px sans-serif`;
