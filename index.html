@@ -1753,10 +1753,11 @@ function _desenharOverlayPreview(x,m,S,fh){
 
   // Frase
   x.fillStyle=m.tx;
-  x.font=`italic ${S*.09}px Cormorant Garamond,serif`;
+  x.font=`italic ${S*.085}px Cormorant Garamond,serif`;
   x.textAlign='center';
-  const frase = document.getElementById('nomePai')?.value.trim() || 'Pai';
-  x.fillText(`Para sempre, ${frase}`, S/2, fh + (S-fh)*0.45);
+  const nomeDigitado = document.getElementById('nomePai')?.value.trim();
+  const frase = nomeDigitado ? `Para sempre, ${nomeDigitado}` : 'Sua frase aqui';
+  x.fillText(frase, S/2, fh + (S-fh)*0.45);
 
   // Ornamento base
   x.fillStyle=m.brd; x.font=`${S*.07}px serif`;
@@ -1823,9 +1824,11 @@ function mostrarPreviewMoldura(i){
     ctx.fillText('✦',S/2,S*.065);
     // Frase
     ctx.fillStyle=m.tx;
-    ctx.font=`italic ${S*.075}px Cormorant Garamond,serif`;
-    const nomePai = document.getElementById('nomePai')?.value.trim()||'Pai';
-    ctx.fillText(`Para sempre, ${nomePai}`,S/2,fh+(S-fh)*.4);
+    ctx.font=`italic ${S*.07}px Cormorant Garamond,serif`;
+    ctx.textAlign='center';
+    const nomeDigitadoG = document.getElementById('nomePai')?.value.trim();
+    const fraseG = nomeDigitadoG ? `Para sempre, ${nomeDigitadoG}` : 'Sua frase aqui';
+    ctx.fillText(fraseG,S/2,fh+(S-fh)*.4);
     // Ornamento base
     ctx.fillStyle=m.brd; ctx.font=`${S*.06}px serif`;
     ctx.fillText('✦',S/2,S*.95);
