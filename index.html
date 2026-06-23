@@ -2218,7 +2218,7 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto,idx){
 
   if(tipo==='foto'&&fotoUrl){
     const img=await loadImg(fotoUrl);
-    const v=1; // modelo fixo: FAIXA (foto emoldurada + frase no mesmo lugar)
+    const v=0; // modelo fixo: IMERSIVO (foto preenchendo todo o slide + frase sobreposta embaixo)
     const corFrase=claro?m.tx:'#FFFFFF';
     const drawCover=(dx,dy,dw,dh,r)=>{
       x.save();rrect(x,dx,dy,dw,dh,r||0.001);x.clip();
