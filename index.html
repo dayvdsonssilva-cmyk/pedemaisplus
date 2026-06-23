@@ -728,15 +728,201 @@ h1 em{
   flex-direction:column;
   gap:8px;
 }
+
+/* ═══════════════════════════════
+   REFINO VISUAL 2026
+═══════════════════════════════ */
+body{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+.eyebrow{letter-spacing:6px}
+.header-fixo{background:rgba(14,11,8,.78)}
+.header-logo{letter-spacing:1px}
+
+.card{
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(200,169,110,.06), transparent 60%),
+    rgba(200,169,110,.04);
+  border:1px solid rgba(200,169,110,.14);
+  border-radius:22px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 24px 60px -34px rgba(0,0,0,.85);
+}
+
+.tipo-btn{
+  transition:transform .15s ease, background .2s, border-color .2s, color .2s, box-shadow .2s;
+}
+.tipo-btn.ativo{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px -10px rgba(200,169,110,.65);
+}
+
+.step-dot{box-shadow:inset 0 0 0 1px rgba(200,169,110,.05)}
+.step.ativo .step-dot{box-shadow:0 0 24px rgba(200,169,110,.45)}
+
+.upload-zone{
+  border-radius:18px;
+  transition:.25s ease;
+}
+.upload-zone:hover{
+  border-color:rgba(200,169,110,.5);
+  background:rgba(200,169,110,.05);
+}
+
+.btn{
+  border-radius:14px;
+  letter-spacing:.4px;
+  box-shadow:
+    0 14px 34px -14px rgba(200,169,110,.6),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+.btn:not(:disabled):active{transform:translateY(1px) scale(.99)}
+
+.insta-post{
+  border-radius:20px;
+  box-shadow:
+    0 40px 90px -38px rgba(0,0,0,.9),
+    0 0 0 1px rgba(200,169,110,.09),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+.insta-avatar-ring{
+  background:linear-gradient(135deg,#C8A96E,#A8864A,#E8C98A);
+}
+.insta-dot.ativo{box-shadow:0 0 8px rgba(255,255,255,.5)}
+
+.moldura-opt{transition:transform .18s ease, box-shadow .2s, border-color .2s}
+.moldura-opt.sel{transform:translateY(-2px)}
+
+.pix-box,.slide-mini{border-radius:18px}
+.finp,.g-inp{border-radius:12px}
+
+/* ═══════════════════════════════════════════
+   REDESIGN 2.0 — EDITORIAL PREMIUM
+═══════════════════════════════════════════ */
+:root{
+  --ouro:#CDAE78;
+  --ouro-claro:#E8CF9E;
+  --branco:#F3ECDF;
+  --cinza:#9C9486;
+}
+html,body{background:#0C0A07}
+body{
+  background:
+    radial-gradient(125% 55% at 50% -8%, rgba(205,174,120,.12), transparent 55%),
+    linear-gradient(180deg,#17130D 0%, #0C0A07 52%);
+  background-attachment:fixed;
+  color:var(--branco);
+}
+#canvas-bg{opacity:.42}
+
+/* ── HEADER ── */
+.header-fixo{
+  padding:16px 22px;
+  background:linear-gradient(180deg, rgba(12,10,7,.9), rgba(12,10,7,0));
+  border-bottom:none;
+  backdrop-filter:blur(10px);
+}
+.header-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:23px;font-weight:600;letter-spacing:.4px;color:var(--branco);
+}
+.btn-meus-slides{
+  background:transparent;border:1px solid rgba(205,174,120,.32);
+  color:var(--ouro);font-family:'Inter',sans-serif;font-weight:500;
+  font-size:12px;letter-spacing:.4px;border-radius:100px;padding:8px 16px;
+}
+
+/* ── HERO EDITORIAL ── */
+.hero-novo{padding:100px 2px 6px;text-align:left}
+.hero-novo .kicker{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:3.5px;text-transform:uppercase;color:var(--ouro);
+  display:flex;align-items:center;gap:11px;margin-bottom:24px;
+}
+.hero-novo .kicker::before{content:'';width:28px;height:1px;background:var(--ouro);opacity:.6}
+.hero-novo .display{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;font-size:60px;line-height:.96;letter-spacing:-1.2px;
+  color:var(--branco);
+}
+.hero-novo .display span{font-style:italic;font-weight:600;color:var(--ouro)}
+.hero-novo .lead{
+  font-family:'Inter',sans-serif;font-size:14px;line-height:1.7;
+  color:var(--cinza);margin-top:20px;max-width:330px;
+}
+.hero-novo .rule{height:1px;background:linear-gradient(90deg,rgba(205,174,120,.4),transparent);margin:28px 0 20px}
+.hero-novo .select-label{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:var(--cinza);margin-bottom:14px;
+}
+
+/* ── CHIPS MINIMAIS ── */
+#tipoSelector{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;padding:0;margin-top:0!important}
+.tipo-btn{
+  background:transparent;
+  border:1px solid rgba(205,174,120,.22);
+  color:var(--cinza);
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:500;
+  padding:9px 17px;border-radius:100px;letter-spacing:.2px;
+}
+.tipo-btn.ativo,.tipo-btn:active{
+  background:var(--ouro);border-color:var(--ouro);color:#1A1409;font-weight:600;
+  transform:none;
+  box-shadow:0 10px 22px -10px rgba(205,174,120,.7);
+}
+
+/* ── STEPS ── */
+.steps{margin:32px 0 22px}
+.step-dot{
+  width:30px;height:30px;border:1px solid rgba(205,174,120,.3);
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--cinza);
+}
+.step.ativo .step-dot{background:var(--ouro);color:#1A1409;border-color:var(--ouro)}
+.step-nome{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:1px}
+
+/* ── CARDS ── */
+.card{
+  background:rgba(243,236,223,.022);
+  border:1px solid rgba(205,174,120,.13);
+  border-radius:18px;
+  box-shadow:none;
+  padding:26px 22px;
+}
+.slbl,.flbl{font-family:'Inter',sans-serif;font-weight:600;letter-spacing:1.4px;color:var(--cinza)}
+
+/* ── BOTÕES MODERNOS ── */
+.btn{
+  background:var(--ouro);
+  color:#171109;
+  font-family:'Inter',sans-serif!important;font-weight:600;font-size:16px;letter-spacing:.2px;
+  border-radius:14px;padding:18px;
+  box-shadow:0 16px 32px -16px rgba(205,174,120,.7);
+}
+.btn::before{display:none}
+.btn.ghost{background:transparent;border:1px solid rgba(205,174,120,.3);color:var(--ouro);box-shadow:none}
+
+/* ── INPUTS ── */
+.finp,.g-inp{
+  background:rgba(243,236,223,.03);border:1px solid rgba(205,174,120,.18);
+  border-radius:12px;color:var(--branco);font-family:'Inter',sans-serif;
+}
+.finp:focus,.g-inp:focus{border-color:rgba(205,174,120,.5)}
+
+/* ── PREVIEW (tela 2) ── */
+.eyebrow{font-family:'Inter',sans-serif;font-weight:600;letter-spacing:3px;font-size:11px;text-transform:uppercase}
+.insta-post{border-radius:20px}
 </style>
 </head>
 <body>
 
 <!-- HEADER FIXO -->
 <div class="header-fixo">
-  <div class="header-logo">🕊️ Eternize IA</div>
+  <div class="header-logo">Eternize IA</div>
   <button class="btn-meus-slides" onclick="abrirGaleria()">
-    🖼️ Meus Slides
+    Meus Slides
   </button>
 </div>
 
@@ -769,33 +955,30 @@ h1 em{
 <div id="tela1">
 <div class="page">
 
-  <!-- HERO COMPACTO -->
-  <div style="padding-top:70px;padding-bottom:12px;text-align:center">
-    <div class="eyebrow" style="margin-bottom:8px">Homenagem com IA · 2026</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:var(--branco);line-height:1">
-      Eternize quem<br><em style="color:var(--ouro);font-size:52px;font-weight:600">você ama</em>
-    </div>
-    <p style="font-size:12px;color:var(--cinza);margin-top:8px;line-height:1.6">
-      Um carrossel para o Instagram.<br>Feito com amor, guardado para sempre.
-    </p>
-    <div class="divider" style="margin:14px 0 4px"><span>✦</span></div>
+  <!-- HERO EDITORIAL -->
+  <div class="hero-novo">
+    <div class="kicker">Homenagem em carrossel</div>
+    <h1 class="display">Eternize<br>quem você<br><span>ama</span>.</h1>
+    <p class="lead">Dez fotos viram um carrossel para o Instagram — feito com cuidado e guardado para sempre.</p>
+    <div class="rule"></div>
 
     <!-- SELETOR DE HOMENAGEADO -->
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 12px;margin-top:4px" id="tipoSelector">
-      <button onclick="selecionarTipo('Pai','👨')"      class="tipo-btn ativo" id="tipo_pai">👨 Pai</button>
-      <button onclick="selecionarTipo('Mãe','👩')"      class="tipo-btn"       id="tipo_mae">👩 Mãe</button>
-      <button onclick="selecionarTipo('Avô','👴')"      class="tipo-btn"       id="tipo_avo">👴 Avô</button>
-      <button onclick="selecionarTipo('Avó','👵')"      class="tipo-btn"       id="tipo_avo2">👵 Avó</button>
-      <button onclick="selecionarTipo('Tio','🧔')"      class="tipo-btn"       id="tipo_tio">🧔 Tio</button>
-      <button onclick="selecionarTipo('Tia','👩')"      class="tipo-btn"       id="tipo_tia">🧕 Tia</button>
-      <button onclick="selecionarTipo('Irmão','🧑')"    class="tipo-btn"       id="tipo_irmao">🧑 Irmão</button>
-      <button onclick="selecionarTipo('Irmã','👧')"     class="tipo-btn"       id="tipo_irma">👧 Irmã</button>
-      <button onclick="selecionarTipo('Marido','👨')"  class="tipo-btn"       id="tipo_marido">👨 Marido</button>
-      <button onclick="selecionarTipo('Esposa','👩')"  class="tipo-btn"       id="tipo_esposa">👩 Esposa</button>
-      <button onclick="selecionarTipo('Filho','👦')"   class="tipo-btn"       id="tipo_filho">👦 Filho</button>
-      <button onclick="selecionarTipo('Filha','👧')"   class="tipo-btn"       id="tipo_filha">👧 Filha</button>
-      <button onclick="selecionarTipo('Amigo','🤝')"   class="tipo-btn"       id="tipo_amigo">🤝 Amigo</button>
-      <button onclick="selecionarTipo('Amiga','🤝')"   class="tipo-btn"       id="tipo_amiga">🤝 Amiga</button>
+    <div class="select-label">Para quem é a homenagem?</div>
+    <div id="tipoSelector">
+      <button onclick="selecionarTipo('Pai','👨')"      class="tipo-btn ativo" id="tipo_pai">Pai</button>
+      <button onclick="selecionarTipo('Mãe','👩')"      class="tipo-btn"       id="tipo_mae">Mãe</button>
+      <button onclick="selecionarTipo('Avô','👴')"      class="tipo-btn"       id="tipo_avo">Avô</button>
+      <button onclick="selecionarTipo('Avó','👵')"      class="tipo-btn"       id="tipo_avo2">Avó</button>
+      <button onclick="selecionarTipo('Tio','🧔')"      class="tipo-btn"       id="tipo_tio">Tio</button>
+      <button onclick="selecionarTipo('Tia','👩')"      class="tipo-btn"       id="tipo_tia">Tia</button>
+      <button onclick="selecionarTipo('Irmão','🧑')"    class="tipo-btn"       id="tipo_irmao">Irmão</button>
+      <button onclick="selecionarTipo('Irmã','👧')"     class="tipo-btn"       id="tipo_irma">Irmã</button>
+      <button onclick="selecionarTipo('Marido','👨')"  class="tipo-btn"       id="tipo_marido">Marido</button>
+      <button onclick="selecionarTipo('Esposa','👩')"  class="tipo-btn"       id="tipo_esposa">Esposa</button>
+      <button onclick="selecionarTipo('Filho','👦')"   class="tipo-btn"       id="tipo_filho">Filho</button>
+      <button onclick="selecionarTipo('Filha','👧')"   class="tipo-btn"       id="tipo_filha">Filha</button>
+      <button onclick="selecionarTipo('Amigo','🤝')"   class="tipo-btn"       id="tipo_amigo">Amigo</button>
+      <button onclick="selecionarTipo('Amiga','🤝')"   class="tipo-btn"       id="tipo_amiga">Amiga</button>
     </div>
   </div>
 
@@ -1893,7 +2076,7 @@ async function gerarCarrossel(){
       setMsg(`Processando foto ${i+1} de ${Math.min(fotos.length,7)}...`);
       // Usa base64 croppada se disponível, senão url original
       const fotoSrc = fotos[i].base64 || fotos[i].url;
-      slides.push(await gerarSlide(fotoSrc,'foto',m,nomePai,nomeF,ded.frases[i]||''));
+      slides.push(await gerarSlide(fotoSrc,'foto',m,nomePai,nomeF,ded.frases[i]||'',i));
     }
     setMsg('Finalizando...');
     slides.push(await gerarSlide(null,'fim',m,nomePai,nomeF,ded.mensagem));
@@ -1918,80 +2101,221 @@ async function gptDedicatoria(nomeF, nomePai, mem){
   return r.json();
 }
 
-// ══ CANVAS SLIDE 1080x1080 ══
-async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto){
+// ══ HELPERS DE DESENHO ══
+function hexA(hex,a){
+  const c=hex.replace('#','');
+  const r=parseInt(c.substr(0,2),16),g=parseInt(c.substr(2,2),16),b=parseInt(c.substr(4,2),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function ehClaro(hex){
+  const c=hex.replace('#','');
+  const r=parseInt(c.substr(0,2),16),g=parseInt(c.substr(2,2),16),b=parseInt(c.substr(4,2),16);
+  return (0.299*r+0.587*g+0.114*b)>140;
+}
+let _noiseTile=null;
+function getNoiseTile(){
+  if(_noiseTile) return _noiseTile;
+  const n=document.createElement('canvas'); n.width=150; n.height=190;
+  const nx=n.getContext('2d');
+  const id=nx.createImageData(n.width,n.height);
+  for(let i=0;i<id.data.length;i+=4){
+    const v=Math.random()*255;
+    id.data[i]=id.data[i+1]=id.data[i+2]=v;
+    id.data[i+3]=Math.random()*18;
+  }
+  nx.putImageData(id,0,0);
+  _noiseTile=n; return n;
+}
+function aplicarGrao(x,S,H){
+  x.save();
+  x.globalCompositeOperation='overlay';
+  x.globalAlpha=0.55;
+  const t=getNoiseTile();
+  for(let yy=0;yy<H;yy+=t.height) for(let xx=0;xx<S;xx+=t.width) x.drawImage(t,xx,yy);
+  x.restore();
+}
+function vinheta(x,S,H,cor,forte){
+  const g=x.createRadialGradient(S/2,H*0.44,H*0.18, S/2,H*0.5,H*0.80);
+  g.addColorStop(0, hexA(cor,0));
+  g.addColorStop(1, hexA(cor,forte));
+  x.fillStyle=g; x.fillRect(0,0,S,H);
+}
+function textoEspacado(x,t,cx,cy,esp){
+  const chars=[...t];
+  const widths=chars.map(c=>x.measureText(c).width+esp);
+  const total=widths.reduce((a,b)=>a+b,0)-esp;
+  let px=cx-total/2;
+  const prev=x.textAlign; x.textAlign='left';
+  chars.forEach((c,i)=>{ x.fillText(c,px,cy); px+=widths[i]; });
+  x.textAlign=prev;
+}
+function medirLinhas(x,t,mw,maxLinhas){
+  maxLinhas=maxLinhas||4;
+  const words=(t||'').trim().split(/\s+/); const lines=[]; let line='';
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(x.measureText(test).width>mw && line){ lines.push(line); line=w; }
+    else line=test;
+  }
+  if(line) lines.push(line);
+  if(lines.length>maxLinhas){ lines.length=maxLinhas; lines[maxLinhas-1]=lines[maxLinhas-1].replace(/[.,]?$/,'')+'…'; }
+  return lines;
+}
+function desenharLinhas(x,lines,cx,topY,lh){
+  lines.forEach((l,i)=>x.fillText(l,cx,topY+i*lh));
+  return topY+lines.length*lh;
+}
+function ajustarFonte(x,t,mw,peso,maxPx,fam){
+  let px=maxPx; x.font=`${peso} ${px}px ${fam}`;
+  while(x.measureText(t).width>mw && px>36){ px-=3; x.font=`${peso} ${px}px ${fam}`; }
+  return px;
+}
+function molduraFina(x,S,H,m){
+  const inset=44;
+  x.save();
+  x.strokeStyle=m.brd; x.globalAlpha=0.55; x.lineWidth=2;
+  rrect(x,inset,inset,S-inset*2,H-inset*2,10); x.stroke();
+  x.globalAlpha=0.30; x.lineWidth=1;
+  rrect(x,inset+11,inset+11,S-(inset+11)*2,H-(inset+11)*2,5); x.stroke();
+  x.restore();
+}
+
+// ══ FRASE (vários posicionamentos) ══
+function fraseBloco(x,texto,S,H,m,cor,modo,yRef,sobreFoto){
+  x.textAlign='center';
+  x.fillStyle=cor; x.font='italic 300 50px Cormorant Garamond,serif';
+  const lines=medirLinhas(x,texto,S-220,4);
+  const lh=64; const blocoH=(lines.length-1)*lh;
+  let startY;
+  if(modo==='baixo') startY=H*0.84-blocoH;
+  else if(modo==='topo') startY=H*0.17;
+  else startY=(yRef+H)/2 - blocoH/2 + 14;
+  // aspas decorativas
+  x.fillStyle=hexA(m.brd,0.85);
+  x.font='italic 120px Playfair Display,Georgia,serif';
+  x.fillText('\u201C',S/2,startY-56);
+  // frase
+  x.fillStyle=cor;
+  x.font='italic 300 50px Cormorant Garamond,serif';
+  if(sobreFoto){x.shadowColor='rgba(0,0,0,0.5)';x.shadowBlur=18;x.shadowOffsetY=2;}
+  desenharLinhas(x,lines,S/2,startY,lh);
+  x.shadowBlur=0;x.shadowOffsetY=0;
+  // tracinho
+  x.strokeStyle=m.brd;x.globalAlpha=0.6;x.lineWidth=1;
+  x.beginPath();x.moveTo(S/2-32,startY+blocoH+42);x.lineTo(S/2+32,startY+blocoH+42);x.stroke();x.globalAlpha=1;
+}
+
+// ══ CANVAS SLIDE 1080×1350 (4:5) — versão emotiva, com variações ══
+async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto,idx){
   const S=1080,H=1350,c=document.createElement('canvas');
   c.width=S;c.height=H;
   const x=c.getContext('2d');
+  const claro=ehClaro(m.bg);
 
-  // Fundo
-  x.fillStyle=m.bg;x.fillRect(0,0,S,H);
+  // Fundo base
+  x.fillStyle=m.bg; x.fillRect(0,0,S,H);
 
   if(tipo==='foto'&&fotoUrl){
     const img=await loadImg(fotoUrl);
-    // Área da foto — sem distorção, fit-cover
-    const ax=50,ay=60,aw=S-100,ah=900;
-    const sc=Math.max(aw/img.width,ah/img.height);
-    const iw=img.width*sc,ih=img.height*sc;
-    x.save();
-    x.beginPath();rrect(x,ax,ay,aw,ah,16);x.clip();
-    x.drawImage(img,ax+(aw-iw)/2,ay+(ah-ih)/2,iw,ih);
-    // Gradiente na base da foto
-    const g=x.createLinearGradient(0,ay+ah-280,0,ay+ah);
-    g.addColorStop(0,'transparent');g.addColorStop(1,m.bg+'f0');
-    x.fillStyle=g;x.fillRect(ax,ay+ah-260,aw,260);
-    x.restore();
+    const v=(((typeof idx==='number'?idx:0)%4)+4)%4;
+    const corFrase=claro?m.tx:'#FFFFFF';
+    const drawCover=(dx,dy,dw,dh,r)=>{
+      x.save();rrect(x,dx,dy,dw,dh,r||0.001);x.clip();
+      const sc=Math.max(dw/img.width,dh/img.height);
+      const iw=img.width*sc,ih=img.height*sc;
+      x.drawImage(img,dx+(dw-iw)/2,dy+(dh-ih)/2,iw,ih);
+      x.restore();
+    };
+
+    if(v===0){
+      // ① IMERSIVO — foto sangrando, frase embaixo
+      drawCover(0,0,S,H,0.001);
+      x.save();x.globalAlpha=0.10;x.fillStyle=m.bg;x.fillRect(0,0,S,H);x.restore();
+      let gt=x.createLinearGradient(0,0,0,H*0.30);gt.addColorStop(0,hexA(m.bg,0.5));gt.addColorStop(1,hexA(m.bg,0));x.fillStyle=gt;x.fillRect(0,0,S,H*0.30);
+      let gb=x.createLinearGradient(0,H*0.42,0,H);gb.addColorStop(0,hexA(m.bg,0));gb.addColorStop(0.55,hexA(m.bg,0.82));gb.addColorStop(1,hexA(m.bg,0.97));x.fillStyle=gb;x.fillRect(0,H*0.42,S,H*0.58);
+      vinheta(x,S,H,'#000000',0.38);
+      aplicarGrao(x,S,H);
+      if(texto) fraseBloco(x,texto,S,H,m,corFrase,'baixo',0,true);
+    } else if(v===1){
+      // ② FAIXA — foto emoldurada em cima, frase em área sólida embaixo
+      const top=72,fh=Math.round(H*0.60);
+      drawCover(70,top,S-140,fh,16);
+      x.strokeStyle=hexA(m.brd,0.5);x.lineWidth=1.5;rrect(x,70,top,S-140,fh,16);x.stroke();
+      aplicarGrao(x,S,H);
+      if(texto) fraseBloco(x,texto,S,H,m,m.tx,'faixa',top+fh,false);
+    } else if(v===2){
+      // ③ TOPO — frase no alto, foto preenchendo embaixo
+      drawCover(0,0,S,H,0.001);
+      x.save();x.globalAlpha=0.10;x.fillStyle=m.bg;x.fillRect(0,0,S,H);x.restore();
+      let gt=x.createLinearGradient(0,0,0,H*0.52);gt.addColorStop(0,hexA(m.bg,0.94));gt.addColorStop(0.5,hexA(m.bg,0.72));gt.addColorStop(1,hexA(m.bg,0));x.fillStyle=gt;x.fillRect(0,0,S,H*0.52);
+      let gb=x.createLinearGradient(0,H*0.72,0,H);gb.addColorStop(0,hexA(m.bg,0));gb.addColorStop(1,hexA(m.bg,0.55));x.fillStyle=gb;x.fillRect(0,H*0.72,S,H*0.28);
+      vinheta(x,S,H,'#000000',0.34);
+      aplicarGrao(x,S,H);
+      if(texto) fraseBloco(x,texto,S,H,m,corFrase,'topo',0,true);
+    } else {
+      // ④ RETRATO — card central emoldurado, frase embaixo
+      const gl=x.createRadialGradient(S/2,H*0.32,0,S/2,H*0.4,H*0.5);gl.addColorStop(0,hexA(m.brd,claro?0.08:0.14));gl.addColorStop(1,hexA(m.bg,0));x.fillStyle=gl;x.fillRect(0,0,S,H);
+      const cw=S-300,ch=Math.round((S-300)*1.05),cx0=150,cy0=128;
+      drawCover(cx0,cy0,cw,ch,12);
+      x.strokeStyle=hexA(m.brd,0.55);x.lineWidth=2;rrect(x,cx0,cy0,cw,ch,12);x.stroke();
+      aplicarGrao(x,S,H);
+      if(texto) fraseBloco(x,texto,S,H,m,m.tx,'card',cy0+ch,false);
+    }
+  } else {
+    // brilho central suave para capa / mensagem final
+    const g=x.createRadialGradient(S/2,H*0.36,0,S/2,H*0.42,H*0.55);
+    g.addColorStop(0,hexA(m.brd,claro?0.10:0.16)); g.addColorStop(1,hexA(m.bg,0));
+    x.fillStyle=g; x.fillRect(0,0,S,H);
+    vinheta(x,S,H, claro?'#9a8c78':'#000000', claro?0.16:0.34);
+    aplicarGrao(x,S,H);
   }
 
-  // Borda dupla decorativa
-  x.strokeStyle=m.brd;x.lineWidth=3;rrect(x,28,28,S-56,H-56,22);x.stroke();
-  x.strokeStyle=m.brd;x.lineWidth=.8;x.globalAlpha=.4;
-  rrect(x,42,42,S-84,H-84,14);x.stroke();x.globalAlpha=1;
-
-  // Ornamento topo
-  x.fillStyle=m.brd;x.font='32px serif';x.textAlign='center';
-  x.fillText('✦',S/2,72);
-
+  // ───── CAPA ─────
   if(tipo==='capa'){
-    x.fillStyle=m.tx;
-    x.font=`italic 600 ${S*.11}px Cormorant Garamond,serif`;x.textAlign='center';
-    x.fillText(nomePai,S/2,H/2-60);
-    x.fillStyle=m.brd;x.font='32px serif';x.fillText('✦',S/2,H/2+0);
-    x.fillStyle=m.tx;
-    x.font=`italic 300 38px Cormorant Garamond,serif`;
-    x.fillText('Para sempre em nosso coração',S/2,H/2+60);
-    x.fillStyle=m.brd;x.font='26px sans-serif';
-    x.fillText('de '+nomeF,S/2,H/2+110);
-  }
-
-  if(tipo==='foto'&&texto){
-    x.shadowColor='rgba(0,0,0,0.85)';
-    x.shadowBlur=24;
-    x.shadowOffsetY=2;
-    x.fillStyle=m.tx;
-    x.font=`italic 300 48px Cormorant Garamond,serif`;
     x.textAlign='center';
-    // Começa em 900 — mais para baixo, longe da foto
-    wrapTxt(x,texto,S/2,1050,S-80,56,2); // máx 2 linhas
-    x.shadowBlur=0; x.shadowOffsetY=0;
-  }
-
-  if(tipo==='fim'){
-    x.shadowColor='rgba(0,0,0,0.6)'; x.shadowBlur=16;
+    x.fillStyle=m.brd;
+    x.font='600 25px Inter,sans-serif';
+    textoEspacado(x,'PARA SEMPRE',S/2,H*0.265,9);
+    x.font='30px Georgia,serif';
+    x.fillText('✦',S/2,H*0.265+54);
+    // nome grande
     x.fillStyle=m.tx;
-    x.font=`italic 300 52px Cormorant Garamond,serif`;x.textAlign='center';
-    wrapTxt(x,texto||'Com amor eterno.',S/2,H/2-80,S-120,64);
-    x.shadowBlur=0;
-    x.strokeStyle=m.brd; x.lineWidth=1; x.globalAlpha=.3;
-    x.beginPath(); x.moveTo(S*.25,H*.72); x.lineTo(S*.75,H*.72); x.stroke();
-    x.globalAlpha=1;
-    x.fillStyle=m.brd; x.font='26px serif';
-    x.fillText('✦',S/2,H*.78);
-    x.fillStyle=m.tx; x.font=`600 32px Cormorant Garamond,serif`;
-    x.fillText(nomePai,S/2,H*.85);
+    const px=ajustarFonte(x,nomePai||'',S-200,'500',128,'Playfair Display,Georgia,serif');
+    x.fillText(nomePai||'',S/2,H*0.50);
+    // subtítulo
+    x.fillStyle=hexA(m.tx,0.9);
+    x.font='italic 300 42px Cormorant Garamond,serif';
+    x.fillText('Para sempre em nosso coração',S/2,H*0.50+px*0.42+46);
+    // divisor
+    x.strokeStyle=m.brd;x.globalAlpha=0.5;x.lineWidth=1;
+    x.beginPath();x.moveTo(S*0.36,H*0.645);x.lineTo(S*0.64,H*0.645);x.stroke();x.globalAlpha=1;
+    // assinatura
+    x.fillStyle=m.brd;x.font='500 22px Inter,sans-serif';
+    textoEspacado(x,('UMA HOMENAGEM DE '+(nomeF||'')).toUpperCase().trim(),S/2,H*0.69,4);
   }
 
-  // SEM rodapé — removido
+  // (a frase da foto é desenhada dentro de cada variação acima)
+
+  // ───── MENSAGEM FINAL ─────
+  if(tipo==='fim'){
+    x.textAlign='center';
+    x.fillStyle=m.brd;x.font='32px Georgia,serif';
+    x.fillText('✦',S/2,H*0.30);
+    x.fillStyle=m.tx;
+    x.font='italic 300 56px Cormorant Garamond,serif';
+    const lines=medirLinhas(x,texto||'Com amor eterno.',S-220,4);
+    const endY=desenharLinhas(x,lines,S/2,H*0.44,72);
+    x.strokeStyle=m.brd;x.globalAlpha=0.4;x.lineWidth=1;
+    x.beginPath();x.moveTo(S*0.36,endY+24);x.lineTo(S*0.64,endY+24);x.stroke();x.globalAlpha=1;
+    x.fillStyle=m.tx;
+    const fp=ajustarFonte(x,nomePai||'',S-260,'500',64,'Playfair Display,Georgia,serif');
+    x.fillText(nomePai||'',S/2,endY+108);
+    x.fillStyle=m.brd;x.font='500 20px Inter,sans-serif';
+    textoEspacado(x,'EM MEMÓRIA',S/2,endY+108+fp*0.5+34,6);
+  }
+
+  // moldura fina por cima de tudo
+  molduraFina(x,S,H,m);
 
   return c;
 }
@@ -2072,7 +2396,7 @@ async function salvarFrases(){
     slides.push(await gerarSlide(null, 'capa', m, nomePai, nomeF, ''));
     for(let i = 0; i < Math.min(fotos.length, 7); i++){
       const fotoSrc = fotos[i].base64 || fotos[i].url;
-      slides.push(await gerarSlide(fotoSrc, 'foto', m, nomePai, nomeF, frasesGeradas.frases[i]||''));
+      slides.push(await gerarSlide(fotoSrc, 'foto', m, nomePai, nomeF, frasesGeradas.frases[i]||'', i));
     }
     slides.push(await gerarSlide(null, 'fim', m, nomePai, nomeF, frasesGeradas.mensagem));
     document.getElementById('loading').classList.remove('show');
