@@ -2189,6 +2189,7 @@ function fraseBloco(x,texto,S,H,m,cor,modo,yRef,sobreFoto){
   let startY;
   if(modo==='baixo') startY=H*0.84-blocoH;
   else if(modo==='topo') startY=H*0.17;
+  else if(modo==='faixa') startY=yRef+150;
   else startY=(yRef+H)/2 - blocoH/2 + 14;
   // aspas decorativas
   x.fillStyle=hexA(m.brd,0.85);
@@ -2217,7 +2218,7 @@ async function gerarSlide(fotoUrl,tipo,m,nomePai,nomeF,texto,idx){
 
   if(tipo==='foto'&&fotoUrl){
     const img=await loadImg(fotoUrl);
-    const v=(((typeof idx==='number'?idx:0)%4)+4)%4;
+    const v=1; // modelo fixo: FAIXA (foto emoldurada + frase no mesmo lugar)
     const corFrase=claro?m.tx:'#FFFFFF';
     const drawCover=(dx,dy,dw,dh,r)=>{
       x.save();rrect(x,dx,dy,dw,dh,r||0.001);x.clip();
