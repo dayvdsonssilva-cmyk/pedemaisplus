@@ -1,0 +1,382 @@
+/* ===================== Navbar inferior (travada / fixed) ===================== */
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(10,10,10,0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--preto-3);
+  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 480px;
+  z-index: 500;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+}
+
+.navbar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  color: var(--cinza);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: var(--raio-peq);
+  transition: color 0.15s ease;
+}
+
+.navbar-item.ativo { color: var(--vermelho); }
+
+.navbar-item svg { width: 22px; height: 22px; }
+
+/* ===================== Streak badge + fogo animado ===================== */
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(232,21,26,0.18), var(--preto-2));
+  border: 1px solid rgba(232,21,26,0.35);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.streak-badge .chama {
+  font-size: 16px;
+  display: inline-block;
+  animation: pulsarChama 1.2s ease-in-out infinite;
+}
+
+@keyframes pulsarChama {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.15) rotate(2deg); }
+}
+
+.fogo-flutuante {
+  position: fixed;
+  pointer-events: none;
+  font-size: 26px;
+  z-index: 600;
+  animation: subirFogo 0.9s ease-out forwards;
+}
+
+@keyframes subirFogo {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -10px) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -70px) scale(0.9); }
+}
+
+/* ===================== Topo com saudacao ===================== */
+.topo-usuario {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.topo-usuario .saudacao { font-size: 13px; color: var(--cinza); }
+.topo-usuario .nome { font-size: 20px; font-family: var(--fonte-display); text-transform: uppercase; }
+
+.avatar-inicial {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--vermelho);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonte-display);
+  font-size: 16px;
+}
+
+/* ===================== Anel de Impulso (assinatura) ===================== */
+.anel-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0 20px;
+  position: relative;
+}
+
+.anel-svg { width: 220px; height: 220px; }
+
+.anel-fundo {
+  fill: none;
+  stroke: var(--preto-3);
+  stroke-width: 14;
+}
+
+.anel-progresso {
+  fill: none;
+  stroke: var(--vermelho);
+  stroke-width: 14;
+  stroke-linecap: round;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 0 8px rgba(232,21,26,0.55));
+}
+
+.anel-centro {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.anel-numero {
+  font-family: var(--fonte-display);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.anel-legenda {
+  font-size: 11px;
+  color: var(--cinza);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 4px;
+}
+
+/* ===================== Grid de estatisticas ===================== */
+.grid-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: var(--preto-2);
+  border: 1px solid var(--preto-3);
+  border-radius: var(--raio);
+  padding: 16px;
+}
+
+.stat-card .valor {
+  font-family: var(--fonte-display);
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+.stat-card .rotulo { margin-bottom: 0; }
+
+.stat-card.destaque {
+  border-color: rgba(232,21,26,0.4);
+  background: linear-gradient(160deg, rgba(232,21,26,0.14), var(--preto-2));
+}
+
+/* ===================== Check-in do dia ===================== */
+.checkin-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--preto-2);
+  border: 1px solid var(--preto-3);
+  border-radius: var(--raio);
+  padding: 16px 18px;
+  margin-top: 16px;
+}
+
+.checkin-toggle.feito {
+  border-color: rgba(52,199,123,0.5);
+  background: linear-gradient(160deg, rgba(52,199,123,0.1), var(--preto-2));
+}
+
+.switch {
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--preto-3);
+  position: relative;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.switch.ligado { background: var(--vermelho); }
+
+.switch-bolinha {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--branco);
+  transition: transform 0.2s ease;
+}
+
+.switch.ligado .switch-bolinha { transform: translateX(20px); }
+
+/* ===================== Lista de exercicios ===================== */
+.lista-exercicios { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+
+.exercicio-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--preto-2);
+  border: 1px solid var(--preto-3);
+  border-radius: var(--raio-peq);
+  padding: 14px;
+}
+
+.exercicio-icone {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--preto-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.exercicio-info { flex: 1; }
+.exercicio-info .titulo { font-weight: 700; font-size: 14px; }
+.exercicio-info .sub { font-size: 12px; color: var(--cinza); margin-top: 2px; }
+.exercicio-cal { font-size: 13px; color: var(--vermelho); font-weight: 700; white-space: nowrap; }
+
+/* ===================== Chips de selecao ===================== */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--preto-2);
+  border: 1.5px solid var(--preto-3);
+  color: var(--cinza-claro);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chip.selecionado {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+  color: var(--branco);
+}
+
+/* ===================== Barra de progresso simples ===================== */
+.barra-fundo {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--preto-3);
+  overflow: hidden;
+}
+
+.barra-preenchimento {
+  height: 100%;
+  background: linear-gradient(90deg, var(--vermelho-forte), var(--vermelho));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* ===================== Tela de carregamento ===================== */
+.tela-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid var(--preto-3);
+  border-top-color: var(--vermelho);
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* ===================== Marca ===================== */
+.marca {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: var(--fonte-display);
+  font-size: 32px;
+  letter-spacing: 1px;
+}
+
+.marca .ponto { color: var(--vermelho); }
+
+/* ===================== Ranking ===================== */
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--preto-2);
+  border: 1px solid var(--preto-3);
+  border-radius: var(--raio-peq);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.ranking-item.voce {
+  border-color: rgba(232,21,26,0.5);
+  background: linear-gradient(160deg, rgba(232,21,26,0.14), var(--preto-2));
+}
+
+.ranking-pos {
+  width: 28px;
+  text-align: center;
+  font-family: var(--fonte-display);
+  font-size: 16px;
+  color: var(--cinza);
+}
+
+.ranking-item.top1 .ranking-pos { color: #FFD34D; }
+.ranking-item.top2 .ranking-pos { color: #C9C9C9; }
+.ranking-item.top3 .ranking-pos { color: #CD7F32; }
+
+.ranking-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--preto-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonte-display);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.ranking-item.voce .ranking-avatar { background: var(--vermelho); }
+
+.ranking-info { flex: 1; }
+.ranking-info .titulo { font-weight: 700; font-size: 14px; }
+.ranking-info .sub { font-size: 11px; color: var(--cinza); margin-top: 1px; }
+.ranking-pontos { font-family: var(--fonte-display); font-size: 16px; color: var(--vermelho); }
+
+.linha-pontos {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--preto-3);
+}
+.linha-pontos:last-of-type { border-bottom: none; }
+.linha-pontos .label { color: var(--cinza-claro); }
+.linha-pontos .valor { font-weight: 700; }
+
+/* ===================== Estimativa de calorias por foto ===================== */
+.resultado-foto {
+  margin-top: 12px;
+  border-color: rgba(232,21,26,0.35);
+}
