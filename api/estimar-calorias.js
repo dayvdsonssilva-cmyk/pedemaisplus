@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       res.status(502).json({ erro: 'Falha ao consultar a IA.', detalhes: dados });
       return;
     }
-
+     
     const textos = (dados.content || [])
       .filter((bloco) => bloco.type === 'text')
       .map((bloco) => bloco.text)
