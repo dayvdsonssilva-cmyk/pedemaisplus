@@ -3,7 +3,7 @@ import './styles/componentes.css';
 
 import { definirRaiz, registrarRota, iniciarRouter } from './router.js';
 import { obterSessaoAtual } from './lib/auth.js';
-import { MODO_DEMO } from './lib/supabase.js';
+import { MODO_DEMO, CREDENCIAIS_VALIDAS } from './lib/supabase.js';
 
 import * as PaginaLogin from './pages/login.js';
 import * as PaginaCadastro from './pages/cadastro.js';
@@ -17,8 +17,18 @@ async function iniciar() {
   const raiz = document.getElementById('app');
   definirRaiz(raiz);
 
+  // Se chegou aqui em producao (nao e npm run dev) sem credenciais
+  // reais do Supabase, nao inicia o app fingindo que funciona -
+  // mostra um erro claro pra quem publicou corrigir a configuracao,
+  // em vez de deixar usuarios reais se cadastrando em algo que nao
+  // salva nada.
+  if (!CREDENCIAIS_VALIDAS && !MODO_DEMO) {
+    exibirErroDeConfiguracao(raiz);
+    return;
+  }
+
   if (MODO_DEMO) {
-    exibirSeloDemo();
+    console.info('[IMPULSO] Modo demo ativo (apenas em npm run dev local, sem .env configurado).');
   }
 
   registrarRota('/login', PaginaLogin);
@@ -35,17 +45,18 @@ async function iniciar() {
   iniciarRouter(rotaInicial);
 }
 
-function exibirSeloDemo() {
-  const selo = document.createElement('div');
-  selo.textContent = 'MODO DEMO \u2022 dados salvos so neste navegador';
-  selo.style.cssText = `
-    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-    background: #E8151A; color: #fff; font-family: 'Inter', sans-serif;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
-    text-align: center; padding: 6px 8px; text-transform: uppercase;
+function exibirErroDeConfiguracao(raiz) {
+  raiz.innerHTML = `
+    <div class="tela" style="display:flex;flex-direction:column;justify-content:center;min-height:100vh;text-align:center;">
+      <p style="font-size:40px;margin-bottom:12px;">&#9888;&#65039;</p>
+      <h2 style="font-size:18px;margin-bottom:12px;">Configuracao pendente</h2>
+      <p style="color:var(--cinza);font-size:14px;line-height:1.5;">
+        O app nao encontrou as credenciais do Supabase (<code>VITE_SUPABASE_URL</code>
+        e <code>VITE_SUPABASE_ANON_KEY</code>). Adicione essas variaveis em
+        Settings &gt; Environment Variables no Vercel e faca um novo deploy.
+      </p>
+    </div>
   `;
-  document.body.prepend(selo);
-  document.body.style.paddingTop = '28px';
 }
 
 iniciar();
