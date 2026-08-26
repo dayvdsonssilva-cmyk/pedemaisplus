@@ -189,10 +189,128 @@
     color:var(--ink-soft);
     font-size:12px;
   }
+
+  /* Tela de entrada — criar ou entrar num ninho */
+  #gate-screen{
+    max-width:420px;
+    margin:60px auto;
+    text-align:center;
+  }
+  #gate-screen h1{margin-bottom:10px;}
+  #gate-screen .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--sage);margin-bottom:6px;
+  }
+  #gate-screen p{color:var(--ink-soft);font-size:15px;margin:0 0 28px;}
+  .gate-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:16px;
+    text-align:left;
+  }
+  .gate-card h3{
+    font-family:'Fraunces',serif;font-size:17px;margin:0 0 6px;
+  }
+  .gate-card p.hint{color:var(--ink-soft);font-size:13px;margin:0 0 14px;}
+  .btn-primary{
+    background:var(--rose);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:12px 18px;
+    font-family:'Karla',sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+    width:100%;
+  }
+  .btn-primary:hover{background:#B76A5B;}
+  .btn-secondary{
+    background:none;
+    border:1.5px solid var(--line);
+    color:var(--ink);
+    border-radius:10px;
+    padding:11px 18px;
+    font-family:'Karla',sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+    width:100%;
+  }
+  .btn-secondary:hover{border-color:var(--gold);}
+  .gate-card .join-row{display:flex;gap:8px;}
+  .gate-card .join-row input{margin-bottom:0;text-transform:lowercase;}
+  .gate-card .join-row button{width:auto;white-space:nowrap;}
+
+  /* Barra de código dentro do app */
+  .code-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:#F3E7D8;
+    border-radius:12px;
+    padding:10px 14px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .code-bar .code-info{font-size:13px;color:var(--ink-soft);}
+  .code-bar .code-info b{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--ink);
+    letter-spacing:0.03em;
+  }
+  .code-bar .code-actions{display:flex;gap:8px;}
+  .code-bar button{
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:6px 12px;
+    font-family:'Karla',sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .code-bar button:hover{border-color:var(--gold);}
+  #app-screen{display:none;}
 </style>
 </head>
 <body>
+<div id="gate-screen">
+  <div class="eyebrow">Cofrinho do casal</div>
+  <h1>Ninho a Dois</h1>
+  <p>Cada casal tem o seu próprio ninho, com seu próprio link. Crie o de vocês ou entrem com um código que já receberam.</p>
+
+  <div class="gate-card">
+    <h3>Criar um ninho novo</h3>
+    <p class="hint">Pra vocês dois começarem do zero. Depois é só mandar o link pra outra pessoa.</p>
+    <button class="btn-primary" id="btn-criar">🪺 Criar nosso ninho</button>
+  </div>
+
+  <div class="gate-card">
+    <h3>Já tenho um código</h3>
+    <p class="hint">Alguém te mandou um código de ninho? Cole aqui.</p>
+    <div class="join-row">
+      <input type="text" id="codigo-input" placeholder="ex: joao-de-barro-42">
+      <button class="btn-secondary" id="btn-entrar" style="width:auto;">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="app-screen">
 <div class="wrap">
+  <div class="code-bar">
+    <div class="code-info">Ninho: <b id="codigo-atual"></b></div>
+    <div class="code-actions">
+      <button id="btn-copiar">copiar link p/ convidar</button>
+      <button id="btn-trocar">trocar de ninho</button>
+    </div>
+  </div>
+
   <header>
     <div class="eyebrow">Cofrinho do casal</div>
     <h1>Ninho a Dois</h1>
@@ -241,7 +359,8 @@
     </div>
   </div>
 
-  <footer>As contas são divididas na proporção da renda de cada um — quem ganha mais, contribui mais. Dados salvos automaticamente neste link.</footer>
+  <footer>As contas são divididas na proporção da renda de cada um — quem ganha mais, contribui mais. Dados salvos automaticamente neste ninho.</footer>
+</div>
 </div>
 
 <script>
@@ -255,9 +374,68 @@ document.addEventListener('touchend', e => {
   lastTouchEnd = now;
 }, {passive:false});
 
-const STORAGE_KEY = 'ninho-a-dois:dados';
+const STORAGE_KEY_PREFIX = 'ninho-a-dois:dados:';
 let contas = [{desc:'Aluguel', valor:0}];
 let saveTimeout = null;
+let currentCode = null;
+
+const PASSAROS = ['joao-de-barro','andorinha','sabia','curio','beija-flor','pardal','canario','bem-te-vi','tico-tico','coruja'];
+
+function gerarCodigo(){
+  const nome = PASSAROS[Math.floor(Math.random()*PASSAROS.length)];
+  const num = Math.floor(10 + Math.random()*90);
+  return `${nome}-${num}`;
+}
+
+function slugify(s){
+  return s.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9-]/g,'');
+}
+
+function entrarNoNinho(code){
+  currentCode = code;
+  location.hash = code;
+  document.getElementById('codigo-atual').textContent = code;
+  document.getElementById('gate-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  load();
+}
+
+document.getElementById('btn-criar').addEventListener('click', () => {
+  entrarNoNinho(gerarCodigo());
+});
+
+document.getElementById('btn-entrar').addEventListener('click', () => {
+  const val = slugify(document.getElementById('codigo-input').value);
+  if(val) entrarNoNinho(val);
+});
+document.getElementById('codigo-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter') document.getElementById('btn-entrar').click();
+});
+
+document.getElementById('btn-trocar').addEventListener('click', () => {
+  currentCode = null;
+  history.replaceState(null, '', location.pathname + location.search);
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('gate-screen').style.display = 'block';
+  document.getElementById('codigo-input').value = '';
+});
+
+document.getElementById('btn-copiar').addEventListener('click', async () => {
+  const link = location.href.split('#')[0] + '#' + currentCode;
+  const btn = document.getElementById('btn-copiar');
+  try{
+    await navigator.clipboard.writeText(link);
+    btn.textContent = 'link copiado ✓';
+  }catch(err){
+    prompt('Copie o link do ninho:', link);
+  }
+  setTimeout(() => btn.textContent = 'copiar link p/ convidar', 2000);
+});
+
+// Se a URL já vem com um código (#nome-do-ninho), entra direto
+if(location.hash && location.hash.length > 1){
+  entrarNoNinho(slugify(location.hash.slice(1)));
+}
 
 function brl(n){
   const sign = n < 0 ? '-' : '';
@@ -360,6 +538,7 @@ function scheduleSave(){
 }
 
 async function save(){
+  if(!currentCode) return;
   const data = {
     nome1: document.getElementById('nome1').value,
     nome2: document.getElementById('nome2').value,
@@ -368,15 +547,16 @@ async function save(){
     contas
   };
   try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(data), true);
+    await window.storage.set(STORAGE_KEY_PREFIX + currentCode, JSON.stringify(data), true);
   }catch(err){
     console.error('Erro ao salvar:', err);
   }
 }
 
 async function load(){
+  if(!currentCode) return;
   try{
-    const result = await window.storage.get(STORAGE_KEY, true);
+    const result = await window.storage.get(STORAGE_KEY_PREFIX + currentCode, true);
     if(result && result.value){
       const data = JSON.parse(result.value);
       document.getElementById('nome1').value = data.nome1 || 'Pessoa 1';
@@ -406,13 +586,11 @@ document.getElementById('add-conta').addEventListener('click', () => {
   });
 });
 
-load();
-
 // Verifica periodicamente se o outro dispositivo salvou algo novo,
-// só atualiza a tela se ninguém estiver digitando neste momento
+// só atualiza a tela se ninguém estiver digitando e se já estamos dentro de um ninho
 setInterval(() => {
   const tag = document.activeElement ? document.activeElement.tagName : '';
-  if (tag !== 'INPUT') {
+  if (tag !== 'INPUT' && currentCode) {
     load();
   }
 }, 4000);
