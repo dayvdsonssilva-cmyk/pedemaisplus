@@ -41,7 +41,7 @@ input:focus{border-color:var(--vermelho)}
 .cartao{background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:20px}
 .marca{display:flex;align-items:baseline;gap:2px;font-family:var(--fonte-display);font-size:32px;letter-spacing:1px;justify-content:center}
 .marca .ponto{color:var(--vermelho)}
-.navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);display:flex;justify-content:space-around;align-items:center;background:rgba(10,10,10,.96);backdrop-filter:blur(10px);border-top:1px solid var(--preto-3);padding:10px 8px calc(10px + env(safe-area-inset-bottom));width:100%;max-width:480px;z-index:500;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
+.navbar{position:sticky;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-top:1px solid var(--preto-3);padding:10px 8px calc(10px + env(safe-area-inset-bottom));max-width:480px;margin:0 auto}
 .navbar-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--cinza);font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:6px 10px;border-radius:var(--raio-peq)}
 .navbar-item.ativo{color:var(--vermelho)}
 .navbar-item svg{width:22px;height:22px}
@@ -49,11 +49,6 @@ input:focus{border-color:var(--vermelho)}
 .topo-usuario .saudacao{font-size:13px;color:var(--cinza)}
 .topo-usuario .nome{font-size:20px;font-family:var(--fonte-display);text-transform:uppercase}
 .avatar-inicial{width:40px;height:40px;border-radius:50%;background:var(--vermelho);display:flex;align-items:center;justify-content:center;font-family:var(--fonte-display);font-size:16px}
-.streak-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(232,21,26,.18),var(--preto-2));border:1px solid rgba(232,21,26,.35);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;margin-bottom:18px}
-.streak-badge .chama{font-size:16px;display:inline-block;animation:pulsarChama 1.2s ease-in-out infinite}
-@keyframes pulsarChama{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.15) rotate(2deg)}}
-.fogo-flutuante{position:fixed;pointer-events:none;font-size:26px;z-index:600;animation:subirFogo 0.9s ease-out forwards}
-@keyframes subirFogo{0%{opacity:0;transform:translate(-50%,0) scale(.5)}20%{opacity:1;transform:translate(-50%,-10px) scale(1.2)}100%{opacity:0;transform:translate(-50%,-70px) scale(.9)}}
 .anel-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0 20px;position:relative}
 .anel-svg{width:220px;height:220px}
 .anel-fundo{fill:none;stroke:var(--preto-3);stroke-width:14}
@@ -83,29 +78,17 @@ input:focus{border-color:var(--vermelho)}
 .chip.selecionado{background:var(--vermelho);border-color:var(--vermelho);color:var(--branco)}
 .barra-fundo{width:100%;height:8px;border-radius:999px;background:var(--preto-3);overflow:hidden}
 .barra-preenchimento{height:100%;background:linear-gradient(90deg,var(--vermelho-forte),var(--vermelho));border-radius:999px;transition:width .5s ease}
-.ranking-item{display:flex;align-items:center;gap:12px;background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio-peq);padding:12px 14px;margin-bottom:10px}
-.ranking-item.voce{border-color:rgba(232,21,26,.5);background:linear-gradient(160deg,rgba(232,21,26,.14),var(--preto-2))}
-.ranking-pos{width:28px;text-align:center;font-family:var(--fonte-display);font-size:16px;color:var(--cinza)}
-.ranking-item.top1 .ranking-pos{color:#FFD34D}
-.ranking-item.top2 .ranking-pos{color:#C9C9C9}
-.ranking-item.top3 .ranking-pos{color:#CD7F32}
-.ranking-avatar{width:36px;height:36px;border-radius:50%;background:var(--preto-3);display:flex;align-items:center;justify-content:center;font-family:var(--fonte-display);font-size:14px;flex-shrink:0}
-.ranking-item.voce .ranking-avatar{background:var(--vermelho)}
-.ranking-info{flex:1}
-.ranking-info .titulo{font-weight:700;font-size:14px}
-.ranking-info .sub{font-size:11px;color:var(--cinza);margin-top:1px}
-.ranking-pontos{font-family:var(--fonte-display);font-size:16px;color:var(--vermelho)}
 </style>
 </head>
 <body>
-<div id="faixa-demo">MODO TESTE &bull; ja entrou com um perfil de exemplo &bull; edite em Perfil</div>
+<div id="faixa-demo">MODO TESTE &bull; dados somente nesta aba, somem ao recarregar</div>
 <div id="app"></div>
 
 <script>
 "use strict";
 
 /* ============== "banco" em memoria (some ao recarregar) ============== */
-var DB = { usuarios: {}, sessao: null, perfis: {}, checkins: {}, treinos: [], rankingFake: null };
+var DB = { usuarios: {}, sessao: null, perfis: {}, checkins: {} };
 
 function gerarId(){ return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
 function dataDeHoje(){
@@ -149,103 +132,6 @@ function buscarHistorico(uid, dias){
     .filter(function(c){ return c.user_id === uid; })
     .sort(function(a,b){ return a.data < b.data ? 1 : -1; })
     .slice(0, dias || 14);
-}
-
-/* ============== treinos (cada registro fica salvo separado) ============== */
-function registrarTreino(uid, dados){
-  var item = {
-    id: gerarId(),
-    user_id: uid,
-    data: dataDeHoje(),
-    hora: new Date().toTimeString().slice(0,5),
-    tipo_exercicio: dados.tipo_exercicio,
-    duracao_min: dados.duracao_min,
-    calorias_gastas_exercicio: dados.calorias_gastas_exercicio
-  };
-  DB.treinos.push(item);
-  // mantem o flag do dia sincronizado, sem apagar o registro anterior
-  salvarCheckinHoje(uid, { treinou: true });
-  return item;
-}
-function buscarTreinosHoje(uid){
-  var hoje = dataDeHoje();
-  return DB.treinos.filter(function(t){ return t.user_id === uid && t.data === hoje; });
-}
-function buscarHistoricoTreinos(uid, limite){
-  return DB.treinos
-    .filter(function(t){ return t.user_id === uid; })
-    .sort(function(a,b){
-      if (a.data !== b.data) return a.data < b.data ? 1 : -1;
-      return a.hora < b.hora ? 1 : -1;
-    })
-    .slice(0, limite || 20);
-}
-
-/* ============== streak (dias seguidos com treino registrado) ============== */
-function calcularStreak(uid){
-  var datasComTreino = {};
-  DB.treinos.forEach(function(t){ if (t.user_id === uid) datasComTreino[t.data] = true; });
-  var streak = 0;
-  var cursor = new Date();
-  for (var i = 0; i < 365; i++){
-    var chave = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
-    if (datasComTreino[chave]) { streak++; cursor.setDate(cursor.getDate()-1); }
-    else break;
-  }
-  return streak;
-}
-
-/* ============== ranking (gamificacao) ============== */
-var NOMES_FAKE = ['Marina', 'Lucas', 'Bia', 'Pedro', 'Ana Julia', 'Rafa', 'Carol', 'Thiago'];
-function gerarRankingFake(){
-  if (DB.rankingFake) return DB.rankingFake;
-  DB.rankingFake = NOMES_FAKE.map(function(nome){
-    return { nome: nome, pontos: 40 + Math.round(Math.random() * 260) };
-  });
-  return DB.rankingFake;
-}
-/* ============== ranking (gamificacao, a prova de trapaca) ==============
-   Regra: o que mais vale e CONSTANCIA (dias diferentes que a pessoa
-   treinou de verdade + sequencia), nao a duracao ou calorias digitadas.
-   Isso evita que alguem coloque "500 minutos de corrida" numa registro
-   so e va pro topo do ranking sem esforco real. */
-var PONTOS_POR_DIA_TREINADO = 30;   // vale por DIA com treino, nao por registro
-var PONTOS_POR_DIA_SEQUENCIA = 10;  // bonus de constancia (streak)
-var TETO_KCAL_PONTUAVEL_POR_DIA = 400; // calorias acima disso no mesmo dia nao rendem mais pontos
-var DIVISOR_BONUS_CALORICO = 20;    // 400kcal/dia = no maximo 20 pontos de bonus
-
-function calcularPontos(uid){
-  var treinosUsuario = DB.treinos.filter(function(t){ return t.user_id === uid; });
-
-  // agrupa por dia: nao importa se a pessoa registrou 1 ou 10 treinos
-  // no mesmo dia, o dia conta 1 vez so pra pontuacao de constancia
-  var caloriasPorDia = {};
-  treinosUsuario.forEach(function(t){
-    var cal = Math.max(0, Math.min(t.calorias_gastas_exercicio || 0, TETO_KCAL_PONTUAVEL_POR_DIA));
-    caloriasPorDia[t.data] = Math.min((caloriasPorDia[t.data] || 0) + cal, TETO_KCAL_PONTUAVEL_POR_DIA);
-  });
-
-  var diasTreinados = Object.keys(caloriasPorDia).length;
-  var streak = calcularStreak(uid);
-
-  var pontosConstancia = diasTreinados * PONTOS_POR_DIA_TREINADO;
-  var pontosSequencia = streak * PONTOS_POR_DIA_SEQUENCIA;
-  var bonusCalorico = Object.values(caloriasPorDia).reduce(function(soma, cal){
-    return soma + Math.round(cal / DIVISOR_BONUS_CALORICO);
-  }, 0);
-
-  return pontosConstancia + pontosSequencia + bonusCalorico;
-}
-
-function detalharPontos(uid){
-  var treinosUsuario = DB.treinos.filter(function(t){ return t.user_id === uid; });
-  var diasUnicos = {};
-  treinosUsuario.forEach(function(t){ diasUnicos[t.data] = true; });
-  return {
-    diasTreinados: Object.keys(diasUnicos).length,
-    streak: calcularStreak(uid),
-    total: calcularPontos(uid)
-  };
 }
 
 /* ============== calculos ============== */
@@ -332,33 +218,11 @@ window.addEventListener('hashchange', render);
 function iconeCasa(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>'; }
 function iconeRaio(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>'; }
 function iconePessoa(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>'; }
-function iconeTrofeu(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 5H4a1 1 0 0 0-1 1c0 3 2 5 4.5 5.3M17 5h3a1 1 0 0 1 1 1c0 3-2 5-4.5 5.3"/></svg>'; }
-
-/* Animacao de fogo: aparece perto do elemento clicado e sobe/some */
-function dispararFogo(elementoOrigem){
-  if (!elementoOrigem) return;
-  var rect = elementoOrigem.getBoundingClientRect();
-  var qtd = 3;
-  for (var i = 0; i < qtd; i++){
-    (function(indice){
-      setTimeout(function(){
-        var fogo = document.createElement('span');
-        fogo.className = 'fogo-flutuante';
-        fogo.textContent = '\u{1F525}';
-        fogo.style.left = (rect.left + rect.width/2 + (Math.random()*30-15)) + 'px';
-        fogo.style.top = (rect.top - 4) + 'px';
-        document.body.appendChild(fogo);
-        setTimeout(function(){ fogo.remove(); }, 900);
-      }, indice * 120);
-    })(i);
-  }
-}
 
 function navbarHTML(){
   var itens = [
     { rota: '/painel', rotulo: 'Painel', icone: iconeCasa },
     { rota: '/exercicios', rotulo: 'Treino', icone: iconeRaio },
-    { rota: '/ranking', rotulo: 'Ranking', icone: iconeTrofeu },
     { rota: '/perfil', rotulo: 'Perfil', icone: iconePessoa }
   ];
   var atual = rotaAtual();
@@ -511,9 +375,7 @@ function paginaPainel(){
   var checkin = buscarCheckinHoje(sess.user.id);
   var painel = calcularPainel(perfil);
   var consumidas = (checkin && checkin.calorias_consumidas) || 0;
-  var treinosHoje = buscarTreinosHoje(sess.user.id);
-  var treinou = Boolean((checkin && checkin.treinou) || treinosHoje.length > 0);
-  var streak = calcularStreak(sess.user.id);
+  var treinou = Boolean(checkin && checkin.treinou);
   var progresso = calcularProgressoPeso(perfil.peso_inicial_kg, perfil.peso_atual_kg, perfil.peso_meta_kg);
   var primeiroNome = perfil.nome.split(' ')[0];
 
@@ -521,7 +383,6 @@ function paginaPainel(){
     '<div class="tela">' +
       '<div class="topo-usuario"><div><p class="saudacao">'+saudacaoPorHorario()+'</p><h1 class="nome">'+primeiroNome+'</h1></div>' +
       '<div class="avatar-inicial">'+primeiroNome.charAt(0).toUpperCase()+'</div></div>' +
-      (streak > 0 ? '<div class="streak-badge"><span class="chama">\u{1F525}</span><span>'+streak+' dia'+(streak>1?'s':'')+' seguidos treinando</span></div>' : '') +
       anelHTML(consumidas, painel.metaCalorica) +
       '<div class="grid-stats">' +
         '<div class="stat-card destaque"><div class="valor">'+painel.metaCalorica+'</div><p class="rotulo">Meta kcal / dia</p></div>' +
@@ -530,14 +391,10 @@ function paginaPainel(){
         '<div class="stat-card"><div class="valor">'+painel.macros.carboidrato_g+'g</div><p class="rotulo">Carboidrato</p></div>' +
       '</div>' +
       '<div class="cartao" style="margin-top:16px;"><label class="rotulo">Registrar calorias consumidas hoje</label>' +
-        '<div style="display:flex;gap:10px;margin-bottom:10px;"><input type="number" id="input-calorias" value="'+(consumidas||'')+'" min="0" style="flex:1;" />' +
-        '<button class="btn btn-primario" id="btn-salvar-calorias" style="width:auto;padding:14px 18px;">Salvar</button></div>' +
-        '<button type="button" class="btn btn-secundario" id="btn-abrir-camera">\u{1F4F7} Estimar calorias por foto</button>' +
-        '<input type="file" id="input-foto" accept="image/*" capture="environment" style="display:none;" />' +
-        '<div id="area-resultado-foto"></div>' +
-      '</div>' +
+        '<div style="display:flex;gap:10px;"><input type="number" id="input-calorias" value="'+(consumidas||'')+'" min="0" style="flex:1;" />' +
+        '<button class="btn btn-primario" id="btn-salvar-calorias" style="width:auto;padding:14px 18px;">Salvar</button></div></div>' +
       '<div class="checkin-toggle'+(treinou?' feito':'')+'" ><div><p style="font-weight:700;font-size:14px;">Treinei hoje</p>' +
-        '<p style="font-size:12px;color:var(--cinza);margin-top:2px;">'+(treinosHoje.length>0?(treinosHoje.length+' treino'+(treinosHoje.length>1?'s':'')+' registrado'+(treinosHoje.length>1?'s':'')+' hoje'):'Marca quando fizer qualquer exercicio')+'</p></div>' +
+        '<p style="font-size:12px;color:var(--cinza);margin-top:2px;">Marca quando fizer qualquer exercicio</p></div>' +
         '<div class="switch'+(treinou?' ligado':'')+'" id="switch-treino"><div class="switch-bolinha"></div></div></div>' +
       '<div class="cartao" style="margin-top:16px;"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">' +
         '<span class="rotulo" style="margin-bottom:0;">Rumo a meta</span><span style="font-size:12px;color:var(--cinza);">'+perfil.peso_atual_kg+'kg &rarr; '+perfil.peso_meta_kg+'kg</span></div>' +
@@ -546,103 +403,16 @@ function paginaPainel(){
       '<button class="btn btn-texto" id="btn-sair" style="margin-top:20px;">Sair da conta</button>' +
     '</div>' + navbarHTML();
 
-  document.getElementById('btn-salvar-calorias').addEventListener('click', function(evento){
+  document.getElementById('btn-salvar-calorias').addEventListener('click', function(){
     var v = Number(document.getElementById('input-calorias').value) || 0;
     salvarCheckinHoje(sess.user.id, { calorias_consumidas: v });
-    dispararFogo(evento.currentTarget);
-    setTimeout(function(){ paginaPainel(); }, 250);
+    paginaPainel();
   });
-  document.getElementById('switch-treino').addEventListener('click', function(evento){
-    var novoValor = !treinou;
-    salvarCheckinHoje(sess.user.id, { treinou: novoValor });
-    if (novoValor) dispararFogo(evento.currentTarget);
-    setTimeout(function(){ paginaPainel(); }, novoValor ? 250 : 0);
+  document.getElementById('switch-treino').addEventListener('click', function(){
+    salvarCheckinHoje(sess.user.id, { treinou: !treinou });
+    paginaPainel();
   });
   document.getElementById('btn-sair').addEventListener('click', function(){ sair(); navegarPara('/login'); });
-
-  document.getElementById('btn-abrir-camera').addEventListener('click', function(){
-    document.getElementById('input-foto').click();
-  });
-  document.getElementById('input-foto').addEventListener('change', function(evento){
-    var arquivo = evento.target.files[0];
-    if (arquivo) estimarCaloriasPorFoto(arquivo, sess.user.id);
-  });
-}
-
-/* ============== estimativa de calorias por foto (visao de IA) ==============
-   Analisa a foto do prato e estima calorias/macros. E uma ESTIMATIVA,
-   nao uma medicao exata - por isso sempre mostramos como sugestao
-   editavel, nunca gravamos direto sem o usuario confirmar. */
-function estimarCaloriasPorFoto(arquivo, userId){
-  var area = document.getElementById('area-resultado-foto');
-  area.innerHTML = '<div class="cartao" style="margin-top:12px;display:flex;align-items:center;gap:10px;">' +
-    '<div class="spinner" style="width:18px;height:18px;border-width:2px;"></div>' +
-    '<span style="font-size:13px;color:var(--cinza-claro);">Analisando a foto...</span></div>';
-
-  var leitor = new FileReader();
-  leitor.onload = function(){
-    var base64Completo = leitor.result;
-    var base64 = base64Completo.split(',')[1];
-    var mediaType = arquivo.type || 'image/jpeg';
-
-    fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 400,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-            { type: 'text', text:
-              'Voce e um nutricionista estimando calorias a partir de uma foto de comida. ' +
-              'Responda SOMENTE com um JSON puro, sem markdown e sem texto fora do JSON, no formato: ' +
-              '{"prato":"nome curto do prato","calorias_estimadas":numero,"proteina_g":numero,"carboidrato_g":numero,"gordura_g":numero,"confianca":"baixa|media|alta","observacao":"uma frase curta sobre a estimativa"}. ' +
-              'Se a imagem nao mostrar comida claramente, responda com calorias_estimadas 0 e observacao explicando isso.'
-            }
-          ]
-        }]
-      })
-    })
-    .then(function(resp){ return resp.json(); })
-    .then(function(data){
-      var textos = (data.content || []).filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; });
-      var bruto = textos.join('').replace(/```json|```/g, '').trim();
-      var resultado = JSON.parse(bruto);
-      exibirResultadoFoto(resultado, userId);
-    })
-    .catch(function(){
-      area.innerHTML = '<div class="erro" style="margin-top:12px;">Nao consegui analisar a foto agora. Tenta de novo ou digita as calorias manualmente.</div>';
-    });
-  };
-  leitor.readAsDataURL(arquivo);
-}
-
-function exibirResultadoFoto(resultado, userId){
-  var area = document.getElementById('area-resultado-foto');
-  if (!resultado.calorias_estimadas || resultado.calorias_estimadas < 1){
-    area.innerHTML = '<div class="erro" style="margin-top:12px;">'+(resultado.observacao || 'Nao deu pra identificar comida nessa foto.')+'</div>';
-    return;
-  }
-  area.innerHTML =
-    '<div class="cartao" style="margin-top:12px;border-color:rgba(232,21,26,.35);">' +
-      '<p style="font-weight:700;font-size:14px;margin-bottom:4px;">'+resultado.prato+'</p>' +
-      '<p class="anel-numero" style="font-size:30px;">~'+resultado.calorias_estimadas+' kcal</p>' +
-      '<p style="font-size:11px;color:var(--cinza);margin-bottom:10px;">Confianca: '+(resultado.confianca||'media')+' &middot; '+(resultado.observacao||'Estimativa por IA, ajuste se achar necessario.')+'</p>' +
-      '<button type="button" class="btn btn-primario" id="btn-usar-estimativa" style="margin-bottom:8px;">Usar essa estimativa</button>' +
-      '<button type="button" class="btn btn-texto" id="btn-descartar-estimativa">Descartar</button>' +
-    '</div>';
-
-  document.getElementById('btn-usar-estimativa').addEventListener('click', function(){
-    var inputCalorias = document.getElementById('input-calorias');
-    var atual = Number(inputCalorias.value) || 0;
-    inputCalorias.value = atual + resultado.calorias_estimadas;
-    area.innerHTML = '';
-  });
-  document.getElementById('btn-descartar-estimativa').addEventListener('click', function(){
-    area.innerHTML = '';
-  });
 }
 
 function formatarData(iso){ var p = iso.split('-'); return p[2]+'/'+p[1]; }
@@ -651,42 +421,42 @@ function paginaExercicios(){
   var sess = sessaoAtual();
   if (!sess) { navegarPara('/login'); return; }
   var perfil = buscarPerfil(sess.user.id);
-  var treinosHoje = buscarTreinosHoje(sess.user.id);
-  var historico = buscarHistoricoTreinos(sess.user.id, 20);
+  var checkin = buscarCheckinHoje(sess.user.id);
+  var historico = buscarHistorico(sess.user.id, 10);
+  estadoExercicio.tipo = (checkin && checkin.tipo_exercicio) || 'caminhada';
 
   var chipsEx = EXERCICIOS.map(function(ex){
     return '<button type="button" class="chip'+(ex.chave===estadoExercicio.tipo?' selecionado':'')+'" data-valor="'+ex.chave+'">'+ex.rotulo+'</button>';
   }).join('');
 
-  var listaHoje = treinosHoje.length === 0
-    ? ''
-    : treinosHoje.map(function(t){ return renderizarLinhaTreino(t, true); }).join('');
-
   var listaHist = historico.length === 0
     ? '<p style="color:var(--cinza);font-size:14px;">Ainda sem registros. Comeca hoje.</p>'
-    : historico.map(function(t){ return renderizarLinhaTreino(t, false); }).join('');
+    : historico.map(function(d){
+        var rot = d.treinou ? ((EXERCICIOS.filter(function(e){return e.chave===d.tipo_exercicio;})[0]||{}).rotulo || 'Treino') : 'Descanso';
+        return '<div class="exercicio-item"><div class="exercicio-icone">'+(d.treinou?'&#9889;':'&#9711;')+'</div>' +
+          '<div class="exercicio-info"><p class="titulo">'+rot+'</p><p class="sub">'+formatarData(d.data)+(d.duracao_min?(' &middot; '+d.duracao_min+' min'):'')+'</p></div>' +
+          (d.calorias_gastas_exercicio ? '<span class="exercicio-cal">-'+d.calorias_gastas_exercicio+' kcal</span>' : '') + '</div>';
+      }).join('');
 
   raiz.innerHTML =
     '<div class="tela">' +
       '<h2 style="font-size:22px;margin-bottom:4px;">Treino de hoje</h2>' +
-      '<p style="color:var(--cinza);font-size:14px;margin-bottom:20px;">Escolhe o que voce fez. Pode registrar quantos treinos quiser no dia.</p>' +
+      '<p style="color:var(--cinza);font-size:14px;margin-bottom:20px;">Escolhe o que voce fez e a gente calcula o gasto.</p>' +
       '<div class="chips" id="chips-exercicio">'+chipsEx+'</div>' +
       '<div class="campo" style="margin-top:18px;"><label class="rotulo">Duracao (minutos)</label>' +
-        '<input type="number" id="input-duracao" placeholder="Ex: 40" min="1" max="240" /></div>' +
+        '<input type="number" id="input-duracao" placeholder="Ex: 40" min="1" max="600" value="'+((checkin&&checkin.duracao_min)||'')+'" /></div>' +
       '<div class="cartao" style="margin-bottom:18px;"><p style="font-size:13px;color:var(--cinza);">Gasto estimado</p>' +
         '<p class="anel-numero" style="font-size:32px;" id="texto-gasto">0 kcal</p></div>' +
       '<button class="btn btn-primario" id="btn-registrar">Registrar treino</button>' +
-      (listaHoje ? ('<h3 style="font-size:16px;margin-top:28px;margin-bottom:12px;">Hoje</h3><div class="lista-exercicios">'+listaHoje+'</div>') : '') +
-      '<h3 style="font-size:16px;margin-top:28px;margin-bottom:12px;">Historico</h3>' +
+      '<h3 style="font-size:16px;margin-top:32px;margin-bottom:12px;">Ultimos dias</h3>' +
       '<div class="lista-exercicios">'+listaHist+'</div>' +
     '</div>' + navbarHTML();
 
   var inputDuracao = document.getElementById('input-duracao');
   var textoGasto = document.getElementById('texto-gasto');
-  var MAX_MINUTOS_POR_TREINO = 240;
   function atualizarGasto(){
     var ex = EXERCICIOS.filter(function(e){return e.chave===estadoExercicio.tipo;})[0];
-    var minutos = Math.min(Number(inputDuracao.value) || 0, MAX_MINUTOS_POR_TREINO);
+    var minutos = Number(inputDuracao.value) || 0;
     var peso = (perfil && perfil.peso_atual_kg) || 70;
     var kcal = Math.round(ex.met * peso * (minutos/60));
     textoGasto.textContent = kcal + ' kcal';
@@ -704,74 +474,13 @@ function paginaExercicios(){
     });
   });
 
-  document.getElementById('btn-registrar').addEventListener('click', function(evento){
-    var minutos = Math.min(Number(inputDuracao.value) || 0, MAX_MINUTOS_POR_TREINO);
+  document.getElementById('btn-registrar').addEventListener('click', function(){
+    var minutos = Number(inputDuracao.value) || 0;
     if (minutos < 1) { inputDuracao.focus(); return; }
     var kcal = atualizarGasto();
-    registrarTreino(sess.user.id, { tipo_exercicio: estadoExercicio.tipo, duracao_min: minutos, calorias_gastas_exercicio: kcal });
-    dispararFogo(evento.currentTarget);
-    setTimeout(function(){ paginaExercicios(); }, 300);
+    salvarCheckinHoje(sess.user.id, { treinou: true, tipo_exercicio: estadoExercicio.tipo, duracao_min: minutos, calorias_gastas_exercicio: kcal });
+    paginaExercicios();
   });
-}
-
-function renderizarLinhaTreino(t, ehHoje){
-  var rot = (EXERCICIOS.filter(function(e){return e.chave===t.tipo_exercicio;})[0]||{}).rotulo || 'Treino';
-  var quando = ehHoje ? t.hora : (formatarData(t.data) + (t.hora ? (' &middot; '+t.hora) : ''));
-  return '<div class="exercicio-item"><div class="exercicio-icone">&#9889;</div>' +
-    '<div class="exercicio-info"><p class="titulo">'+rot+'</p><p class="sub">'+quando+(t.duracao_min?(' &middot; '+t.duracao_min+' min'):'')+'</p></div>' +
-    (t.calorias_gastas_exercicio ? '<span class="exercicio-cal">-'+t.calorias_gastas_exercicio+' kcal</span>' : '') + '</div>';
-}
-
-function paginaRanking(){
-  var sess = sessaoAtual();
-  if (!sess) { navegarPara('/login'); return; }
-  var perfil = buscarPerfil(sess.user.id);
-  if (!perfil) { navegarPara('/onboarding'); return; }
-
-  var detalhe = detalharPontos(sess.user.id);
-  var pontosUsuario = detalhe.total;
-  var jogadores = gerarRankingFake().map(function(j){ return { nome: j.nome, pontos: j.pontos, voce: false }; });
-  jogadores.push({ nome: perfil.nome.split(' ')[0], pontos: pontosUsuario, voce: true });
-  jogadores.sort(function(a,b){ return b.pontos - a.pontos; });
-
-  var posicaoVoce = jogadores.findIndex(function(j){ return j.voce; }) + 1;
-
-  var medalhas = ['\u{1F947}', '\u{1F948}', '\u{1F949}'];
-  var listaHTML = jogadores.map(function(j, indice){
-    var pos = indice + 1;
-    var classeTop = pos === 1 ? ' top1' : pos === 2 ? ' top2' : pos === 3 ? ' top3' : '';
-    var rotuloPos = pos <= 3 ? medalhas[pos-1] : pos;
-    return '<div class="ranking-item'+classeTop+(j.voce?' voce':'')+'">' +
-      '<div class="ranking-pos">'+rotuloPos+'</div>' +
-      '<div class="ranking-avatar">'+j.nome.charAt(0).toUpperCase()+'</div>' +
-      '<div class="ranking-info"><p class="titulo">'+j.nome+(j.voce?' (voce)':'')+'</p><p class="sub">'+j.pontos+' pontos</p></div>' +
-      '<div class="ranking-pontos">'+j.pontos+'</div>' +
-    '</div>';
-  }).join('');
-
-  raiz.innerHTML =
-    '<div class="tela">' +
-      '<h2 style="font-size:22px;margin-bottom:4px;">Ranking</h2>' +
-      '<p style="color:var(--cinza);font-size:14px;margin-bottom:20px;">Quem e mais constante fica na frente. Duracao e calorias contam pouco.</p>' +
-      '<div class="cartao" style="margin-bottom:14px;text-align:center;">' +
-        '<p class="rotulo" style="margin-bottom:6px;">Sua posicao</p>' +
-        '<p class="anel-numero" style="font-size:36px;">#'+posicaoVoce+'</p>' +
-      '</div>' +
-      '<div class="cartao" style="margin-bottom:20px;">' +
-        '<p class="rotulo" style="margin-bottom:10px;">Como seus '+pontosUsuario+' pontos foram calculados</p>' +
-        '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--preto-3);">' +
-          '<span style="color:var(--cinza-claro);">'+detalhe.diasTreinados+' dia'+(detalhe.diasTreinados!==1?'s':'')+' treinado'+(detalhe.diasTreinados!==1?'s':'')+' &times; 30</span>' +
-          '<span style="font-weight:700;">'+(detalhe.diasTreinados*PONTOS_POR_DIA_TREINADO)+'</span></div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--preto-3);">' +
-          '<span style="color:var(--cinza-claro);">'+detalhe.streak+' dia'+(detalhe.streak!==1?'s':'')+' seguidos &times; 10</span>' +
-          '<span style="font-weight:700;">'+(detalhe.streak*PONTOS_POR_DIA_SEQUENCIA)+'</span></div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;">' +
-          '<span style="color:var(--cinza-claro);">Bonus de calorias (limitado por dia)</span>' +
-          '<span style="font-weight:700;">'+(pontosUsuario - detalhe.diasTreinados*PONTOS_POR_DIA_TREINADO - detalhe.streak*PONTOS_POR_DIA_SEQUENCIA)+'</span></div>' +
-        '<p style="font-size:11px;color:var(--cinza);margin-top:10px;">O que mais pesa e treinar em dias diferentes, nao a duracao que voce digita. Cada dia so pontua uma vez, tenha 1 ou 5 treinos registrados nele.</p>' +
-      '</div>' +
-      listaHTML +
-    '</div>' + navbarHTML();
 }
 
 function paginaPerfil(){
@@ -835,47 +544,9 @@ registrarRota('/cadastro', paginaCadastro);
 registrarRota('/onboarding', paginaOnboarding);
 registrarRota('/painel', paginaPainel);
 registrarRota('/exercicios', paginaExercicios);
-registrarRota('/ranking', paginaRanking);
 registrarRota('/perfil', paginaPerfil);
 
-/* Entra direto no app com um perfil de exemplo, sem precisar logar.
-   Da pra editar tudo (nome, peso, meta, etc) na aba Perfil. */
-(function entrarDireto(){
-  var sess = cadastrar('teste@impulso.app', 'teste123');
-  criarPerfil({
-    id: sess.user.id,
-    nome: 'Atleta',
-    idade: 28,
-    sexo: 'masculino',
-    altura_cm: 175,
-    peso_inicial_kg: 82,
-    peso_atual_kg: 82,
-    peso_meta_kg: 75,
-    nivel_atividade: 'leve',
-    ritmo_perda_kg_semana: 0.5,
-    onboarding_completo: true
-  });
-
-  // Semeando alguns treinos de dias anteriores so pra mostrar
-  // historico, streak e ranking ja funcionando na primeira abertura.
-  var hoje = new Date();
-  [3, 2, 1].forEach(function(diasAtras, indice){
-    var d = new Date(hoje);
-    d.setDate(d.getDate() - diasAtras);
-    var chave = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    var tipos = ['caminhada', 'musculacao', 'corrida'];
-    DB.treinos.push({
-      id: gerarId(), user_id: sess.user.id, data: chave, hora: '07:3'+indice,
-      tipo_exercicio: tipos[indice], duracao_min: 35 + indice*10,
-      calorias_gastas_exercicio: 210 + indice*90
-    });
-  });
-  // Treino de hoje, pra fechar a sequencia e o streak ja aparecer aceso
-  registrarTreino(sess.user.id, { tipo_exercicio: 'hiit', duracao_min: 30, calorias_gastas_exercicio: 320 });
-  salvarCheckinHoje(sess.user.id, { calorias_consumidas: 1180 });
-})();
-
-if (!window.location.hash) window.location.hash = '/painel';
+if (!window.location.hash) window.location.hash = '/login';
 render();
 </script>
 </body>
