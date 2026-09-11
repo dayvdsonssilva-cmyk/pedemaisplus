@@ -1,695 +1,882 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<title>Ninho a Dois</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0A0A" />
+<title>IMPULSO - teste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --cream:#FBF3E9;
-    --rose:#C97C6D;
-    --sage:#7C9070;
-    --gold:#D4A657;
-    --ink:#3A322C;
-    --ink-soft:#847A6E;
-    --card:#FFFDF9;
-    --line:#E9DCC9;
-  }
-  *{box-sizing:border-box;}
-  html{touch-action:pan-y;}
-  body{
-    margin:0;
-    background:var(--cream);
-    color:var(--ink);
-    font-family:'Karla',sans-serif;
-    padding:32px 16px 64px;
-    min-height:100vh;
-    touch-action:pan-y;
-  }
-  .wrap{max-width:720px;margin:0 auto;}
-  header{text-align:center;margin-bottom:36px;}
-  header .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--sage);
-    margin-bottom:6px;
-  }
-  h1{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:clamp(32px,6vw,48px);
-    margin:0 0 8px;
-    font-optical-sizing:auto;
-  }
-  header p{color:var(--ink-soft);font-size:15px;margin:0;}
-
-  .profiles{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-bottom:20px;
-  }
-  @media(max-width:520px){.profiles{grid-template-columns:1fr;}}
-
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:18px;
-    padding:20px;
-  }
-  .profile-card{position:relative;overflow:hidden;}
-  .profile-card::before{
-    content:"";
-    position:absolute;top:-30px;right:-30px;
-    width:90px;height:90px;border-radius:50%;
-    opacity:0.14;
-  }
-  .p1::before{background:var(--rose);}
-  .p2::before{background:var(--sage);}
-
-  label{
-    display:block;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    margin-bottom:6px;
-  }
-  input[type=text], input[type=number]{
-    width:100%;
-    border:1.5px solid var(--line);
-    background:#fff;
-    border-radius:10px;
-    padding:10px 12px;
-    font-family:'Karla',sans-serif;
-    font-size:15px;
-    color:var(--ink);
-    margin-bottom:12px;
-  }
-  input:focus{outline:2px solid var(--gold);outline-offset:1px;}
-  .name-input{font-family:'Fraunces',serif;font-size:19px;font-weight:600;}
-
-  .contas-card{margin-bottom:20px;}
-  .contas-title{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:20px;
-    margin:0 0 14px;
-  }
-  .conta-item{
-    border:1.5px solid var(--line);
-    border-radius:12px;
-    padding:10px 10px;
-    margin-bottom:8px;
-    background:#FFFDF9;
-  }
-  .conta-top{
-    display:flex;
-    gap:8px;
-    margin-bottom:8px;
-  }
-  .conta-top input{margin-bottom:0;flex:1;}
-  .conta-bottom{
-    display:flex;
-    gap:8px;
-  }
-  .conta-bottom input{margin-bottom:0;width:120px;flex-shrink:0;}
-  .quem-pill{
-    flex:1;
-    border:1.5px solid var(--line);
-    border-radius:10px;
-    background:#fff;
-    font-family:'Karla',sans-serif;
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-    padding:0 10px;
-    display:flex;align-items:center;justify-content:center;gap:6px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .quem-pill .dot{flex-shrink:0;}
-  .quem-pill[data-quem="ambos"]{border-color:var(--gold);color:#8a6a2c;background:#FBF1DD;}
-  .quem-pill[data-quem="p1"]{border-color:var(--rose);color:#8a4a3c;background:#FBEDE9;}
-  .quem-pill[data-quem="p2"]{border-color:var(--sage);color:#4c5c3f;background:#EFF3EA;}
-  .remove-btn{
-    background:none;border:none;color:var(--ink-soft);
-    font-size:18px;cursor:pointer;line-height:1;
-    width:34px;height:38px;border-radius:8px;flex-shrink:0;
-  }
-  .remove-btn:hover{background:#F3E7D8;color:var(--rose);}
-  .add-btn{
-    background:none;
-    border:1.5px dashed var(--line);
-    color:var(--ink-soft);
-    font-family:'Karla',sans-serif;
-    font-weight:700;
-    font-size:14px;
-    padding:10px;
-    border-radius:10px;
-    width:100%;
-    cursor:pointer;
-    margin-top:4px;
-  }
-  .add-btn:hover{border-color:var(--gold);color:var(--ink);}
-
-  .nest-section{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:24px 20px 20px;
-    text-align:center;
-  }
-  .nest-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    margin-bottom:2px;
-  }
-  .nest-total{
-    font-family:'Fraunces',serif;
-    font-weight:700;
-    font-size:clamp(38px,8vw,54px);
-    margin:2px 0 4px;
-  }
-  .nest-total.negative{color:var(--rose);}
-  .nest-sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:18px;}
-
-  svg#nest-svg{display:block;margin:0 auto 18px;max-width:280px;width:100%;height:auto;}
-
-  .split{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    text-align:left;
-  }
-  @media(max-width:520px){.split{grid-template-columns:1fr;}}
-  .split-item{
-    border-radius:14px;
-    padding:14px 16px;
-    background:#F8F1E5;
-  }
-  .split-item .who{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:16px;
-    margin-bottom:4px;
-    display:flex;align-items:center;gap:8px;
-  }
-  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
-  .split-item .valor{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:22px;
-    font-weight:600;
-  }
-  .split-item .detail{color:var(--ink-soft);font-size:12px;margin-top:4px;}
-
-  footer{
-    text-align:center;
-    margin-top:24px;
-    color:var(--ink-soft);
-    font-size:12px;
-  }
-
-  /* Tela de entrada — criar ou entrar num ninho */
-  #gate-screen{
-    max-width:420px;
-    margin:60px auto;
-    text-align:center;
-  }
-  #gate-screen h1{margin-bottom:10px;}
-  #gate-screen .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;letter-spacing:0.14em;text-transform:uppercase;
-    color:var(--sage);margin-bottom:6px;
-  }
-  #gate-screen p{color:var(--ink-soft);font-size:15px;margin:0 0 28px;}
-  .gate-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:18px;
-    padding:22px;
-    margin-bottom:16px;
-    text-align:left;
-  }
-  .gate-card h3{
-    font-family:'Fraunces',serif;font-size:17px;margin:0 0 6px;
-  }
-  .gate-card p.hint{color:var(--ink-soft);font-size:13px;margin:0 0 14px;}
-  .btn-primary{
-    background:var(--rose);
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    padding:12px 18px;
-    font-family:'Karla',sans-serif;
-    font-weight:700;
-    font-size:14.5px;
-    cursor:pointer;
-    width:100%;
-  }
-  .btn-primary:hover{background:#B76A5B;}
-  .btn-secondary{
-    background:none;
-    border:1.5px solid var(--line);
-    color:var(--ink);
-    border-radius:10px;
-    padding:11px 18px;
-    font-family:'Karla',sans-serif;
-    font-weight:700;
-    font-size:14.5px;
-    cursor:pointer;
-    width:100%;
-  }
-  .btn-secondary:hover{border-color:var(--gold);}
-  .gate-card .join-row{display:flex;gap:8px;}
-  .gate-card .join-row input{margin-bottom:0;text-transform:lowercase;}
-  .gate-card .join-row button{width:auto;white-space:nowrap;}
-
-  /* Barra de código dentro do app */
-  .code-bar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    background:#F3E7D8;
-    border-radius:12px;
-    padding:10px 14px;
-    margin-bottom:22px;
-    flex-wrap:wrap;
-  }
-  .code-bar .code-info{font-size:13px;color:var(--ink-soft);}
-  .code-bar .code-info b{
-    font-family:'IBM Plex Mono',monospace;
-    color:var(--ink);
-    letter-spacing:0.03em;
-  }
-  .code-bar .code-actions{display:flex;gap:8px;}
-  .code-bar button{
-    background:#fff;
-    border:1.5px solid var(--line);
-    border-radius:8px;
-    padding:6px 12px;
-    font-family:'Karla',sans-serif;
-    font-size:12.5px;
-    font-weight:700;
-    color:var(--ink);
-    cursor:pointer;
-  }
-  .code-bar button:hover{border-color:var(--gold);}
-  #app-screen{display:none;}
+:root{
+  --preto:#0A0A0A;--preto-2:#161616;--preto-3:#1F1F1F;
+  --vermelho:#E8151A;--vermelho-forte:#B80000;
+  --branco:#F4F4F2;--cinza:#8C8C8C;--cinza-claro:#B8B8B8;--verde-ok:#34C77B;
+  --fonte-display:'Anton',sans-serif;--fonte-corpo:'Inter',sans-serif;
+  --raio:16px;--raio-peq:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--preto);color:var(--branco);font-family:var(--fonte-corpo);-webkit-font-smoothing:antialiased}
+body{min-height:100dvh}
+#faixa-demo{position:fixed;top:0;left:0;right:0;z-index:999;background:var(--vermelho);color:#fff;font-size:11px;font-weight:700;letter-spacing:.4px;text-align:center;padding:6px 8px;text-transform:uppercase}
+#app{max-width:480px;margin:0 auto;min-height:100dvh;position:relative;display:flex;flex-direction:column;background:var(--preto);padding-top:28px}
+h1,h2,h3{font-family:var(--fonte-display);font-weight:400;letter-spacing:.5px;margin:0;text-transform:uppercase}
+p{margin:0}
+button{font-family:var(--fonte-corpo);cursor:pointer;border:none;outline:none;background:none;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--vermelho);outline-offset:2px}
+input{font-family:var(--fonte-corpo);background:var(--preto-2);border:1.5px solid var(--preto-3);color:var(--branco);border-radius:var(--raio-peq);padding:14px 16px;font-size:16px;width:100%}
+input::placeholder{color:var(--cinza)}
+input:focus{border-color:var(--vermelho)}
+.tela{flex:1;padding:24px 20px 100px;animation:entrar .25s ease}
+@keyframes entrar{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 20px;border-radius:var(--raio-peq);font-weight:700;font-size:15px;letter-spacing:.3px;text-transform:uppercase}
+.btn:active{transform:scale(.97)}
+.btn-primario{background:var(--vermelho);color:var(--branco);box-shadow:0 6px 20px rgba(232,21,26,.35)}
+.btn-secundario{background:var(--preto-2);color:var(--branco);border:1.5px solid var(--preto-3)}
+.btn-texto{background:transparent;color:var(--cinza-claro);text-transform:none;font-weight:500;padding:10px}
+.btn:disabled{opacity:.5;pointer-events:none}
+.rotulo{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--cinza);margin-bottom:8px;display:block}
+.campo{margin-bottom:18px}
+.erro{background:rgba(232,21,26,.12);border:1px solid rgba(232,21,26,.4);color:#FF6B6E;padding:12px 14px;border-radius:var(--raio-peq);font-size:14px;margin-bottom:16px}
+.cartao{background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:20px}
+.marca{display:flex;align-items:baseline;gap:2px;font-family:var(--fonte-display);font-size:32px;letter-spacing:1px;justify-content:center}
+.marca .ponto{color:var(--vermelho)}
+.navbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);display:flex;justify-content:space-around;align-items:center;background:rgba(10,10,10,.96);backdrop-filter:blur(10px);border-top:1px solid var(--preto-3);padding:10px 8px calc(10px + env(safe-area-inset-bottom));width:100%;max-width:480px;z-index:500;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
+.navbar-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--cinza);font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:6px 10px;border-radius:var(--raio-peq)}
+.navbar-item.ativo{color:var(--vermelho)}
+.navbar-item svg{width:22px;height:22px}
+.topo-usuario{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.topo-usuario .saudacao{font-size:13px;color:var(--cinza)}
+.topo-usuario .nome{font-size:20px;font-family:var(--fonte-display);text-transform:uppercase}
+.avatar-inicial{width:40px;height:40px;border-radius:50%;background:var(--vermelho);display:flex;align-items:center;justify-content:center;font-family:var(--fonte-display);font-size:16px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(232,21,26,.18),var(--preto-2));border:1px solid rgba(232,21,26,.35);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;margin-bottom:18px}
+.streak-badge .chama{font-size:16px;display:inline-block;animation:pulsarChama 1.2s ease-in-out infinite}
+@keyframes pulsarChama{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.15) rotate(2deg)}}
+.fogo-flutuante{position:fixed;pointer-events:none;font-size:26px;z-index:600;animation:subirFogo 0.9s ease-out forwards}
+@keyframes subirFogo{0%{opacity:0;transform:translate(-50%,0) scale(.5)}20%{opacity:1;transform:translate(-50%,-10px) scale(1.2)}100%{opacity:0;transform:translate(-50%,-70px) scale(.9)}}
+.anel-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0 20px;position:relative}
+.anel-svg{width:220px;height:220px}
+.anel-fundo{fill:none;stroke:var(--preto-3);stroke-width:14}
+.anel-progresso{fill:none;stroke:var(--vermelho);stroke-width:14;stroke-linecap:round;transform-origin:center;transform:rotate(-90deg);transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(232,21,26,.55))}
+.anel-centro{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.anel-numero{font-family:var(--fonte-display);font-size:44px;line-height:1}
+.anel-legenda{font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
+.grid-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.stat-card{background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:16px}
+.stat-card .valor{font-family:var(--fonte-display);font-size:24px;margin-bottom:2px}
+.stat-card.destaque{border-color:rgba(232,21,26,.4);background:linear-gradient(160deg,rgba(232,21,26,.14),var(--preto-2))}
+.checkin-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:16px 18px;margin-top:16px}
+.checkin-toggle.feito{border-color:rgba(52,199,123,.5);background:linear-gradient(160deg,rgba(52,199,123,.1),var(--preto-2))}
+.switch{width:48px;height:28px;border-radius:999px;background:var(--preto-3);position:relative;transition:background .2s ease;flex-shrink:0}
+.switch.ligado{background:var(--vermelho)}
+.switch-bolinha{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--branco);transition:transform .2s ease}
+.switch.ligado .switch-bolinha{transform:translateX(20px)}
+.lista-exercicios{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.exercicio-item{display:flex;align-items:center;gap:12px;background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio-peq);padding:14px}
+.exercicio-icone{width:40px;height:40px;border-radius:10px;background:var(--preto-3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.exercicio-info{flex:1}
+.exercicio-info .titulo{font-weight:700;font-size:14px}
+.exercicio-info .sub{font-size:12px;color:var(--cinza);margin-top:2px}
+.exercicio-cal{font-size:13px;color:var(--vermelho);font-weight:700;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 16px;border-radius:999px;background:var(--preto-2);border:1.5px solid var(--preto-3);color:var(--cinza-claro);font-size:13px;font-weight:600}
+.chip.selecionado{background:var(--vermelho);border-color:var(--vermelho);color:var(--branco)}
+.barra-fundo{width:100%;height:8px;border-radius:999px;background:var(--preto-3);overflow:hidden}
+.barra-preenchimento{height:100%;background:linear-gradient(90deg,var(--vermelho-forte),var(--vermelho));border-radius:999px;transition:width .5s ease}
+.ranking-item{display:flex;align-items:center;gap:12px;background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio-peq);padding:12px 14px;margin-bottom:10px}
+.ranking-item.voce{border-color:rgba(232,21,26,.5);background:linear-gradient(160deg,rgba(232,21,26,.14),var(--preto-2))}
+.ranking-pos{width:28px;text-align:center;font-family:var(--fonte-display);font-size:16px;color:var(--cinza)}
+.ranking-item.top1 .ranking-pos{color:#FFD34D}
+.ranking-item.top2 .ranking-pos{color:#C9C9C9}
+.ranking-item.top3 .ranking-pos{color:#CD7F32}
+.ranking-avatar{width:36px;height:36px;border-radius:50%;background:var(--preto-3);display:flex;align-items:center;justify-content:center;font-family:var(--fonte-display);font-size:14px;flex-shrink:0}
+.ranking-item.voce .ranking-avatar{background:var(--vermelho)}
+.ranking-info{flex:1}
+.ranking-info .titulo{font-weight:700;font-size:14px}
+.ranking-info .sub{font-size:11px;color:var(--cinza);margin-top:1px}
+.ranking-pontos{font-family:var(--fonte-display);font-size:16px;color:var(--vermelho)}
 </style>
 </head>
 <body>
-<div id="gate-screen">
-  <div class="eyebrow">Cofrinho do casal</div>
-  <h1>Ninho a Dois</h1>
-  <p>Cada casal tem o seu próprio ninho, com seu próprio link. Crie o de vocês ou entrem com um código que já receberam.</p>
-
-  <div class="gate-card">
-    <h3>Criar um ninho novo</h3>
-    <p class="hint">Pra vocês dois começarem do zero. Depois é só mandar o link pra outra pessoa.</p>
-    <button class="btn-primary" id="btn-criar">🪺 Criar nosso ninho</button>
-  </div>
-
-  <div class="gate-card">
-    <h3>Já tenho um código</h3>
-    <p class="hint">Alguém te mandou um código de ninho? Cole aqui.</p>
-    <div class="join-row">
-      <input type="text" id="codigo-input" placeholder="ex: joao-de-barro-42">
-      <button class="btn-secondary" id="btn-entrar" style="width:auto;">Entrar</button>
-    </div>
-  </div>
-</div>
-
-<div id="app-screen">
-<div class="wrap">
-  <div class="code-bar">
-    <div class="code-info">Ninho: <b id="codigo-atual"></b></div>
-    <div class="code-actions">
-      <button id="btn-copiar">copiar link p/ convidar</button>
-      <button id="btn-trocar">trocar de ninho</button>
-    </div>
-  </div>
-
-  <header>
-    <div class="eyebrow">Cofrinho do casal</div>
-    <h1>Ninho a Dois</h1>
-    <p>Cada um bota o que ganha, dividem as contas, e o ninho mostra quanto sobra pra guardar juntos.</p>
-  </header>
-
-  <div class="profiles">
-    <div class="card profile-card p1">
-      <label>Nome</label>
-      <input class="name-input" id="nome1" type="text" value="Pessoa 1" maxlength="20">
-      <label>Renda mensal (R$)</label>
-      <input id="renda1" type="number" min="0" step="0.01" value="0" inputmode="decimal">
-    </div>
-    <div class="card profile-card p2">
-      <label>Nome</label>
-      <input class="name-input" id="nome2" type="text" value="Pessoa 2" maxlength="20">
-      <label>Renda mensal (R$)</label>
-      <input id="renda2" type="number" min="0" step="0.01" value="0" inputmode="decimal">
-    </div>
-  </div>
-
-  <div class="card contas-card">
-    <p class="contas-title">Contas do casal</p>
-    <p style="color:var(--ink-soft);font-size:12.5px;margin:-8px 0 14px;">Toque no botão colorido de cada conta pra marcar se é dividida ou de uma pessoa só.</p>
-    <div id="contas-list"></div>
-    <button class="add-btn" id="add-conta">+ adicionar conta</button>
-  </div>
-
-  <div class="nest-section">
-    <div class="nest-label">Sobra bruta do casal / mês</div>
-    <div class="nest-total" id="sobra-total">R$ 0,00</div>
-    <div class="nest-sub" id="sobra-sub">de R$ 0,00 de renda total</div>
-
-    <svg id="nest-svg" viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg"></svg>
-
-    <div class="split">
-      <div class="split-item">
-        <div class="who"><span class="dot" style="background:var(--rose)"></span><span id="who1">Pessoa 1</span></div>
-        <div class="valor" id="valor1">R$ 0,00</div>
-        <div class="detail" id="detail1">sobra no mês</div>
-      </div>
-      <div class="split-item">
-        <div class="who"><span class="dot" style="background:var(--sage)"></span><span id="who2">Pessoa 2</span></div>
-        <div class="valor" id="valor2">R$ 0,00</div>
-        <div class="detail" id="detail2">sobra no mês</div>
-      </div>
-    </div>
-  </div>
-
-  <footer>As contas são divididas na proporção da renda de cada um — quem ganha mais, contribui mais. Dados salvos automaticamente neste ninho.</footer>
-</div>
-</div>
+<div id="faixa-demo">MODO TESTE &bull; ja entrou com um perfil de exemplo &bull; edite em Perfil</div>
+<div id="app"></div>
 
 <script>
-// Reforço extra contra pinça de zoom (Safari/iOS ignora touch-action em alguns casos)
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, {passive:false});
-let lastTouchEnd = 0;
-document.addEventListener('touchend', e => {
-  const now = Date.now();
-  if (now - lastTouchEnd <= 300) e.preventDefault();
-  lastTouchEnd = now;
-}, {passive:false});
+"use strict";
 
-// ============================================================
-// CONFIGURAÇÃO DO FIREBASE — cole aqui a URL do seu banco
-// (veja o passo a passo que te mandei junto com este arquivo)
-// Exemplo: "https://ninho-a-dois-abc12-default-rtdb.firebaseio.com"
-// ============================================================
-const FIREBASE_DB_URL = "COLE_AQUI_SUA_URL_DO_FIREBASE";
+/* ============== "banco" em memoria (some ao recarregar) ============== */
+var DB = { usuarios: {}, sessao: null, perfis: {}, checkins: {}, treinos: [], rankingFake: null };
 
-const STORAGE_KEY_PREFIX = 'ninhos/';
-let contas = [{desc:'Aluguel', valor:0, quem:'ambos'}];
-let saveTimeout = null;
-let currentCode = null;
-let firebaseConfigurado = FIREBASE_DB_URL && !FIREBASE_DB_URL.includes('COLE_AQUI');
-
-const PASSAROS = ['joao-de-barro','andorinha','sabia','curio','beija-flor','pardal','canario','bem-te-vi','tico-tico','coruja'];
-
-function gerarCodigo(){
-  const nome = PASSAROS[Math.floor(Math.random()*PASSAROS.length)];
-  const num = Math.floor(10 + Math.random()*90);
-  return `${nome}-${num}`;
+function gerarId(){ return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
+function dataDeHoje(){
+  var h = new Date();
+  return h.getFullYear() + '-' + String(h.getMonth()+1).padStart(2,'0') + '-' + String(h.getDate()).padStart(2,'0');
 }
 
-function slugify(s){
-  return s.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9-]/g,'');
+/* ============== auth ============== */
+function cadastrar(email, senha){
+  if (DB.usuarios[email]) throw new Error('Esse e-mail ja tem cadastro nesta sessao de teste. Tenta entrar.');
+  if (senha.length < 6) throw new Error('A senha precisa ter pelo menos 6 caracteres.');
+  var id = gerarId();
+  DB.usuarios[email] = { id: id, email: email, senha: senha };
+  DB.sessao = { user: { id: id, email: email } };
+  return DB.sessao;
+}
+function entrar(email, senha){
+  var u = DB.usuarios[email];
+  if (!u || u.senha !== senha) throw new Error('E-mail ou senha incorretos.');
+  DB.sessao = { user: { id: u.id, email: email } };
+  return DB.sessao;
+}
+function sair(){ DB.sessao = null; }
+function sessaoAtual(){ return DB.sessao; }
+
+/* ============== perfil / checkins ============== */
+function buscarPerfil(uid){ return DB.perfis[uid] || null; }
+function criarPerfil(p){ DB.perfis[p.id] = p; return p; }
+function atualizarPerfil(uid, campos){ DB.perfis[uid] = Object.assign({}, DB.perfis[uid], campos); return DB.perfis[uid]; }
+
+function chaveCheckin(uid, data){ return uid + '__' + data; }
+function buscarCheckinHoje(uid){ return DB.checkins[chaveCheckin(uid, dataDeHoje())] || null; }
+function salvarCheckinHoje(uid, campos){
+  var chave = chaveCheckin(uid, dataDeHoje());
+  var atual = DB.checkins[chave] || { id: gerarId(), user_id: uid, data: dataDeHoje() };
+  DB.checkins[chave] = Object.assign({}, atual, campos);
+  return DB.checkins[chave];
+}
+function buscarHistorico(uid, dias){
+  return Object.values(DB.checkins)
+    .filter(function(c){ return c.user_id === uid; })
+    .sort(function(a,b){ return a.data < b.data ? 1 : -1; })
+    .slice(0, dias || 14);
 }
 
-function entrarNoNinho(code){
-  currentCode = code;
-  location.hash = code;
-  document.getElementById('codigo-atual').textContent = code;
-  document.getElementById('gate-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'block';
-  if(!firebaseConfigurado){
-    alert('⚠️ Falta configurar o Firebase!\n\nAbra o arquivo .html num editor de texto, procure por FIREBASE_DB_URL logo no início do <script>, e cole a URL do seu banco no lugar de "COLE_AQUI_SUA_URL_DO_FIREBASE".\n\nSem isso, nada vai ser salvo nem sincronizado.');
-  }
-  load();
-}
-
-document.getElementById('btn-criar').addEventListener('click', () => {
-  entrarNoNinho(gerarCodigo());
-});
-
-document.getElementById('btn-entrar').addEventListener('click', () => {
-  const val = slugify(document.getElementById('codigo-input').value);
-  if(val) entrarNoNinho(val);
-});
-document.getElementById('codigo-input').addEventListener('keydown', e => {
-  if(e.key === 'Enter') document.getElementById('btn-entrar').click();
-});
-
-document.getElementById('btn-trocar').addEventListener('click', () => {
-  currentCode = null;
-  history.replaceState(null, '', location.pathname + location.search);
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('gate-screen').style.display = 'block';
-  document.getElementById('codigo-input').value = '';
-});
-
-document.getElementById('btn-copiar').addEventListener('click', async () => {
-  const link = location.href.split('#')[0] + '#' + currentCode;
-  const btn = document.getElementById('btn-copiar');
-  try{
-    await navigator.clipboard.writeText(link);
-    btn.textContent = 'link copiado ✓';
-  }catch(err){
-    prompt('Copie o link do ninho:', link);
-  }
-  setTimeout(() => btn.textContent = 'copiar link p/ convidar', 2000);
-});
-
-// Se a URL já vem com um código (#nome-do-ninho), entra direto
-if(location.hash && location.hash.length > 1){
-  entrarNoNinho(slugify(location.hash.slice(1)));
-}
-
-function brl(n){
-  const sign = n < 0 ? '-' : '';
-  return sign + 'R$ ' + Math.abs(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-
-function nomeAtual(id){
-  const v = document.getElementById(id).value.trim();
-  return v || (id === 'nome1' ? 'Pessoa 1' : 'Pessoa 2');
-}
-
-function labelQuem(quem){
-  if(quem === 'p1') return { texto: nomeAtual('nome1'), cor:'var(--rose)' };
-  if(quem === 'p2') return { texto: nomeAtual('nome2'), cor:'var(--sage)' };
-  return { texto: 'Dividido', cor:'var(--gold)' };
-}
-
-function proximoQuem(quem){
-  if(quem === 'ambos') return 'p1';
-  if(quem === 'p1') return 'p2';
-  return 'ambos';
-}
-
-function refreshQuemPills(){
-  document.querySelectorAll('.quem-pill').forEach(btn => {
-    const idx = +btn.dataset.idx;
-    const info = labelQuem(contas[idx].quem);
-    btn.dataset.quem = contas[idx].quem;
-    btn.innerHTML = `<span class="dot" style="background:${info.cor}"></span>${info.texto}`;
-  });
-}
-
-function renderContas(){
-  const list = document.getElementById('contas-list');
-  list.innerHTML = '';
-  contas.forEach((c, i) => {
-    if(!c.quem) c.quem = 'ambos';
-    const info = labelQuem(c.quem);
-    const row = document.createElement('div');
-    row.className = 'conta-item';
-    row.innerHTML = `
-      <div class="conta-top">
-        <input type="text" placeholder="Descrição" value="${c.desc.replace(/"/g,'&quot;')}" data-idx="${i}" data-field="desc">
-        <button class="remove-btn" data-idx="${i}" title="remover">×</button>
-      </div>
-      <div class="conta-bottom">
-        <input type="number" min="0" step="0.01" placeholder="0,00" value="${c.valor || ''}" data-idx="${i}" data-field="valor" inputmode="decimal">
-        <button class="quem-pill" data-idx="${i}" data-quem="${c.quem}"><span class="dot" style="background:${info.cor}"></span>${info.texto}</button>
-      </div>
-    `;
-    list.appendChild(row);
-  });
-  list.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', e => {
-      const idx = +e.target.dataset.idx;
-      const field = e.target.dataset.field;
-      contas[idx][field] = field === 'valor' ? (parseFloat(e.target.value) || 0) : e.target.value;
-      calcAndRender();
-      scheduleSave();
-    });
-  });
-  list.querySelectorAll('.remove-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const idx = +e.target.dataset.idx;
-      contas.splice(idx, 1);
-      renderContas();
-      calcAndRender();
-      scheduleSave();
-    });
-  });
-  list.querySelectorAll('.quem-pill').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const idx = +e.currentTarget.dataset.idx;
-      contas[idx].quem = proximoQuem(contas[idx].quem);
-      refreshQuemPills();
-      calcAndRender();
-      scheduleSave();
-    });
-  });
-}
-
-function drawNest(pct1, pct2, fillPct){
-  const svg = document.getElementById('nest-svg');
-  const clamped = Math.max(0, Math.min(1, fillPct));
-  const twigCount = 22;
-  let twigs = '';
-  for(let i=0;i<twigCount;i++){
-    const angle = (i/twigCount) * Math.PI;
-    const x1 = 140 + Math.cos(angle) * (95 - (i%3)*4);
-    const y1 = 130 - Math.sin(angle) * (38 - (i%3)*2);
-    const x2 = 140 + Math.cos(angle + 0.35) * (60 - (i%3)*3);
-    const y2 = 128 - Math.sin(angle + 0.35) * (20 - (i%3));
-    const color = i < twigCount*pct1 ? '#C97C6D' : '#7C9070';
-    twigs += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="4" stroke-linecap="round" opacity="0.85"/>`;
-  }
-  const eggY = 118 - clamped*30;
-  const eggOpacity = 0.35 + clamped*0.65;
-  svg.innerHTML = `
-    <ellipse cx="140" cy="140" rx="100" ry="14" fill="#E9DCC9" opacity="0.5"/>
-    ${twigs}
-    <ellipse cx="118" cy="${eggY+6}" rx="15" ry="19" fill="#D4A657" opacity="${eggOpacity}"/>
-    <ellipse cx="150" cy="${eggY}" rx="16" ry="20" fill="#D4A657" opacity="${eggOpacity}"/>
-    <ellipse cx="140" cy="132" rx="70" ry="16" fill="none" stroke="#8A7A5C" stroke-width="2" opacity="0.25"/>
-  `;
-}
-
-function calcAndRender(){
-  const nome1 = nomeAtual('nome1');
-  const nome2 = nomeAtual('nome2');
-  const renda1 = parseFloat(document.getElementById('renda1').value) || 0;
-  const renda2 = parseFloat(document.getElementById('renda2').value) || 0;
-  const totalRenda = renda1 + renda2;
-
-  const contasAmbos = contas.filter(c=>c.quem==='ambos' || !c.quem).reduce((s,c)=>s+(c.valor||0),0);
-  const contasP1 = contas.filter(c=>c.quem==='p1').reduce((s,c)=>s+(c.valor||0),0);
-  const contasP2 = contas.filter(c=>c.quem==='p2').reduce((s,c)=>s+(c.valor||0),0);
-  const totalContas = contasAmbos + contasP1 + contasP2;
-  const sobraBruta = totalRenda - totalContas;
-
-  const share1 = totalRenda > 0 ? renda1/totalRenda : 0.5;
-  const share2 = totalRenda > 0 ? renda2/totalRenda : 0.5;
-  const parteDividida1 = contasAmbos * share1;
-  const parteDividida2 = contasAmbos * share2;
-  const totalContas1 = contasP1 + parteDividida1;
-  const totalContas2 = contasP2 + parteDividida2;
-  const sobra1 = renda1 - totalContas1;
-  const sobra2 = renda2 - totalContas2;
-
-  document.getElementById('who1').textContent = nome1;
-  document.getElementById('who2').textContent = nome2;
-  const totalEl = document.getElementById('sobra-total');
-  totalEl.textContent = brl(sobraBruta);
-  totalEl.className = 'nest-total' + (sobraBruta < 0 ? ' negative' : '');
-  document.getElementById('sobra-sub').textContent = `de ${brl(totalRenda)} de renda total, ${brl(totalContas)} em contas`;
-
-  document.getElementById('valor1').textContent = brl(sobra1);
-  document.getElementById('valor2').textContent = brl(sobra2);
-  document.getElementById('detail1').textContent = `gasta ${brl(totalContas1)} (próprias + parte dividida)`;
-  document.getElementById('detail2').textContent = `gasta ${brl(totalContas2)} (próprias + parte dividida)`;
-
-  const fillPct = totalRenda > 0 ? Math.max(0, sobraBruta/totalRenda) : 0;
-  drawNest(share1, share2, fillPct);
-}
-
-function scheduleSave(){
-  clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(save, 500);
-}
-
-async function save(){
-  if(!currentCode || !firebaseConfigurado) return;
-  const data = {
-    nome1: document.getElementById('nome1').value,
-    nome2: document.getElementById('nome2').value,
-    renda1: document.getElementById('renda1').value,
-    renda2: document.getElementById('renda2').value,
-    contas
+/* ============== treinos (cada registro fica salvo separado) ============== */
+function registrarTreino(uid, dados){
+  var item = {
+    id: gerarId(),
+    user_id: uid,
+    data: dataDeHoje(),
+    hora: new Date().toTimeString().slice(0,5),
+    tipo_exercicio: dados.tipo_exercicio,
+    duracao_min: dados.duracao_min,
+    calorias_gastas_exercicio: dados.calorias_gastas_exercicio
   };
-  try{
-    await fetch(`${FIREBASE_DB_URL}/${STORAGE_KEY_PREFIX}${currentCode}.json`, {
-      method: 'PUT',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(data)
-    });
-  }catch(err){
-    console.error('Erro ao salvar:', err);
-  }
+  DB.treinos.push(item);
+  // mantem o flag do dia sincronizado, sem apagar o registro anterior
+  salvarCheckinHoje(uid, { treinou: true });
+  return item;
+}
+function buscarTreinosHoje(uid){
+  var hoje = dataDeHoje();
+  return DB.treinos.filter(function(t){ return t.user_id === uid && t.data === hoje; });
+}
+function buscarHistoricoTreinos(uid, limite){
+  return DB.treinos
+    .filter(function(t){ return t.user_id === uid; })
+    .sort(function(a,b){
+      if (a.data !== b.data) return a.data < b.data ? 1 : -1;
+      return a.hora < b.hora ? 1 : -1;
+    })
+    .slice(0, limite || 20);
 }
 
-async function load(){
-  if(!currentCode || !firebaseConfigurado) return;
-  try{
-    const resp = await fetch(`${FIREBASE_DB_URL}/${STORAGE_KEY_PREFIX}${currentCode}.json`);
-    const data = await resp.json();
-    if(data){
-      document.getElementById('nome1').value = data.nome1 || 'Pessoa 1';
-      document.getElementById('nome2').value = data.nome2 || 'Pessoa 2';
-      document.getElementById('renda1').value = data.renda1 || 0;
-      document.getElementById('renda2').value = data.renda2 || 0;
-      contas = (data.contas && data.contas.length) ? data.contas : contas;
-      contas.forEach(c => { if(!c.quem) c.quem = 'ambos'; });
-    }
-  }catch(err){
-    console.log('Sem dados salvos ainda, começando do zero.');
+/* ============== streak (dias seguidos com treino registrado) ============== */
+function calcularStreak(uid){
+  var datasComTreino = {};
+  DB.treinos.forEach(function(t){ if (t.user_id === uid) datasComTreino[t.data] = true; });
+  var streak = 0;
+  var cursor = new Date();
+  for (var i = 0; i < 365; i++){
+    var chave = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
+    if (datasComTreino[chave]) { streak++; cursor.setDate(cursor.getDate()-1); }
+    else break;
   }
-  renderContas();
-  refreshQuemPills();
-  calcAndRender();
+  return streak;
 }
 
-document.getElementById('add-conta').addEventListener('click', () => {
-  contas.push({desc:'', valor:0, quem:'ambos'});
-  renderContas();
-  calcAndRender();
-  scheduleSave();
-});
-
-['nome1','nome2','renda1','renda2'].forEach(id => {
-  document.getElementById(id).addEventListener('input', () => {
-    refreshQuemPills();
-    calcAndRender();
-    scheduleSave();
+/* ============== ranking (gamificacao) ============== */
+var NOMES_FAKE = ['Marina', 'Lucas', 'Bia', 'Pedro', 'Ana Julia', 'Rafa', 'Carol', 'Thiago'];
+function gerarRankingFake(){
+  if (DB.rankingFake) return DB.rankingFake;
+  DB.rankingFake = NOMES_FAKE.map(function(nome){
+    return { nome: nome, pontos: 40 + Math.round(Math.random() * 260) };
   });
-});
+  return DB.rankingFake;
+}
+/* ============== ranking (gamificacao, a prova de trapaca) ==============
+   Regra: o que mais vale e CONSTANCIA (dias diferentes que a pessoa
+   treinou de verdade + sequencia), nao a duracao ou calorias digitadas.
+   Isso evita que alguem coloque "500 minutos de corrida" numa registro
+   so e va pro topo do ranking sem esforco real. */
+var PONTOS_POR_DIA_TREINADO = 30;   // vale por DIA com treino, nao por registro
+var PONTOS_POR_DIA_SEQUENCIA = 10;  // bonus de constancia (streak)
+var TETO_KCAL_PONTUAVEL_POR_DIA = 400; // calorias acima disso no mesmo dia nao rendem mais pontos
+var DIVISOR_BONUS_CALORICO = 20;    // 400kcal/dia = no maximo 20 pontos de bonus
 
-// Verifica periodicamente se o outro dispositivo salvou algo novo,
-// só atualiza a tela se ninguém estiver digitando e se já estamos dentro de um ninho
-setInterval(() => {
-  const tag = document.activeElement ? document.activeElement.tagName : '';
-  if (tag !== 'INPUT' && currentCode) {
-    load();
+function calcularPontos(uid){
+  var treinosUsuario = DB.treinos.filter(function(t){ return t.user_id === uid; });
+
+  // agrupa por dia: nao importa se a pessoa registrou 1 ou 10 treinos
+  // no mesmo dia, o dia conta 1 vez so pra pontuacao de constancia
+  var caloriasPorDia = {};
+  treinosUsuario.forEach(function(t){
+    var cal = Math.max(0, Math.min(t.calorias_gastas_exercicio || 0, TETO_KCAL_PONTUAVEL_POR_DIA));
+    caloriasPorDia[t.data] = Math.min((caloriasPorDia[t.data] || 0) + cal, TETO_KCAL_PONTUAVEL_POR_DIA);
+  });
+
+  var diasTreinados = Object.keys(caloriasPorDia).length;
+  var streak = calcularStreak(uid);
+
+  var pontosConstancia = diasTreinados * PONTOS_POR_DIA_TREINADO;
+  var pontosSequencia = streak * PONTOS_POR_DIA_SEQUENCIA;
+  var bonusCalorico = Object.values(caloriasPorDia).reduce(function(soma, cal){
+    return soma + Math.round(cal / DIVISOR_BONUS_CALORICO);
+  }, 0);
+
+  return pontosConstancia + pontosSequencia + bonusCalorico;
+}
+
+function detalharPontos(uid){
+  var treinosUsuario = DB.treinos.filter(function(t){ return t.user_id === uid; });
+  var diasUnicos = {};
+  treinosUsuario.forEach(function(t){ diasUnicos[t.data] = true; });
+  return {
+    diasTreinados: Object.keys(diasUnicos).length,
+    streak: calcularStreak(uid),
+    total: calcularPontos(uid)
+  };
+}
+
+/* ============== calculos ============== */
+var FATORES_ATIVIDADE = {
+  sedentario: { fator: 1.2, rotulo: 'Sedentario' },
+  leve: { fator: 1.375, rotulo: 'Leve' },
+  moderado: { fator: 1.55, rotulo: 'Moderado' },
+  ativo: { fator: 1.725, rotulo: 'Ativo' },
+  muito_ativo: { fator: 1.9, rotulo: 'Muito ativo' }
+};
+var RITMOS_PERDA = [0.25, 0.5, 0.75, 1];
+var KCAL_POR_KG = 7700;
+
+function calcularTMB(p){
+  var base = 10*p.peso_kg + 6.25*p.altura_cm - 5*p.idade;
+  if (p.sexo === 'masculino') return Math.round(base + 5);
+  if (p.sexo === 'feminino') return Math.round(base - 161);
+  return Math.round(base - 78);
+}
+function calcularTDEE(tmb, nivel){
+  var info = FATORES_ATIVIDADE[nivel] || FATORES_ATIVIDADE.leve;
+  return Math.round(tmb * info.fator);
+}
+function calcularMetaCalorica(tdee, tmb, ritmo){
+  var deficit = Math.round((ritmo * KCAL_POR_KG) / 7);
+  var meta = tdee - deficit;
+  var piso = Math.round(tmb * 1.1);
+  return meta < piso ? piso : meta;
+}
+function calcularMacros(metaCalorica, pesoAtual){
+  var proteinaG = Math.round(pesoAtual * 2);
+  var proteinaKcal = proteinaG * 4;
+  var gorduraKcal = Math.round(metaCalorica * 0.25);
+  var gorduraG = Math.round(gorduraKcal / 9);
+  var carboKcal = Math.max(metaCalorica - proteinaKcal - gorduraKcal, 0);
+  var carboG = Math.round(carboKcal / 4);
+  return { proteina_g: proteinaG, gordura_g: gorduraG, carboidrato_g: carboG };
+}
+function calcularPainel(perfil){
+  var tmb = calcularTMB({ peso_kg: perfil.peso_atual_kg, altura_cm: perfil.altura_cm, idade: perfil.idade, sexo: perfil.sexo });
+  var tdee = calcularTDEE(tmb, perfil.nivel_atividade);
+  var meta = calcularMetaCalorica(tdee, tmb, perfil.ritmo_perda_kg_semana);
+  var macros = calcularMacros(meta, perfil.peso_atual_kg);
+  var pesoParaPerder = Math.max(perfil.peso_atual_kg - perfil.peso_meta_kg, 0);
+  var semanas = perfil.ritmo_perda_kg_semana > 0 ? Math.ceil(pesoParaPerder / perfil.ritmo_perda_kg_semana) : 0;
+  return { tmb: tmb, tdee: tdee, metaCalorica: meta, macros: macros, pesoParaPerder: pesoParaPerder, semanasEstimadas: semanas };
+}
+function calcularProgressoPeso(inicial, atual, meta){
+  var total = inicial - meta;
+  if (!(total > 0)) return 0;
+  var jaPerdido = inicial - atual;
+  var pct = (jaPerdido/total)*100;
+  if (pct < 0) return 0;
+  if (pct > 100) return 100;
+  return Math.round(pct);
+}
+
+var EXERCICIOS = [
+  { chave: 'caminhada', rotulo: 'Caminhada', met: 3.5 },
+  { chave: 'corrida', rotulo: 'Corrida', met: 8 },
+  { chave: 'musculacao', rotulo: 'Musculacao', met: 5 },
+  { chave: 'ciclismo', rotulo: 'Ciclismo', met: 7.5 },
+  { chave: 'natacao', rotulo: 'Natacao', met: 6 },
+  { chave: 'hiit', rotulo: 'HIIT', met: 9 },
+  { chave: 'yoga', rotulo: 'Yoga', met: 2.5 },
+  { chave: 'futebol', rotulo: 'Futebol', met: 7 }
+];
+
+/* ============== router (hash) ============== */
+var raiz = document.getElementById('app');
+var rotas = {};
+function registrarRota(caminho, fn){ rotas[caminho] = fn; }
+function navegarPara(c){ if (window.location.hash !== '#'+c) window.location.hash = c; else render(); }
+function rotaAtual(){ return window.location.hash.replace('#','') || '/'; }
+function render(){
+  var caminho = rotaAtual();
+  var fn = rotas[caminho];
+  if (!fn) { raiz.innerHTML = '<div class="tela"><p>Pagina nao encontrada.</p></div>'; return; }
+  fn();
+}
+window.addEventListener('hashchange', render);
+
+/* ============== componentes ============== */
+function iconeCasa(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>'; }
+function iconeRaio(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>'; }
+function iconePessoa(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>'; }
+function iconeTrofeu(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 5H4a1 1 0 0 0-1 1c0 3 2 5 4.5 5.3M17 5h3a1 1 0 0 1 1 1c0 3-2 5-4.5 5.3"/></svg>'; }
+
+/* Animacao de fogo: aparece perto do elemento clicado e sobe/some */
+function dispararFogo(elementoOrigem){
+  if (!elementoOrigem) return;
+  var rect = elementoOrigem.getBoundingClientRect();
+  var qtd = 3;
+  for (var i = 0; i < qtd; i++){
+    (function(indice){
+      setTimeout(function(){
+        var fogo = document.createElement('span');
+        fogo.className = 'fogo-flutuante';
+        fogo.textContent = '\u{1F525}';
+        fogo.style.left = (rect.left + rect.width/2 + (Math.random()*30-15)) + 'px';
+        fogo.style.top = (rect.top - 4) + 'px';
+        document.body.appendChild(fogo);
+        setTimeout(function(){ fogo.remove(); }, 900);
+      }, indice * 120);
+    })(i);
   }
-}, 4000);
+}
+
+function navbarHTML(){
+  var itens = [
+    { rota: '/painel', rotulo: 'Painel', icone: iconeCasa },
+    { rota: '/exercicios', rotulo: 'Treino', icone: iconeRaio },
+    { rota: '/ranking', rotulo: 'Ranking', icone: iconeTrofeu },
+    { rota: '/perfil', rotulo: 'Perfil', icone: iconePessoa }
+  ];
+  var atual = rotaAtual();
+  var html = '<nav class="navbar">';
+  itens.forEach(function(it){
+    html += '<button class="navbar-item' + (atual===it.rota?' ativo':'') + '" onclick="navegarPara(\'' + it.rota + '\')">' + it.icone() + '<span>' + it.rotulo + '</span></button>';
+  });
+  html += '</nav>';
+  return html;
+}
+
+function anelHTML(consumidas, meta){
+  var RAIO = 90, CIRC = 2*Math.PI*RAIO;
+  var restante = Math.max(meta - consumidas, 0);
+  var pct = meta > 0 ? Math.min(consumidas/meta, 1) : 0;
+  var offset = CIRC * (1-pct);
+  return '<div class="anel-wrap"><svg class="anel-svg" viewBox="0 0 200 200">' +
+    '<circle class="anel-fundo" cx="100" cy="100" r="'+RAIO+'"></circle>' +
+    '<circle class="anel-progresso" cx="100" cy="100" r="'+RAIO+'" stroke-dasharray="'+CIRC+'" stroke-dashoffset="'+offset+'"></circle>' +
+    '</svg><div class="anel-centro"><div class="anel-numero">'+restante+'</div><div class="anel-legenda">kcal restantes</div></div></div>';
+}
+
+/* ============== paginas ============== */
+var estadoOnboarding = { sexo: 'masculino', nivel_atividade: 'leve', ritmo_perda_kg_semana: 0.5 };
+var estadoExercicio = { tipo: 'caminhada' };
+var estadoPerfil = {};
+
+function paginaLogin(){
+  raiz.innerHTML =
+    '<div class="tela" style="display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 28px);">' +
+      '<div style="margin-bottom:40px;"><span class="marca">IMPULSO<span class="ponto">.</span></span>' +
+      '<p style="color:var(--cinza);font-size:14px;margin-top:8px;text-align:center;">Treino, peso e meta. Todo dia.</p></div>' +
+      '<div id="erro-area"></div>' +
+      '<form id="form-login">' +
+        '<div class="campo"><label class="rotulo">E-mail</label><input type="email" id="email" placeholder="voce@email.com" required /></div>' +
+        '<div class="campo"><label class="rotulo">Senha</label><input type="password" id="senha" placeholder="Sua senha" required minlength="6" /></div>' +
+        '<button type="submit" class="btn btn-primario">Entrar</button>' +
+      '</form>' +
+      '<button class="btn btn-texto" onclick="navegarPara(\'/cadastro\')" style="margin-top:12px;">Ainda nao tem conta? Cadastre-se</button>' +
+    '</div>';
+  document.getElementById('form-login').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var senha = document.getElementById('senha').value;
+    try { entrar(email, senha); navegarPara('/painel'); }
+    catch(err){ document.getElementById('erro-area').innerHTML = '<div class="erro">'+err.message+'</div>'; }
+  });
+}
+
+function paginaCadastro(){
+  raiz.innerHTML =
+    '<div class="tela" style="display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 28px);">' +
+      '<div style="margin-bottom:40px;"><span class="marca">IMPULSO<span class="ponto">.</span></span>' +
+      '<p style="color:var(--cinza);font-size:14px;margin-top:8px;text-align:center;">Cria sua conta de teste.</p></div>' +
+      '<div id="erro-area"></div>' +
+      '<form id="form-cadastro">' +
+        '<div class="campo"><label class="rotulo">E-mail</label><input type="email" id="email" placeholder="voce@email.com" required /></div>' +
+        '<div class="campo"><label class="rotulo">Senha</label><input type="password" id="senha" placeholder="Minimo 6 caracteres" required minlength="6" /></div>' +
+        '<button type="submit" class="btn btn-primario">Criar conta</button>' +
+      '</form>' +
+      '<button class="btn btn-texto" onclick="navegarPara(\'/login\')" style="margin-top:12px;">Ja tem conta? Entrar</button>' +
+    '</div>';
+  document.getElementById('form-cadastro').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var senha = document.getElementById('senha').value;
+    try { cadastrar(email, senha); navegarPara('/onboarding'); }
+    catch(err){ document.getElementById('erro-area').innerHTML = '<div class="erro">'+err.message+'</div>'; }
+  });
+}
+
+function configurarChips(seletor, aoSelecionar){
+  var container = document.querySelector(seletor);
+  container.querySelectorAll('.chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      container.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('selecionado'); });
+      chip.classList.add('selecionado');
+      aoSelecionar(chip.dataset.valor);
+    });
+  });
+}
+
+function paginaOnboarding(){
+  var sess = sessaoAtual();
+  if (!sess) { navegarPara('/login'); return; }
+
+  var chipsAtividade = Object.keys(FATORES_ATIVIDADE).map(function(k){
+    return '<button type="button" class="chip'+(k==='leve'?' selecionado':'')+'" data-valor="'+k+'">'+FATORES_ATIVIDADE[k].rotulo+'</button>';
+  }).join('');
+  var chipsRitmo = RITMOS_PERDA.map(function(r){
+    return '<button type="button" class="chip'+(r===0.5?' selecionado':'')+'" data-valor="'+r+'">'+String(r).replace('.',',')+' kg/semana</button>';
+  }).join('');
+
+  raiz.innerHTML =
+    '<div class="tela">' +
+      '<h2 style="font-size:22px;margin-bottom:4px;">Vamos te conhecer</h2>' +
+      '<p style="color:var(--cinza);font-size:14px;margin-bottom:24px;">Isso define sua meta calorica real. Leva 1 minuto.</p>' +
+      '<div id="erro-area"></div>' +
+      '<form id="form-onboarding">' +
+        '<div class="campo"><label class="rotulo">Seu nome</label><input type="text" id="nome" placeholder="Como te chamamos?" required /></div>' +
+        '<div class="campo"><label class="rotulo">Idade</label><input type="number" id="idade" placeholder="Ex: 28" required min="14" max="90" /></div>' +
+        '<div class="campo"><label class="rotulo">Sexo biologico (para o calculo)</label><div class="chips" id="chips-sexo">' +
+          '<button type="button" class="chip selecionado" data-valor="masculino">Masculino</button>' +
+          '<button type="button" class="chip" data-valor="feminino">Feminino</button>' +
+          '<button type="button" class="chip" data-valor="outro">Outro</button></div></div>' +
+        '<div class="campo"><label class="rotulo">Altura (cm)</label><input type="number" id="altura" placeholder="Ex: 175" required min="120" max="230" /></div>' +
+        '<div class="campo"><label class="rotulo">Peso atual (kg)</label><input type="number" step="0.1" id="peso_atual" placeholder="Ex: 82.5" required min="30" max="300" /></div>' +
+        '<div class="campo"><label class="rotulo">Peso meta (kg)</label><input type="number" step="0.1" id="peso_meta" placeholder="Ex: 75" required min="30" max="300" /></div>' +
+        '<div class="campo"><label class="rotulo">Nivel de atividade</label><div class="chips" id="chips-atividade">'+chipsAtividade+'</div></div>' +
+        '<div class="campo"><label class="rotulo">Ritmo de perda desejado</label><div class="chips" id="chips-ritmo">'+chipsRitmo+'</div></div>' +
+        '<button type="submit" class="btn btn-primario" style="margin-top:12px;">Calcular minha meta</button>' +
+      '</form>' +
+    '</div>';
+
+  estadoOnboarding = { sexo: 'masculino', nivel_atividade: 'leve', ritmo_perda_kg_semana: 0.5 };
+  configurarChips('#chips-sexo', function(v){ estadoOnboarding.sexo = v; });
+  configurarChips('#chips-atividade', function(v){ estadoOnboarding.nivel_atividade = v; });
+  configurarChips('#chips-ritmo', function(v){ estadoOnboarding.ritmo_perda_kg_semana = Number(v); });
+
+  document.getElementById('form-onboarding').addEventListener('submit', function(e){
+    e.preventDefault();
+    var nome = document.getElementById('nome').value.trim();
+    var idade = Number(document.getElementById('idade').value);
+    var altura = Number(document.getElementById('altura').value);
+    var pesoAtual = Number(document.getElementById('peso_atual').value);
+    var pesoMeta = Number(document.getElementById('peso_meta').value);
+    criarPerfil({
+      id: sess.user.id, nome: nome, idade: idade, sexo: estadoOnboarding.sexo,
+      altura_cm: altura, peso_inicial_kg: pesoAtual, peso_atual_kg: pesoAtual, peso_meta_kg: pesoMeta,
+      nivel_atividade: estadoOnboarding.nivel_atividade, ritmo_perda_kg_semana: estadoOnboarding.ritmo_perda_kg_semana,
+      onboarding_completo: true
+    });
+    navegarPara('/painel');
+  });
+}
+
+function saudacaoPorHorario(){
+  var h = new Date().getHours();
+  if (h < 12) return 'Bom dia';
+  if (h < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+function paginaPainel(){
+  var sess = sessaoAtual();
+  if (!sess) { navegarPara('/login'); return; }
+  var perfil = buscarPerfil(sess.user.id);
+  if (!perfil || !perfil.onboarding_completo) { navegarPara('/onboarding'); return; }
+
+  var checkin = buscarCheckinHoje(sess.user.id);
+  var painel = calcularPainel(perfil);
+  var consumidas = (checkin && checkin.calorias_consumidas) || 0;
+  var treinosHoje = buscarTreinosHoje(sess.user.id);
+  var treinou = Boolean((checkin && checkin.treinou) || treinosHoje.length > 0);
+  var streak = calcularStreak(sess.user.id);
+  var progresso = calcularProgressoPeso(perfil.peso_inicial_kg, perfil.peso_atual_kg, perfil.peso_meta_kg);
+  var primeiroNome = perfil.nome.split(' ')[0];
+
+  raiz.innerHTML =
+    '<div class="tela">' +
+      '<div class="topo-usuario"><div><p class="saudacao">'+saudacaoPorHorario()+'</p><h1 class="nome">'+primeiroNome+'</h1></div>' +
+      '<div class="avatar-inicial">'+primeiroNome.charAt(0).toUpperCase()+'</div></div>' +
+      (streak > 0 ? '<div class="streak-badge"><span class="chama">\u{1F525}</span><span>'+streak+' dia'+(streak>1?'s':'')+' seguidos treinando</span></div>' : '') +
+      anelHTML(consumidas, painel.metaCalorica) +
+      '<div class="grid-stats">' +
+        '<div class="stat-card destaque"><div class="valor">'+painel.metaCalorica+'</div><p class="rotulo">Meta kcal / dia</p></div>' +
+        '<div class="stat-card"><div class="valor">'+consumidas+'</div><p class="rotulo">Consumidas hoje</p></div>' +
+        '<div class="stat-card"><div class="valor">'+painel.macros.proteina_g+'g</div><p class="rotulo">Proteina</p></div>' +
+        '<div class="stat-card"><div class="valor">'+painel.macros.carboidrato_g+'g</div><p class="rotulo">Carboidrato</p></div>' +
+      '</div>' +
+      '<div class="cartao" style="margin-top:16px;"><label class="rotulo">Registrar calorias consumidas hoje</label>' +
+        '<div style="display:flex;gap:10px;margin-bottom:10px;"><input type="number" id="input-calorias" value="'+(consumidas||'')+'" min="0" style="flex:1;" />' +
+        '<button class="btn btn-primario" id="btn-salvar-calorias" style="width:auto;padding:14px 18px;">Salvar</button></div>' +
+        '<button type="button" class="btn btn-secundario" id="btn-abrir-camera">\u{1F4F7} Estimar calorias por foto</button>' +
+        '<input type="file" id="input-foto" accept="image/*" capture="environment" style="display:none;" />' +
+        '<div id="area-resultado-foto"></div>' +
+      '</div>' +
+      '<div class="checkin-toggle'+(treinou?' feito':'')+'" ><div><p style="font-weight:700;font-size:14px;">Treinei hoje</p>' +
+        '<p style="font-size:12px;color:var(--cinza);margin-top:2px;">'+(treinosHoje.length>0?(treinosHoje.length+' treino'+(treinosHoje.length>1?'s':'')+' registrado'+(treinosHoje.length>1?'s':'')+' hoje'):'Marca quando fizer qualquer exercicio')+'</p></div>' +
+        '<div class="switch'+(treinou?' ligado':'')+'" id="switch-treino"><div class="switch-bolinha"></div></div></div>' +
+      '<div class="cartao" style="margin-top:16px;"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">' +
+        '<span class="rotulo" style="margin-bottom:0;">Rumo a meta</span><span style="font-size:12px;color:var(--cinza);">'+perfil.peso_atual_kg+'kg &rarr; '+perfil.peso_meta_kg+'kg</span></div>' +
+        '<div class="barra-fundo"><div class="barra-preenchimento" style="width:'+progresso+'%;"></div></div>' +
+        '<p style="font-size:12px;color:var(--cinza);margin-top:8px;">'+(painel.pesoParaPerder>0?('Faltam '+painel.pesoParaPerder.toFixed(1)+'kg &middot; ~'+painel.semanasEstimadas+' semanas no seu ritmo'):'Meta alcancada. Hora de manter o resultado.')+'</p></div>' +
+      '<button class="btn btn-texto" id="btn-sair" style="margin-top:20px;">Sair da conta</button>' +
+    '</div>' + navbarHTML();
+
+  document.getElementById('btn-salvar-calorias').addEventListener('click', function(evento){
+    var v = Number(document.getElementById('input-calorias').value) || 0;
+    salvarCheckinHoje(sess.user.id, { calorias_consumidas: v });
+    dispararFogo(evento.currentTarget);
+    setTimeout(function(){ paginaPainel(); }, 250);
+  });
+  document.getElementById('switch-treino').addEventListener('click', function(evento){
+    var novoValor = !treinou;
+    salvarCheckinHoje(sess.user.id, { treinou: novoValor });
+    if (novoValor) dispararFogo(evento.currentTarget);
+    setTimeout(function(){ paginaPainel(); }, novoValor ? 250 : 0);
+  });
+  document.getElementById('btn-sair').addEventListener('click', function(){ sair(); navegarPara('/login'); });
+
+  document.getElementById('btn-abrir-camera').addEventListener('click', function(){
+    document.getElementById('input-foto').click();
+  });
+  document.getElementById('input-foto').addEventListener('change', function(evento){
+    var arquivo = evento.target.files[0];
+    if (arquivo) estimarCaloriasPorFoto(arquivo, sess.user.id);
+  });
+}
+
+/* ============== estimativa de calorias por foto (visao de IA) ==============
+   Analisa a foto do prato e estima calorias/macros. E uma ESTIMATIVA,
+   nao uma medicao exata - por isso sempre mostramos como sugestao
+   editavel, nunca gravamos direto sem o usuario confirmar. */
+function estimarCaloriasPorFoto(arquivo, userId){
+  var area = document.getElementById('area-resultado-foto');
+  area.innerHTML = '<div class="cartao" style="margin-top:12px;display:flex;align-items:center;gap:10px;">' +
+    '<div class="spinner" style="width:18px;height:18px;border-width:2px;"></div>' +
+    '<span style="font-size:13px;color:var(--cinza-claro);">Analisando a foto...</span></div>';
+
+  var leitor = new FileReader();
+  leitor.onload = function(){
+    var base64Completo = leitor.result;
+    var base64 = base64Completo.split(',')[1];
+    var mediaType = arquivo.type || 'image/jpeg';
+
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+            { type: 'text', text:
+              'Voce e um nutricionista estimando calorias a partir de uma foto de comida. ' +
+              'Responda SOMENTE com um JSON puro, sem markdown e sem texto fora do JSON, no formato: ' +
+              '{"prato":"nome curto do prato","calorias_estimadas":numero,"proteina_g":numero,"carboidrato_g":numero,"gordura_g":numero,"confianca":"baixa|media|alta","observacao":"uma frase curta sobre a estimativa"}. ' +
+              'Se a imagem nao mostrar comida claramente, responda com calorias_estimadas 0 e observacao explicando isso.'
+            }
+          ]
+        }]
+      })
+    })
+    .then(function(resp){ return resp.json(); })
+    .then(function(data){
+      var textos = (data.content || []).filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; });
+      var bruto = textos.join('').replace(/```json|```/g, '').trim();
+      var resultado = JSON.parse(bruto);
+      exibirResultadoFoto(resultado, userId);
+    })
+    .catch(function(){
+      area.innerHTML = '<div class="erro" style="margin-top:12px;">Nao consegui analisar a foto agora. Tenta de novo ou digita as calorias manualmente.</div>';
+    });
+  };
+  leitor.readAsDataURL(arquivo);
+}
+
+function exibirResultadoFoto(resultado, userId){
+  var area = document.getElementById('area-resultado-foto');
+  if (!resultado.calorias_estimadas || resultado.calorias_estimadas < 1){
+    area.innerHTML = '<div class="erro" style="margin-top:12px;">'+(resultado.observacao || 'Nao deu pra identificar comida nessa foto.')+'</div>';
+    return;
+  }
+  area.innerHTML =
+    '<div class="cartao" style="margin-top:12px;border-color:rgba(232,21,26,.35);">' +
+      '<p style="font-weight:700;font-size:14px;margin-bottom:4px;">'+resultado.prato+'</p>' +
+      '<p class="anel-numero" style="font-size:30px;">~'+resultado.calorias_estimadas+' kcal</p>' +
+      '<p style="font-size:11px;color:var(--cinza);margin-bottom:10px;">Confianca: '+(resultado.confianca||'media')+' &middot; '+(resultado.observacao||'Estimativa por IA, ajuste se achar necessario.')+'</p>' +
+      '<button type="button" class="btn btn-primario" id="btn-usar-estimativa" style="margin-bottom:8px;">Usar essa estimativa</button>' +
+      '<button type="button" class="btn btn-texto" id="btn-descartar-estimativa">Descartar</button>' +
+    '</div>';
+
+  document.getElementById('btn-usar-estimativa').addEventListener('click', function(){
+    var inputCalorias = document.getElementById('input-calorias');
+    var atual = Number(inputCalorias.value) || 0;
+    inputCalorias.value = atual + resultado.calorias_estimadas;
+    area.innerHTML = '';
+  });
+  document.getElementById('btn-descartar-estimativa').addEventListener('click', function(){
+    area.innerHTML = '';
+  });
+}
+
+function formatarData(iso){ var p = iso.split('-'); return p[2]+'/'+p[1]; }
+
+function paginaExercicios(){
+  var sess = sessaoAtual();
+  if (!sess) { navegarPara('/login'); return; }
+  var perfil = buscarPerfil(sess.user.id);
+  var treinosHoje = buscarTreinosHoje(sess.user.id);
+  var historico = buscarHistoricoTreinos(sess.user.id, 20);
+
+  var chipsEx = EXERCICIOS.map(function(ex){
+    return '<button type="button" class="chip'+(ex.chave===estadoExercicio.tipo?' selecionado':'')+'" data-valor="'+ex.chave+'">'+ex.rotulo+'</button>';
+  }).join('');
+
+  var listaHoje = treinosHoje.length === 0
+    ? ''
+    : treinosHoje.map(function(t){ return renderizarLinhaTreino(t, true); }).join('');
+
+  var listaHist = historico.length === 0
+    ? '<p style="color:var(--cinza);font-size:14px;">Ainda sem registros. Comeca hoje.</p>'
+    : historico.map(function(t){ return renderizarLinhaTreino(t, false); }).join('');
+
+  raiz.innerHTML =
+    '<div class="tela">' +
+      '<h2 style="font-size:22px;margin-bottom:4px;">Treino de hoje</h2>' +
+      '<p style="color:var(--cinza);font-size:14px;margin-bottom:20px;">Escolhe o que voce fez. Pode registrar quantos treinos quiser no dia.</p>' +
+      '<div class="chips" id="chips-exercicio">'+chipsEx+'</div>' +
+      '<div class="campo" style="margin-top:18px;"><label class="rotulo">Duracao (minutos)</label>' +
+        '<input type="number" id="input-duracao" placeholder="Ex: 40" min="1" max="240" /></div>' +
+      '<div class="cartao" style="margin-bottom:18px;"><p style="font-size:13px;color:var(--cinza);">Gasto estimado</p>' +
+        '<p class="anel-numero" style="font-size:32px;" id="texto-gasto">0 kcal</p></div>' +
+      '<button class="btn btn-primario" id="btn-registrar">Registrar treino</button>' +
+      (listaHoje ? ('<h3 style="font-size:16px;margin-top:28px;margin-bottom:12px;">Hoje</h3><div class="lista-exercicios">'+listaHoje+'</div>') : '') +
+      '<h3 style="font-size:16px;margin-top:28px;margin-bottom:12px;">Historico</h3>' +
+      '<div class="lista-exercicios">'+listaHist+'</div>' +
+    '</div>' + navbarHTML();
+
+  var inputDuracao = document.getElementById('input-duracao');
+  var textoGasto = document.getElementById('texto-gasto');
+  var MAX_MINUTOS_POR_TREINO = 240;
+  function atualizarGasto(){
+    var ex = EXERCICIOS.filter(function(e){return e.chave===estadoExercicio.tipo;})[0];
+    var minutos = Math.min(Number(inputDuracao.value) || 0, MAX_MINUTOS_POR_TREINO);
+    var peso = (perfil && perfil.peso_atual_kg) || 70;
+    var kcal = Math.round(ex.met * peso * (minutos/60));
+    textoGasto.textContent = kcal + ' kcal';
+    return kcal;
+  }
+  atualizarGasto();
+  inputDuracao.addEventListener('input', atualizarGasto);
+
+  document.querySelectorAll('#chips-exercicio .chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('#chips-exercicio .chip').forEach(function(c){ c.classList.remove('selecionado'); });
+      chip.classList.add('selecionado');
+      estadoExercicio.tipo = chip.dataset.valor;
+      atualizarGasto();
+    });
+  });
+
+  document.getElementById('btn-registrar').addEventListener('click', function(evento){
+    var minutos = Math.min(Number(inputDuracao.value) || 0, MAX_MINUTOS_POR_TREINO);
+    if (minutos < 1) { inputDuracao.focus(); return; }
+    var kcal = atualizarGasto();
+    registrarTreino(sess.user.id, { tipo_exercicio: estadoExercicio.tipo, duracao_min: minutos, calorias_gastas_exercicio: kcal });
+    dispararFogo(evento.currentTarget);
+    setTimeout(function(){ paginaExercicios(); }, 300);
+  });
+}
+
+function renderizarLinhaTreino(t, ehHoje){
+  var rot = (EXERCICIOS.filter(function(e){return e.chave===t.tipo_exercicio;})[0]||{}).rotulo || 'Treino';
+  var quando = ehHoje ? t.hora : (formatarData(t.data) + (t.hora ? (' &middot; '+t.hora) : ''));
+  return '<div class="exercicio-item"><div class="exercicio-icone">&#9889;</div>' +
+    '<div class="exercicio-info"><p class="titulo">'+rot+'</p><p class="sub">'+quando+(t.duracao_min?(' &middot; '+t.duracao_min+' min'):'')+'</p></div>' +
+    (t.calorias_gastas_exercicio ? '<span class="exercicio-cal">-'+t.calorias_gastas_exercicio+' kcal</span>' : '') + '</div>';
+}
+
+function paginaRanking(){
+  var sess = sessaoAtual();
+  if (!sess) { navegarPara('/login'); return; }
+  var perfil = buscarPerfil(sess.user.id);
+  if (!perfil) { navegarPara('/onboarding'); return; }
+
+  var detalhe = detalharPontos(sess.user.id);
+  var pontosUsuario = detalhe.total;
+  var jogadores = gerarRankingFake().map(function(j){ return { nome: j.nome, pontos: j.pontos, voce: false }; });
+  jogadores.push({ nome: perfil.nome.split(' ')[0], pontos: pontosUsuario, voce: true });
+  jogadores.sort(function(a,b){ return b.pontos - a.pontos; });
+
+  var posicaoVoce = jogadores.findIndex(function(j){ return j.voce; }) + 1;
+
+  var medalhas = ['\u{1F947}', '\u{1F948}', '\u{1F949}'];
+  var listaHTML = jogadores.map(function(j, indice){
+    var pos = indice + 1;
+    var classeTop = pos === 1 ? ' top1' : pos === 2 ? ' top2' : pos === 3 ? ' top3' : '';
+    var rotuloPos = pos <= 3 ? medalhas[pos-1] : pos;
+    return '<div class="ranking-item'+classeTop+(j.voce?' voce':'')+'">' +
+      '<div class="ranking-pos">'+rotuloPos+'</div>' +
+      '<div class="ranking-avatar">'+j.nome.charAt(0).toUpperCase()+'</div>' +
+      '<div class="ranking-info"><p class="titulo">'+j.nome+(j.voce?' (voce)':'')+'</p><p class="sub">'+j.pontos+' pontos</p></div>' +
+      '<div class="ranking-pontos">'+j.pontos+'</div>' +
+    '</div>';
+  }).join('');
+
+  raiz.innerHTML =
+    '<div class="tela">' +
+      '<h2 style="font-size:22px;margin-bottom:4px;">Ranking</h2>' +
+      '<p style="color:var(--cinza);font-size:14px;margin-bottom:20px;">Quem e mais constante fica na frente. Duracao e calorias contam pouco.</p>' +
+      '<div class="cartao" style="margin-bottom:14px;text-align:center;">' +
+        '<p class="rotulo" style="margin-bottom:6px;">Sua posicao</p>' +
+        '<p class="anel-numero" style="font-size:36px;">#'+posicaoVoce+'</p>' +
+      '</div>' +
+      '<div class="cartao" style="margin-bottom:20px;">' +
+        '<p class="rotulo" style="margin-bottom:10px;">Como seus '+pontosUsuario+' pontos foram calculados</p>' +
+        '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--preto-3);">' +
+          '<span style="color:var(--cinza-claro);">'+detalhe.diasTreinados+' dia'+(detalhe.diasTreinados!==1?'s':'')+' treinado'+(detalhe.diasTreinados!==1?'s':'')+' &times; 30</span>' +
+          '<span style="font-weight:700;">'+(detalhe.diasTreinados*PONTOS_POR_DIA_TREINADO)+'</span></div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--preto-3);">' +
+          '<span style="color:var(--cinza-claro);">'+detalhe.streak+' dia'+(detalhe.streak!==1?'s':'')+' seguidos &times; 10</span>' +
+          '<span style="font-weight:700;">'+(detalhe.streak*PONTOS_POR_DIA_SEQUENCIA)+'</span></div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;">' +
+          '<span style="color:var(--cinza-claro);">Bonus de calorias (limitado por dia)</span>' +
+          '<span style="font-weight:700;">'+(pontosUsuario - detalhe.diasTreinados*PONTOS_POR_DIA_TREINADO - detalhe.streak*PONTOS_POR_DIA_SEQUENCIA)+'</span></div>' +
+        '<p style="font-size:11px;color:var(--cinza);margin-top:10px;">O que mais pesa e treinar em dias diferentes, nao a duracao que voce digita. Cada dia so pontua uma vez, tenha 1 ou 5 treinos registrados nele.</p>' +
+      '</div>' +
+      listaHTML +
+    '</div>' + navbarHTML();
+}
+
+function paginaPerfil(){
+  var sess = sessaoAtual();
+  if (!sess) { navegarPara('/login'); return; }
+  var perfil = buscarPerfil(sess.user.id);
+  if (!perfil) { navegarPara('/onboarding'); return; }
+
+  estadoPerfil = { nivel_atividade: perfil.nivel_atividade, ritmo_perda_kg_semana: perfil.ritmo_perda_kg_semana };
+  var painel = calcularPainel(perfil);
+
+  var chipsAtividade = Object.keys(FATORES_ATIVIDADE).map(function(k){
+    return '<button type="button" class="chip'+(k===perfil.nivel_atividade?' selecionado':'')+'" data-valor="'+k+'">'+FATORES_ATIVIDADE[k].rotulo+'</button>';
+  }).join('');
+  var chipsRitmo = RITMOS_PERDA.map(function(r){
+    return '<button type="button" class="chip'+(r===perfil.ritmo_perda_kg_semana?' selecionado':'')+'" data-valor="'+r+'">'+String(r).replace('.',',')+' kg/semana</button>';
+  }).join('');
+
+  raiz.innerHTML =
+    '<div class="tela">' +
+      '<h2 style="font-size:22px;margin-bottom:20px;">Seu perfil</h2>' +
+      '<div class="grid-stats" style="margin-bottom:20px;">' +
+        '<div class="stat-card"><div class="valor">'+painel.tmb+'</div><p class="rotulo">TMB (kcal)</p></div>' +
+        '<div class="stat-card"><div class="valor">'+painel.tdee+'</div><p class="rotulo">Gasto total (kcal)</p></div>' +
+      '</div>' +
+      '<form id="form-perfil">' +
+        '<div class="campo"><label class="rotulo">Nome</label><input type="text" id="nome" value="'+perfil.nome+'" required /></div>' +
+        '<div class="campo"><label class="rotulo">Peso atual (kg)</label><input type="number" step="0.1" id="peso_atual" value="'+perfil.peso_atual_kg+'" required min="30" max="300" /></div>' +
+        '<div class="campo"><label class="rotulo">Peso meta (kg)</label><input type="number" step="0.1" id="peso_meta" value="'+perfil.peso_meta_kg+'" required min="30" max="300" /></div>' +
+        '<div class="campo"><label class="rotulo">Altura (cm)</label><input type="number" id="altura" value="'+perfil.altura_cm+'" required min="120" max="230" /></div>' +
+        '<div class="campo"><label class="rotulo">Idade</label><input type="number" id="idade" value="'+perfil.idade+'" required min="14" max="90" /></div>' +
+        '<div class="campo"><label class="rotulo">Nivel de atividade</label><div class="chips" id="chips-atividade">'+chipsAtividade+'</div></div>' +
+        '<div class="campo"><label class="rotulo">Ritmo de perda</label><div class="chips" id="chips-ritmo">'+chipsRitmo+'</div></div>' +
+        '<button type="submit" class="btn btn-primario">Salvar alteracoes</button>' +
+      '</form>' +
+      '<button class="btn btn-texto" id="btn-sair" style="margin-top:16px;">Sair da conta</button>' +
+    '</div>' + navbarHTML();
+
+  configurarChips('#chips-atividade', function(v){ estadoPerfil.nivel_atividade = v; });
+  configurarChips('#chips-ritmo', function(v){ estadoPerfil.ritmo_perda_kg_semana = Number(v); });
+
+  document.getElementById('form-perfil').addEventListener('submit', function(e){
+    e.preventDefault();
+    atualizarPerfil(sess.user.id, {
+      nome: document.getElementById('nome').value.trim(),
+      peso_atual_kg: Number(document.getElementById('peso_atual').value),
+      peso_meta_kg: Number(document.getElementById('peso_meta').value),
+      altura_cm: Number(document.getElementById('altura').value),
+      idade: Number(document.getElementById('idade').value),
+      nivel_atividade: estadoPerfil.nivel_atividade,
+      ritmo_perda_kg_semana: estadoPerfil.ritmo_perda_kg_semana
+    });
+    navegarPara('/painel');
+  });
+  document.getElementById('btn-sair').addEventListener('click', function(){ sair(); navegarPara('/login'); });
+}
+
+/* ============== init ============== */
+registrarRota('/login', paginaLogin);
+registrarRota('/cadastro', paginaCadastro);
+registrarRota('/onboarding', paginaOnboarding);
+registrarRota('/painel', paginaPainel);
+registrarRota('/exercicios', paginaExercicios);
+registrarRota('/ranking', paginaRanking);
+registrarRota('/perfil', paginaPerfil);
+
+/* Entra direto no app com um perfil de exemplo, sem precisar logar.
+   Da pra editar tudo (nome, peso, meta, etc) na aba Perfil. */
+(function entrarDireto(){
+  var sess = cadastrar('teste@impulso.app', 'teste123');
+  criarPerfil({
+    id: sess.user.id,
+    nome: 'Atleta',
+    idade: 28,
+    sexo: 'masculino',
+    altura_cm: 175,
+    peso_inicial_kg: 82,
+    peso_atual_kg: 82,
+    peso_meta_kg: 75,
+    nivel_atividade: 'leve',
+    ritmo_perda_kg_semana: 0.5,
+    onboarding_completo: true
+  });
+
+  // Semeando alguns treinos de dias anteriores so pra mostrar
+  // historico, streak e ranking ja funcionando na primeira abertura.
+  var hoje = new Date();
+  [3, 2, 1].forEach(function(diasAtras, indice){
+    var d = new Date(hoje);
+    d.setDate(d.getDate() - diasAtras);
+    var chave = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    var tipos = ['caminhada', 'musculacao', 'corrida'];
+    DB.treinos.push({
+      id: gerarId(), user_id: sess.user.id, data: chave, hora: '07:3'+indice,
+      tipo_exercicio: tipos[indice], duracao_min: 35 + indice*10,
+      calorias_gastas_exercicio: 210 + indice*90
+    });
+  });
+  // Treino de hoje, pra fechar a sequencia e o streak ja aparecer aceso
+  registrarTreino(sess.user.id, { tipo_exercicio: 'hiit', duracao_min: 30, calorias_gastas_exercicio: 320 });
+  salvarCheckinHoje(sess.user.id, { calorias_consumidas: 1180 });
+})();
+
+if (!window.location.hash) window.location.hash = '/painel';
+render();
 </script>
 </body>
 </html>
