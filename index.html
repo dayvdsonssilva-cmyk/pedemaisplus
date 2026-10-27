@@ -4,113 +4,177 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pagamentos · Fim de ano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mut:#6b7280;--bd:#e3e6ea;--ok:#16a34a;--okbg:#e8f7ee;--ac:#2563eb;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#181b22;--tx:#eef0f3;--mut:#9aa1ad;--bd:#2a2f39;--ok:#4ade80;--okbg:#14301f;--ac:#60a5fa;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1115;--card:#181b22;--tx:#eef0f3;--mut:#9aa1ad;--bd:#2a2f39;--ok:#4ade80;--okbg:#14301f;--ac:#60a5fa;color-scheme:dark}
+:root{
+  --bg:#f6f7f9;--ink:#14181f;--mut:#6b7280;--paper:#fff;--line:#e3e6ea;
+  --stamp:#16a34a;--paidbg:#e8f7ee;--btn:#2563eb;--btntx:#fff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1115;--ink:#eef0f3;--mut:#9aa1ad;--paper:#181b22;--line:#2a2f39;
+  --stamp:#4ade80;--paidbg:#14301f;--btn:#60a5fa;--btntx:#0f1115;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1115;--ink:#eef0f3;--mut:#9aa1ad;--paper:#181b22;--line:#2a2f39;
+  --stamp:#4ade80;--paidbg:#14301f;--btn:#60a5fa;--btntx:#0f1115;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:520px;margin:0 auto;padding:20px 16px 40px}
-h1{font-size:22px;margin:0 0 4px}
-.sub{color:var(--mut);font-size:14px;margin:0 0 16px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.stat{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
-.stat b{display:block;font-size:26px}
-.stat span{color:var(--mut);font-size:13px}
-.bar{height:8px;background:var(--bd);border-radius:99px;overflow:hidden;margin-bottom:16px}
-.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tabs button{flex:1;padding:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-size:14px}
-.tabs button.on{background:var(--ac);border-color:var(--ac);color:#fff}
-ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-li{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;cursor:pointer;user-select:none}
-li.paid{background:var(--okbg);border-color:var(--ok)}
-.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--bd);display:grid;place-items:center;flex:none;color:#fff;font-size:15px}
-li.paid .chk{background:var(--ok);border-color:var(--ok)}
-.nm{flex:1;font-size:17px}
-li.paid .nm{color:var(--mut);text-decoration:line-through}
-.del{border:0;background:none;color:var(--mut);font-size:20px;padding:4px 8px;cursor:pointer}
-.add{display:flex;gap:8px;margin-top:16px}
-.add input{flex:1;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit}
-.add button,.reset{padding:11px 16px;border:0;border-radius:10px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
-.reset{background:none;color:var(--mut);border:1px solid var(--bd);margin-top:16px;width:100%;font-size:14px}
-.empty{text-align:center;color:var(--mut);padding:24px}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.45 "DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg)}
+main{max-width:760px;margin:0 auto;padding:28px 18px 56px}
+h1{font:800 clamp(34px,8vw,56px)/1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.03em;margin:0 0 10px}
+.lead{margin:0 0 22px;font-size:18px;color:var(--mut)}
+.lead b{color:var(--ink);font-weight:700}
+
+.dots{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:26px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);transition:background .2s,border-color .2s,transform .2s}
+.dots i.on{background:var(--stamp);border-color:var(--stamp);transform:scale(1.12)}
+
+.addcard{display:flex;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px;margin-bottom:18px;box-shadow:0 10px 30px -18px rgba(20,20,80,.45)}
+.addcard input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:inherit;font-size:17px;padding:10px 12px;outline:none}
+.addcard input::placeholder{color:var(--mut)}
+.addcard button{border:0;border-radius:12px;background:var(--btn);color:var(--btntx);font:700 16px "DM Sans",sans-serif;padding:0 20px;cursor:pointer}
+.addcard:focus-within{border-color:var(--btn)}
+
+.chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.chips button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:7px 14px;font:500 15px "DM Sans",sans-serif;cursor:pointer}
+.chips button.on{background:var(--btn);color:var(--btntx);border-color:var(--btn)}
+.chips span{color:var(--mut);margin-left:4px}
+.chips button.on span{color:inherit;opacity:.7}
+
+ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.tk{position:relative;display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 96px 14px 14px;min-height:76px;cursor:pointer;user-select:none;transition:background .2s,border-color .2s;
+  -webkit-mask:radial-gradient(circle 9px at calc(100% - 84px) 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at calc(100% - 84px) 100%,#0000 97%,#000) bottom/100% 51% no-repeat;
+  mask:radial-gradient(circle 9px at calc(100% - 84px) 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at calc(100% - 84px) 100%,#0000 97%,#000) bottom/100% 51% no-repeat}
+.tk:focus-visible{outline:3px solid var(--btn);outline-offset:2px}
+.tk.paid{background:var(--paidbg);border-color:var(--stamp)}
+.av{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font:800 18px "Bricolage Grotesque",sans-serif;color:#fff;background:hsl(var(--h) 55% 46%)}
+.nm{flex:1;min-width:0;font-size:18px;font-weight:500;overflow-wrap:anywhere}
+.tk.paid .nm{color:var(--mut)}
+.st{position:absolute;right:0;top:0;bottom:0;width:84px;border-left:2px dashed var(--line);display:grid;place-items:center}
+.tk.paid .st{border-color:var(--stamp)}
+.open{color:var(--mut);font-size:14px;font-style:italic}
+.stamp{display:none;border:3px solid var(--stamp);color:var(--stamp);border-radius:8px;padding:1px 9px;font:800 20px "Bricolage Grotesque",sans-serif;letter-spacing:.04em;transform:rotate(-12deg)}
+.tk.paid .stamp{display:block}.tk.paid .open{display:none}
+.tk.slam .stamp{animation:slam .38s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes slam{from{transform:rotate(-34deg) scale(2.4);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
+.del{position:absolute;left:auto;right:92px;top:2px;border:0;background:none;color:var(--mut);font-size:20px;line-height:1;padding:6px 8px;cursor:pointer;opacity:.55}
+.del:hover,.del:focus-visible{opacity:1}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:30px 10px}
+#msg{color:#d6336c;margin:0 0 12px;font-weight:500}
+.reset{display:block;margin:26px auto 0;border:0;background:none;color:var(--mut);font:500 14px "DM Sans",sans-serif;text-decoration:underline;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.tk.slam .stamp{animation:none}.dots i{transition:none}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <main>
 <h1>Pagamentos · Fim de ano</h1>
-<p class="sub">Toque no nome para marcar ou desmarcar.</p>
-<div class="stats">
-<div class="stat"><b id="np" style="color:var(--ok)">0</b><span>pagaram</span></div>
-<div class="stat"><b id="nf">0</b><span>faltam</span></div>
-</div>
-<div class="bar"><i id="bar"></i></div>
-<div class="tabs">
-<button data-f="all" class="on">Todos</button>
-<button data-f="falta">Faltam</button>
-<button data-f="pago">Pagos</button>
-</div>
-<p id="msg" class="sub" style="color:#dc2626"></p>
-<ul id="list"></ul>
-<form class="add" id="addf" onsubmit="return false">
-<input id="inp" placeholder="Adicionar pessoa" autocomplete="off">
+<p class="lead" id="lead">Carregando a lista…</p>
+<div class="dots" id="dots" aria-hidden="true"></div>
+
+<form class="addcard" id="addf" onsubmit="return false">
+<input id="inp" placeholder="Quem vai participar? Digite o nome" autocomplete="off" aria-label="Nome da pessoa">
 <button type="submit" id="addb">Adicionar</button>
 </form>
+
+<p id="msg"></p>
+<div class="chips" id="chips">
+<button data-f="all" class="on">Todos<span id="c-all">0</span></button>
+<button data-f="falta">Faltam<span id="c-falta">0</span></button>
+<button data-f="pago">Pagos<span id="c-pago">0</span></button>
+</div>
+<ul id="list"></ul>
 <button class="reset" id="reset">Desmarcar todos</button>
 </main>
 <script>
 var SUPABASE_URL="https://nmttkjmfazcipefeakkx.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdHRram1mYXpjaXBlZmVha2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MTM3NjQsImV4cCI6MjA5MDI4OTc2NH0.MMTX_6iQJk7Uv3HPSk0m32_BihvqsWhHJ_qiRkw0WYo";
 var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-var data=[],filter="all";
+var data=[],filter="all",justPaid=null,loaded=false;
+
 function msg(t){document.getElementById("msg").textContent=t||""}
+function hue(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h}
+function $(id){return document.getElementById(id)}
+
 async function load(){
-var r=await sb.from("pagamentos").select("*").order("id");
-if(r.error){msg("Erro ao carregar: "+r.error.message);return}
-msg("");data=r.data;render()}
-function render(){
-var np=data.filter(function(x){return x.pago}).length,t=data.length;
-document.getElementById("np").textContent=np;
-document.getElementById("nf").textContent=t-np;
-document.getElementById("bar").style.width=(t?np/t*100:0)+"%";
-var ul=document.getElementById("list");ul.innerHTML="";
-var shown=0;
-data.forEach(function(x){
-if(filter==="falta"&&x.pago)return;if(filter==="pago"&&!x.pago)return;
-shown++;
-var li=document.createElement("li");if(x.pago)li.className="paid";
-li.innerHTML='<span class="chk">'+(x.pago?"✓":"")+'</span><span class="nm"></span><button class="del" title="Remover">×</button>';
-li.querySelector(".nm").textContent=x.nome;
-li.onclick=async function(){
-x.pago=!x.pago;render();
-var r=await sb.from("pagamentos").update({pago:x.pago}).eq("id",x.id);
-if(r.error){msg("Erro ao salvar: "+r.error.message);load()}};
-li.querySelector(".del").onclick=async function(e){
-e.stopPropagation();
-if(confirm("Remover "+x.nome+"?")){
-var r=await sb.from("pagamentos").delete().eq("id",x.id);
-if(r.error)msg("Erro ao remover: "+r.error.message);load()}};
-ul.appendChild(li)});
-if(!shown){ul.innerHTML='<li class="empty" style="justify-content:center;cursor:default">Ninguém por aqui.</li>'}
+  var r=await sb.from("pagamentos").select("*").order("id");
+  if(r.error){msg("Não foi possível carregar: "+r.error.message);return}
+  msg("");data=r.data;loaded=true;render();
 }
-document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){
-document.querySelectorAll(".tabs button").forEach(function(o){o.classList.remove("on")});
-b.classList.add("on");filter=b.dataset.f;render()}});
+
+function render(){
+  var np=data.filter(function(x){return x.pago}).length,t=data.length,nf=t-np;
+  if(loaded){
+    $("lead").innerHTML=!t?"A lista está vazia. Adicione o primeiro nome.":
+      nf===0?"<b>Todo mundo pagou!</b> Fim de ano garantido.":
+      "<b>"+np+" de "+t+"</b> já pagaram. Faltam "+nf+".";
+  }
+  var d=$("dots");d.innerHTML="";
+  data.forEach(function(x){var i=document.createElement("i");if(x.pago)i.className="on";d.appendChild(i)});
+  $("c-all").textContent=t;$("c-falta").textContent=nf;$("c-pago").textContent=np;
+
+  var ul=$("list");ul.innerHTML="";var shown=0;
+  data.forEach(function(x){
+    if(filter==="falta"&&x.pago)return;if(filter==="pago"&&!x.pago)return;
+    shown++;
+    var li=document.createElement("li");
+    li.className="tk"+(x.pago?" paid":"")+(x.id===justPaid&&x.pago?" slam":"");
+    li.tabIndex=0;li.setAttribute("role","button");li.setAttribute("aria-pressed",x.pago?"true":"false");
+    li.innerHTML='<div class="av"></div><div class="nm"></div><button class="del" title="Remover da lista" aria-label="Remover">×</button><div class="st"><span class="stamp">PAGO</span><span class="open">falta</span></div>';
+    var av=li.querySelector(".av");av.textContent=(x.nome||"?").trim().charAt(0).toUpperCase();av.style.setProperty("--h",hue(x.nome||""));
+    li.querySelector(".nm").textContent=x.nome;
+    li.onclick=function(){toggle(x)};
+    li.onkeydown=function(e){if(e.target===li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();toggle(x)}};
+    li.querySelector(".del").onclick=async function(e){
+      e.stopPropagation();
+      if(confirm("Remover "+x.nome+" da lista?")){
+        var r=await sb.from("pagamentos").delete().eq("id",x.id);
+        if(r.error)msg("Não foi possível remover: "+r.error.message);load()}};
+    ul.appendChild(li)});
+  justPaid=null;
+  if(!shown&&loaded){ul.innerHTML='<li class="empty">'+(filter==="falta"?"Ninguém faltando. Boa!":filter==="pago"?"Ainda ninguém pagou.":"Nenhum nome por aqui.")+'</li>'}
+}
+
+async function toggle(x){
+  x.pago=!x.pago;justPaid=x.pago?x.id:null;render();
+  if(x.pago&&data.length&&data.every(function(y){return y.pago}))confetti();
+  var r=await sb.from("pagamentos").update({pago:x.pago}).eq("id",x.id);
+  if(r.error){msg("Não foi possível salvar: "+r.error.message);load()}
+}
+
+function confetti(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  var cores=["#2563eb","#16a34a","#60a5fa","#4ade80","#ffffff"];
+  for(var i=0;i<60;i++){
+    var s=document.createElement("span");
+    s.style.cssText="position:fixed;z-index:99;pointer-events:none;top:-10px;left:"+(Math.random()*100)+"vw;width:8px;height:14px;border-radius:2px;background:"+cores[i%5];
+    document.body.appendChild(s);
+    var dx=(Math.random()-.5)*160,rot=Math.random()*720;
+    var a=s.animate([{transform:"translate(0,0) rotate(0)",opacity:1},{transform:"translate("+dx+"px,"+(window.innerHeight+40)+"px) rotate("+rot+"deg)",opacity:.9}],{duration:1800+Math.random()*1400,easing:"cubic-bezier(.2,.6,.4,1)",delay:Math.random()*300});
+    a.onfinish=(function(el){return function(){el.remove()}})(s);
+  }
+}
+
+document.querySelectorAll("#chips button").forEach(function(b){b.onclick=function(){
+  document.querySelectorAll("#chips button").forEach(function(o){o.classList.remove("on")});
+  b.classList.add("on");filter=b.dataset.f;render()}});
+
 async function add(){
-var v=document.getElementById("inp").value.trim();if(!v)return;
-document.getElementById("inp").value="";
-var r=await sb.from("pagamentos").insert({nome:v});
-if(r.error)msg("Erro ao adicionar: "+r.error.message);load()}
-document.getElementById("addb").onclick=add;
-document.getElementById("inp").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();add()}};
-document.getElementById("reset").onclick=async function(){
-if(confirm("Desmarcar todos?")){
-var r=await sb.from("pagamentos").update({pago:false}).eq("pago",true);
-if(r.error)msg("Erro: "+r.error.message);load()}};
+  var v=$("inp").value.trim();if(!v)return;
+  $("inp").value="";
+  var r=await sb.from("pagamentos").insert({nome:v});
+  if(r.error)msg("Não foi possível adicionar: "+r.error.message);
+  load();$("inp").focus();
+}
+$("addf").addEventListener("submit",add);
+$("reset").onclick=async function(){
+  if(confirm("Desmarcar todos os pagamentos?")){
+    var r=await sb.from("pagamentos").update({pago:false}).eq("pago",true);
+    if(r.error)msg("Não foi possível desmarcar: "+r.error.message);load()}};
+
 load();
 sb.channel("pagamentos-live").on("postgres_changes",{event:"*",schema:"public",table:"pagamentos"},load).subscribe();
 </script>
