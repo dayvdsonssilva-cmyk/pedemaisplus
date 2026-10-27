@@ -38,6 +38,7 @@ li.paid .nm{color:var(--mut);text-decoration:line-through}
 .reset{background:none;color:var(--mut);border:1px solid var(--bd);margin-top:16px;width:100%;font-size:14px}
 .empty{text-align:center;color:var(--mut);padding:24px}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <main>
@@ -53,6 +54,7 @@ li.paid .nm{color:var(--mut);text-decoration:line-through}
 <button data-f="falta">Faltam</button>
 <button data-f="pago">Pagos</button>
 </div>
+<p id="msg" class="sub" style="color:#dc2626"></p>
 <ul id="list"></ul>
 <form class="add" id="addf" onsubmit="return false">
 <input id="inp" placeholder="Adicionar pessoa" autocomplete="off">
@@ -61,38 +63,56 @@ li.paid .nm{color:var(--mut);text-decoration:line-through}
 <button class="reset" id="reset">Desmarcar todos</button>
 </main>
 <script>
-var KEY="pagamentos-fim-de-ano-v1";
-var base=["Ana Julia","Kenia","Adriano","Isabelli","Ana","Livia","Léo","Lucimeire","Carlos","Lavínia","Matheus","Aline","Vinicius","Neila","Letícia","Michele","Daívid","Amanda","Daravaison","Nelson","Joana"];
-var data=null,filter="all";
-try{var raw=localStorage.getItem(KEY);if(raw)data=JSON.parse(raw)}catch(e){}
-if(!Array.isArray(data)){data=base.map(function(n){return{n:n,p:n==="Ana Julia"||n==="Aline"}})}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+var SUPABASE_URL="COLE_AQUI_SUA_URL";
+var SUPABASE_KEY="COLE_AQUI_SUA_ANON_KEY";
+var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+var data=[],filter="all";
+function msg(t){document.getElementById("msg").textContent=t||""}
+async function load(){
+var r=await sb.from("pagamentos").select("*").order("id");
+if(r.error){msg("Erro ao carregar: "+r.error.message);return}
+msg("");data=r.data;render()}
 function render(){
-var np=data.filter(function(x){return x.p}).length,t=data.length;
+var np=data.filter(function(x){return x.pago}).length,t=data.length;
 document.getElementById("np").textContent=np;
 document.getElementById("nf").textContent=t-np;
 document.getElementById("bar").style.width=(t?np/t*100:0)+"%";
 var ul=document.getElementById("list");ul.innerHTML="";
 var shown=0;
-data.forEach(function(x,i){
-if(filter==="falta"&&x.p)return;if(filter==="pago"&&!x.p)return;
+data.forEach(function(x){
+if(filter==="falta"&&x.pago)return;if(filter==="pago"&&!x.pago)return;
 shown++;
-var li=document.createElement("li");if(x.p)li.className="paid";
-li.innerHTML='<span class="chk">'+(x.p?"✓":"")+'</span><span class="nm"></span><button class="del" title="Remover">×</button>';
-li.querySelector(".nm").textContent=x.n;
-li.onclick=function(){x.p=!x.p;save();render()};
-li.querySelector(".del").onclick=function(e){e.stopPropagation();if(confirm("Remover "+x.n+"?")){data.splice(i,1);save();render()}};
+var li=document.createElement("li");if(x.pago)li.className="paid";
+li.innerHTML='<span class="chk">'+(x.pago?"✓":"")+'</span><span class="nm"></span><button class="del" title="Remover">×</button>';
+li.querySelector(".nm").textContent=x.nome;
+li.onclick=async function(){
+x.pago=!x.pago;render();
+var r=await sb.from("pagamentos").update({pago:x.pago}).eq("id",x.id);
+if(r.error){msg("Erro ao salvar: "+r.error.message);load()}};
+li.querySelector(".del").onclick=async function(e){
+e.stopPropagation();
+if(confirm("Remover "+x.nome+"?")){
+var r=await sb.from("pagamentos").delete().eq("id",x.id);
+if(r.error)msg("Erro ao remover: "+r.error.message);load()}};
 ul.appendChild(li)});
 if(!shown){ul.innerHTML='<li class="empty" style="justify-content:center;cursor:default">Ninguém por aqui.</li>'}
 }
 document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){
 document.querySelectorAll(".tabs button").forEach(function(o){o.classList.remove("on")});
 b.classList.add("on");filter=b.dataset.f;render()}});
-function add(){var v=document.getElementById("inp").value.trim();if(!v)return;data.push({n:v,p:false});document.getElementById("inp").value="";save();render()}
+async function add(){
+var v=document.getElementById("inp").value.trim();if(!v)return;
+document.getElementById("inp").value="";
+var r=await sb.from("pagamentos").insert({nome:v});
+if(r.error)msg("Erro ao adicionar: "+r.error.message);load()}
 document.getElementById("addb").onclick=add;
 document.getElementById("inp").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();add()}};
-document.getElementById("reset").onclick=function(){if(confirm("Desmarcar todos?")){data.forEach(function(x){x.p=false});save();render()}};
-render();
+document.getElementById("reset").onclick=async function(){
+if(confirm("Desmarcar todos?")){
+var r=await sb.from("pagamentos").update({pago:false}).eq("pago",true);
+if(r.error)msg("Erro: "+r.error.message);load()}};
+load();
+sb.channel("pagamentos-live").on("postgres_changes",{event:"*",schema:"public",table:"pagamentos"},load).subscribe();
 </script>
 </body>
 </html>
