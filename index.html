@@ -1,552 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0A0A0A" />
-<title>IMPULSO - teste</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pagamentos · Fim de ano</title>
 <style>
-:root{
-  --preto:#0A0A0A;--preto-2:#161616;--preto-3:#1F1F1F;
-  --vermelho:#E8151A;--vermelho-forte:#B80000;
-  --branco:#F4F4F2;--cinza:#8C8C8C;--cinza-claro:#B8B8B8;--verde-ok:#34C77B;
-  --fonte-display:'Anton',sans-serif;--fonte-corpo:'Inter',sans-serif;
-  --raio:16px;--raio-peq:10px;
-}
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14181f;--mut:#6b7280;--bd:#e3e6ea;--ok:#16a34a;--okbg:#e8f7ee;--ac:#2563eb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#181b22;--tx:#eef0f3;--mut:#9aa1ad;--bd:#2a2f39;--ok:#4ade80;--okbg:#14301f;--ac:#60a5fa;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1115;--card:#181b22;--tx:#eef0f3;--mut:#9aa1ad;--bd:#2a2f39;--ok:#4ade80;--okbg:#14301f;--ac:#60a5fa;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--preto);color:var(--branco);font-family:var(--fonte-corpo);-webkit-font-smoothing:antialiased}
-body{min-height:100dvh}
-#faixa-demo{position:fixed;top:0;left:0;right:0;z-index:999;background:var(--vermelho);color:#fff;font-size:11px;font-weight:700;letter-spacing:.4px;text-align:center;padding:6px 8px;text-transform:uppercase}
-#app{max-width:480px;margin:0 auto;min-height:100dvh;position:relative;display:flex;flex-direction:column;background:var(--preto);padding-top:28px}
-h1,h2,h3{font-family:var(--fonte-display);font-weight:400;letter-spacing:.5px;margin:0;text-transform:uppercase}
-p{margin:0}
-button{font-family:var(--fonte-corpo);cursor:pointer;border:none;outline:none;background:none;color:inherit}
-button:focus-visible,input:focus-visible{outline:2px solid var(--vermelho);outline-offset:2px}
-input{font-family:var(--fonte-corpo);background:var(--preto-2);border:1.5px solid var(--preto-3);color:var(--branco);border-radius:var(--raio-peq);padding:14px 16px;font-size:16px;width:100%}
-input::placeholder{color:var(--cinza)}
-input:focus{border-color:var(--vermelho)}
-.tela{flex:1;padding:24px 20px 100px;animation:entrar .25s ease}
-@keyframes entrar{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 20px;border-radius:var(--raio-peq);font-weight:700;font-size:15px;letter-spacing:.3px;text-transform:uppercase}
-.btn:active{transform:scale(.97)}
-.btn-primario{background:var(--vermelho);color:var(--branco);box-shadow:0 6px 20px rgba(232,21,26,.35)}
-.btn-secundario{background:var(--preto-2);color:var(--branco);border:1.5px solid var(--preto-3)}
-.btn-texto{background:transparent;color:var(--cinza-claro);text-transform:none;font-weight:500;padding:10px}
-.btn:disabled{opacity:.5;pointer-events:none}
-.rotulo{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--cinza);margin-bottom:8px;display:block}
-.campo{margin-bottom:18px}
-.erro{background:rgba(232,21,26,.12);border:1px solid rgba(232,21,26,.4);color:#FF6B6E;padding:12px 14px;border-radius:var(--raio-peq);font-size:14px;margin-bottom:16px}
-.cartao{background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:20px}
-.marca{display:flex;align-items:baseline;gap:2px;font-family:var(--fonte-display);font-size:32px;letter-spacing:1px;justify-content:center}
-.marca .ponto{color:var(--vermelho)}
-.navbar{position:sticky;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);border-top:1px solid var(--preto-3);padding:10px 8px calc(10px + env(safe-area-inset-bottom));max-width:480px;margin:0 auto}
-.navbar-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--cinza);font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:6px 10px;border-radius:var(--raio-peq)}
-.navbar-item.ativo{color:var(--vermelho)}
-.navbar-item svg{width:22px;height:22px}
-.topo-usuario{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.topo-usuario .saudacao{font-size:13px;color:var(--cinza)}
-.topo-usuario .nome{font-size:20px;font-family:var(--fonte-display);text-transform:uppercase}
-.avatar-inicial{width:40px;height:40px;border-radius:50%;background:var(--vermelho);display:flex;align-items:center;justify-content:center;font-family:var(--fonte-display);font-size:16px}
-.anel-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0 20px;position:relative}
-.anel-svg{width:220px;height:220px}
-.anel-fundo{fill:none;stroke:var(--preto-3);stroke-width:14}
-.anel-progresso{fill:none;stroke:var(--vermelho);stroke-width:14;stroke-linecap:round;transform-origin:center;transform:rotate(-90deg);transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 8px rgba(232,21,26,.55))}
-.anel-centro{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.anel-numero{font-family:var(--fonte-display);font-size:44px;line-height:1}
-.anel-legenda{font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
-.grid-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-.stat-card{background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:16px}
-.stat-card .valor{font-family:var(--fonte-display);font-size:24px;margin-bottom:2px}
-.stat-card.destaque{border-color:rgba(232,21,26,.4);background:linear-gradient(160deg,rgba(232,21,26,.14),var(--preto-2))}
-.checkin-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio);padding:16px 18px;margin-top:16px}
-.checkin-toggle.feito{border-color:rgba(52,199,123,.5);background:linear-gradient(160deg,rgba(52,199,123,.1),var(--preto-2))}
-.switch{width:48px;height:28px;border-radius:999px;background:var(--preto-3);position:relative;transition:background .2s ease;flex-shrink:0}
-.switch.ligado{background:var(--vermelho)}
-.switch-bolinha{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--branco);transition:transform .2s ease}
-.switch.ligado .switch-bolinha{transform:translateX(20px)}
-.lista-exercicios{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.exercicio-item{display:flex;align-items:center;gap:12px;background:var(--preto-2);border:1px solid var(--preto-3);border-radius:var(--raio-peq);padding:14px}
-.exercicio-icone{width:40px;height:40px;border-radius:10px;background:var(--preto-3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.exercicio-info{flex:1}
-.exercicio-info .titulo{font-weight:700;font-size:14px}
-.exercicio-info .sub{font-size:12px;color:var(--cinza);margin-top:2px}
-.exercicio-cal{font-size:13px;color:var(--vermelho);font-weight:700;white-space:nowrap}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:10px 16px;border-radius:999px;background:var(--preto-2);border:1.5px solid var(--preto-3);color:var(--cinza-claro);font-size:13px;font-weight:600}
-.chip.selecionado{background:var(--vermelho);border-color:var(--vermelho);color:var(--branco)}
-.barra-fundo{width:100%;height:8px;border-radius:999px;background:var(--preto-3);overflow:hidden}
-.barra-preenchimento{height:100%;background:linear-gradient(90deg,var(--vermelho-forte),var(--vermelho));border-radius:999px;transition:width .5s ease}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:520px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mut);font-size:14px;margin:0 0 16px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:26px}
+.stat span{color:var(--mut);font-size:13px}
+.bar{height:8px;background:var(--bd);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-size:14px}
+.tabs button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+li{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;cursor:pointer;user-select:none}
+li.paid{background:var(--okbg);border-color:var(--ok)}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--bd);display:grid;place-items:center;flex:none;color:#fff;font-size:15px}
+li.paid .chk{background:var(--ok);border-color:var(--ok)}
+.nm{flex:1;font-size:17px}
+li.paid .nm{color:var(--mut);text-decoration:line-through}
+.del{border:0;background:none;color:var(--mut);font-size:20px;padding:4px 8px;cursor:pointer}
+.add{display:flex;gap:8px;margin-top:16px}
+.add input{flex:1;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);font:inherit}
+.add button,.reset{padding:11px 16px;border:0;border-radius:10px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
+.reset{background:none;color:var(--mut);border:1px solid var(--bd);margin-top:16px;width:100%;font-size:14px}
+.empty{text-align:center;color:var(--mut);padding:24px}
 </style>
 </head>
 <body>
-<div id="faixa-demo">MODO TESTE &bull; dados somente nesta aba, somem ao recarregar</div>
-<div id="app"></div>
-
+<main>
+<h1>Pagamentos · Fim de ano</h1>
+<p class="sub">Toque no nome para marcar ou desmarcar.</p>
+<div class="stats">
+<div class="stat"><b id="np" style="color:var(--ok)">0</b><span>pagaram</span></div>
+<div class="stat"><b id="nf">0</b><span>faltam</span></div>
+</div>
+<div class="bar"><i id="bar"></i></div>
+<div class="tabs">
+<button data-f="all" class="on">Todos</button>
+<button data-f="falta">Faltam</button>
+<button data-f="pago">Pagos</button>
+</div>
+<ul id="list"></ul>
+<form class="add" id="addf" onsubmit="return false">
+<input id="inp" placeholder="Adicionar pessoa" autocomplete="off">
+<button type="submit" id="addb">Adicionar</button>
+</form>
+<button class="reset" id="reset">Desmarcar todos</button>
+</main>
 <script>
-"use strict";
-
-/* ============== "banco" em memoria (some ao recarregar) ============== */
-var DB = { usuarios: {}, sessao: null, perfis: {}, checkins: {} };
-
-function gerarId(){ return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
-function dataDeHoje(){
-  var h = new Date();
-  return h.getFullYear() + '-' + String(h.getMonth()+1).padStart(2,'0') + '-' + String(h.getDate()).padStart(2,'0');
-}
-
-/* ============== auth ============== */
-function cadastrar(email, senha){
-  if (DB.usuarios[email]) throw new Error('Esse e-mail ja tem cadastro nesta sessao de teste. Tenta entrar.');
-  if (senha.length < 6) throw new Error('A senha precisa ter pelo menos 6 caracteres.');
-  var id = gerarId();
-  DB.usuarios[email] = { id: id, email: email, senha: senha };
-  DB.sessao = { user: { id: id, email: email } };
-  return DB.sessao;
-}
-function entrar(email, senha){
-  var u = DB.usuarios[email];
-  if (!u || u.senha !== senha) throw new Error('E-mail ou senha incorretos.');
-  DB.sessao = { user: { id: u.id, email: email } };
-  return DB.sessao;
-}
-function sair(){ DB.sessao = null; }
-function sessaoAtual(){ return DB.sessao; }
-
-/* ============== perfil / checkins ============== */
-function buscarPerfil(uid){ return DB.perfis[uid] || null; }
-function criarPerfil(p){ DB.perfis[p.id] = p; return p; }
-function atualizarPerfil(uid, campos){ DB.perfis[uid] = Object.assign({}, DB.perfis[uid], campos); return DB.perfis[uid]; }
-
-function chaveCheckin(uid, data){ return uid + '__' + data; }
-function buscarCheckinHoje(uid){ return DB.checkins[chaveCheckin(uid, dataDeHoje())] || null; }
-function salvarCheckinHoje(uid, campos){
-  var chave = chaveCheckin(uid, dataDeHoje());
-  var atual = DB.checkins[chave] || { id: gerarId(), user_id: uid, data: dataDeHoje() };
-  DB.checkins[chave] = Object.assign({}, atual, campos);
-  return DB.checkins[chave];
-}
-function buscarHistorico(uid, dias){
-  return Object.values(DB.checkins)
-    .filter(function(c){ return c.user_id === uid; })
-    .sort(function(a,b){ return a.data < b.data ? 1 : -1; })
-    .slice(0, dias || 14);
-}
-
-/* ============== calculos ============== */
-var FATORES_ATIVIDADE = {
-  sedentario: { fator: 1.2, rotulo: 'Sedentario' },
-  leve: { fator: 1.375, rotulo: 'Leve' },
-  moderado: { fator: 1.55, rotulo: 'Moderado' },
-  ativo: { fator: 1.725, rotulo: 'Ativo' },
-  muito_ativo: { fator: 1.9, rotulo: 'Muito ativo' }
-};
-var RITMOS_PERDA = [0.25, 0.5, 0.75, 1];
-var KCAL_POR_KG = 7700;
-
-function calcularTMB(p){
-  var base = 10*p.peso_kg + 6.25*p.altura_cm - 5*p.idade;
-  if (p.sexo === 'masculino') return Math.round(base + 5);
-  if (p.sexo === 'feminino') return Math.round(base - 161);
-  return Math.round(base - 78);
-}
-function calcularTDEE(tmb, nivel){
-  var info = FATORES_ATIVIDADE[nivel] || FATORES_ATIVIDADE.leve;
-  return Math.round(tmb * info.fator);
-}
-function calcularMetaCalorica(tdee, tmb, ritmo){
-  var deficit = Math.round((ritmo * KCAL_POR_KG) / 7);
-  var meta = tdee - deficit;
-  var piso = Math.round(tmb * 1.1);
-  return meta < piso ? piso : meta;
-}
-function calcularMacros(metaCalorica, pesoAtual){
-  var proteinaG = Math.round(pesoAtual * 2);
-  var proteinaKcal = proteinaG * 4;
-  var gorduraKcal = Math.round(metaCalorica * 0.25);
-  var gorduraG = Math.round(gorduraKcal / 9);
-  var carboKcal = Math.max(metaCalorica - proteinaKcal - gorduraKcal, 0);
-  var carboG = Math.round(carboKcal / 4);
-  return { proteina_g: proteinaG, gordura_g: gorduraG, carboidrato_g: carboG };
-}
-function calcularPainel(perfil){
-  var tmb = calcularTMB({ peso_kg: perfil.peso_atual_kg, altura_cm: perfil.altura_cm, idade: perfil.idade, sexo: perfil.sexo });
-  var tdee = calcularTDEE(tmb, perfil.nivel_atividade);
-  var meta = calcularMetaCalorica(tdee, tmb, perfil.ritmo_perda_kg_semana);
-  var macros = calcularMacros(meta, perfil.peso_atual_kg);
-  var pesoParaPerder = Math.max(perfil.peso_atual_kg - perfil.peso_meta_kg, 0);
-  var semanas = perfil.ritmo_perda_kg_semana > 0 ? Math.ceil(pesoParaPerder / perfil.ritmo_perda_kg_semana) : 0;
-  return { tmb: tmb, tdee: tdee, metaCalorica: meta, macros: macros, pesoParaPerder: pesoParaPerder, semanasEstimadas: semanas };
-}
-function calcularProgressoPeso(inicial, atual, meta){
-  var total = inicial - meta;
-  if (!(total > 0)) return 0;
-  var jaPerdido = inicial - atual;
-  var pct = (jaPerdido/total)*100;
-  if (pct < 0) return 0;
-  if (pct > 100) return 100;
-  return Math.round(pct);
-}
-
-var EXERCICIOS = [
-  { chave: 'caminhada', rotulo: 'Caminhada', met: 3.5 },
-  { chave: 'corrida', rotulo: 'Corrida', met: 8 },
-  { chave: 'musculacao', rotulo: 'Musculacao', met: 5 },
-  { chave: 'ciclismo', rotulo: 'Ciclismo', met: 7.5 },
-  { chave: 'natacao', rotulo: 'Natacao', met: 6 },
-  { chave: 'hiit', rotulo: 'HIIT', met: 9 },
-  { chave: 'yoga', rotulo: 'Yoga', met: 2.5 },
-  { chave: 'futebol', rotulo: 'Futebol', met: 7 }
-];
-
-/* ============== router (hash) ============== */
-var raiz = document.getElementById('app');
-var rotas = {};
-function registrarRota(caminho, fn){ rotas[caminho] = fn; }
-function navegarPara(c){ if (window.location.hash !== '#'+c) window.location.hash = c; else render(); }
-function rotaAtual(){ return window.location.hash.replace('#','') || '/'; }
+var KEY="pagamentos-fim-de-ano-v1";
+var base=["Ana Julia","Kenia","Adriano","Isabelli","Ana","Livia","Léo","Lucimeire","Carlos","Lavínia","Matheus","Aline","Vinicius","Neila","Letícia","Michele","Daívid","Amanda","Daravaison","Nelson","Joana"];
+var data=null,filter="all";
+try{var raw=localStorage.getItem(KEY);if(raw)data=JSON.parse(raw)}catch(e){}
+if(!Array.isArray(data)){data=base.map(function(n){return{n:n,p:n==="Ana Julia"||n==="Aline"}})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
 function render(){
-  var caminho = rotaAtual();
-  var fn = rotas[caminho];
-  if (!fn) { raiz.innerHTML = '<div class="tela"><p>Pagina nao encontrada.</p></div>'; return; }
-  fn();
+var np=data.filter(function(x){return x.p}).length,t=data.length;
+document.getElementById("np").textContent=np;
+document.getElementById("nf").textContent=t-np;
+document.getElementById("bar").style.width=(t?np/t*100:0)+"%";
+var ul=document.getElementById("list");ul.innerHTML="";
+var shown=0;
+data.forEach(function(x,i){
+if(filter==="falta"&&x.p)return;if(filter==="pago"&&!x.p)return;
+shown++;
+var li=document.createElement("li");if(x.p)li.className="paid";
+li.innerHTML='<span class="chk">'+(x.p?"✓":"")+'</span><span class="nm"></span><button class="del" title="Remover">×</button>';
+li.querySelector(".nm").textContent=x.n;
+li.onclick=function(){x.p=!x.p;save();render()};
+li.querySelector(".del").onclick=function(e){e.stopPropagation();if(confirm("Remover "+x.n+"?")){data.splice(i,1);save();render()}};
+ul.appendChild(li)});
+if(!shown){ul.innerHTML='<li class="empty" style="justify-content:center;cursor:default">Ninguém por aqui.</li>'}
 }
-window.addEventListener('hashchange', render);
-
-/* ============== componentes ============== */
-function iconeCasa(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>'; }
-function iconeRaio(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>'; }
-function iconePessoa(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>'; }
-
-function navbarHTML(){
-  var itens = [
-    { rota: '/painel', rotulo: 'Painel', icone: iconeCasa },
-    { rota: '/exercicios', rotulo: 'Treino', icone: iconeRaio },
-    { rota: '/perfil', rotulo: 'Perfil', icone: iconePessoa }
-  ];
-  var atual = rotaAtual();
-  var html = '<nav class="navbar">';
-  itens.forEach(function(it){
-    html += '<button class="navbar-item' + (atual===it.rota?' ativo':'') + '" onclick="navegarPara(\'' + it.rota + '\')">' + it.icone() + '<span>' + it.rotulo + '</span></button>';
-  });
-  html += '</nav>';
-  return html;
-}
-
-function anelHTML(consumidas, meta){
-  var RAIO = 90, CIRC = 2*Math.PI*RAIO;
-  var restante = Math.max(meta - consumidas, 0);
-  var pct = meta > 0 ? Math.min(consumidas/meta, 1) : 0;
-  var offset = CIRC * (1-pct);
-  return '<div class="anel-wrap"><svg class="anel-svg" viewBox="0 0 200 200">' +
-    '<circle class="anel-fundo" cx="100" cy="100" r="'+RAIO+'"></circle>' +
-    '<circle class="anel-progresso" cx="100" cy="100" r="'+RAIO+'" stroke-dasharray="'+CIRC+'" stroke-dashoffset="'+offset+'"></circle>' +
-    '</svg><div class="anel-centro"><div class="anel-numero">'+restante+'</div><div class="anel-legenda">kcal restantes</div></div></div>';
-}
-
-/* ============== paginas ============== */
-var estadoOnboarding = { sexo: 'masculino', nivel_atividade: 'leve', ritmo_perda_kg_semana: 0.5 };
-var estadoExercicio = { tipo: 'caminhada' };
-var estadoPerfil = {};
-
-function paginaLogin(){
-  raiz.innerHTML =
-    '<div class="tela" style="display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 28px);">' +
-      '<div style="margin-bottom:40px;"><span class="marca">IMPULSO<span class="ponto">.</span></span>' +
-      '<p style="color:var(--cinza);font-size:14px;margin-top:8px;text-align:center;">Treino, peso e meta. Todo dia.</p></div>' +
-      '<div id="erro-area"></div>' +
-      '<form id="form-login">' +
-        '<div class="campo"><label class="rotulo">E-mail</label><input type="email" id="email" placeholder="voce@email.com" required /></div>' +
-        '<div class="campo"><label class="rotulo">Senha</label><input type="password" id="senha" placeholder="Sua senha" required minlength="6" /></div>' +
-        '<button type="submit" class="btn btn-primario">Entrar</button>' +
-      '</form>' +
-      '<button class="btn btn-texto" onclick="navegarPara(\'/cadastro\')" style="margin-top:12px;">Ainda nao tem conta? Cadastre-se</button>' +
-    '</div>';
-  document.getElementById('form-login').addEventListener('submit', function(e){
-    e.preventDefault();
-    var email = document.getElementById('email').value.trim();
-    var senha = document.getElementById('senha').value;
-    try { entrar(email, senha); navegarPara('/painel'); }
-    catch(err){ document.getElementById('erro-area').innerHTML = '<div class="erro">'+err.message+'</div>'; }
-  });
-}
-
-function paginaCadastro(){
-  raiz.innerHTML =
-    '<div class="tela" style="display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 28px);">' +
-      '<div style="margin-bottom:40px;"><span class="marca">IMPULSO<span class="ponto">.</span></span>' +
-      '<p style="color:var(--cinza);font-size:14px;margin-top:8px;text-align:center;">Cria sua conta de teste.</p></div>' +
-      '<div id="erro-area"></div>' +
-      '<form id="form-cadastro">' +
-        '<div class="campo"><label class="rotulo">E-mail</label><input type="email" id="email" placeholder="voce@email.com" required /></div>' +
-        '<div class="campo"><label class="rotulo">Senha</label><input type="password" id="senha" placeholder="Minimo 6 caracteres" required minlength="6" /></div>' +
-        '<button type="submit" class="btn btn-primario">Criar conta</button>' +
-      '</form>' +
-      '<button class="btn btn-texto" onclick="navegarPara(\'/login\')" style="margin-top:12px;">Ja tem conta? Entrar</button>' +
-    '</div>';
-  document.getElementById('form-cadastro').addEventListener('submit', function(e){
-    e.preventDefault();
-    var email = document.getElementById('email').value.trim();
-    var senha = document.getElementById('senha').value;
-    try { cadastrar(email, senha); navegarPara('/onboarding'); }
-    catch(err){ document.getElementById('erro-area').innerHTML = '<div class="erro">'+err.message+'</div>'; }
-  });
-}
-
-function configurarChips(seletor, aoSelecionar){
-  var container = document.querySelector(seletor);
-  container.querySelectorAll('.chip').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      container.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('selecionado'); });
-      chip.classList.add('selecionado');
-      aoSelecionar(chip.dataset.valor);
-    });
-  });
-}
-
-function paginaOnboarding(){
-  var sess = sessaoAtual();
-  if (!sess) { navegarPara('/login'); return; }
-
-  var chipsAtividade = Object.keys(FATORES_ATIVIDADE).map(function(k){
-    return '<button type="button" class="chip'+(k==='leve'?' selecionado':'')+'" data-valor="'+k+'">'+FATORES_ATIVIDADE[k].rotulo+'</button>';
-  }).join('');
-  var chipsRitmo = RITMOS_PERDA.map(function(r){
-    return '<button type="button" class="chip'+(r===0.5?' selecionado':'')+'" data-valor="'+r+'">'+String(r).replace('.',',')+' kg/semana</button>';
-  }).join('');
-
-  raiz.innerHTML =
-    '<div class="tela">' +
-      '<h2 style="font-size:22px;margin-bottom:4px;">Vamos te conhecer</h2>' +
-      '<p style="color:var(--cinza);font-size:14px;margin-bottom:24px;">Isso define sua meta calorica real. Leva 1 minuto.</p>' +
-      '<div id="erro-area"></div>' +
-      '<form id="form-onboarding">' +
-        '<div class="campo"><label class="rotulo">Seu nome</label><input type="text" id="nome" placeholder="Como te chamamos?" required /></div>' +
-        '<div class="campo"><label class="rotulo">Idade</label><input type="number" id="idade" placeholder="Ex: 28" required min="14" max="90" /></div>' +
-        '<div class="campo"><label class="rotulo">Sexo biologico (para o calculo)</label><div class="chips" id="chips-sexo">' +
-          '<button type="button" class="chip selecionado" data-valor="masculino">Masculino</button>' +
-          '<button type="button" class="chip" data-valor="feminino">Feminino</button>' +
-          '<button type="button" class="chip" data-valor="outro">Outro</button></div></div>' +
-        '<div class="campo"><label class="rotulo">Altura (cm)</label><input type="number" id="altura" placeholder="Ex: 175" required min="120" max="230" /></div>' +
-        '<div class="campo"><label class="rotulo">Peso atual (kg)</label><input type="number" step="0.1" id="peso_atual" placeholder="Ex: 82.5" required min="30" max="300" /></div>' +
-        '<div class="campo"><label class="rotulo">Peso meta (kg)</label><input type="number" step="0.1" id="peso_meta" placeholder="Ex: 75" required min="30" max="300" /></div>' +
-        '<div class="campo"><label class="rotulo">Nivel de atividade</label><div class="chips" id="chips-atividade">'+chipsAtividade+'</div></div>' +
-        '<div class="campo"><label class="rotulo">Ritmo de perda desejado</label><div class="chips" id="chips-ritmo">'+chipsRitmo+'</div></div>' +
-        '<button type="submit" class="btn btn-primario" style="margin-top:12px;">Calcular minha meta</button>' +
-      '</form>' +
-    '</div>';
-
-  estadoOnboarding = { sexo: 'masculino', nivel_atividade: 'leve', ritmo_perda_kg_semana: 0.5 };
-  configurarChips('#chips-sexo', function(v){ estadoOnboarding.sexo = v; });
-  configurarChips('#chips-atividade', function(v){ estadoOnboarding.nivel_atividade = v; });
-  configurarChips('#chips-ritmo', function(v){ estadoOnboarding.ritmo_perda_kg_semana = Number(v); });
-
-  document.getElementById('form-onboarding').addEventListener('submit', function(e){
-    e.preventDefault();
-    var nome = document.getElementById('nome').value.trim();
-    var idade = Number(document.getElementById('idade').value);
-    var altura = Number(document.getElementById('altura').value);
-    var pesoAtual = Number(document.getElementById('peso_atual').value);
-    var pesoMeta = Number(document.getElementById('peso_meta').value);
-    criarPerfil({
-      id: sess.user.id, nome: nome, idade: idade, sexo: estadoOnboarding.sexo,
-      altura_cm: altura, peso_inicial_kg: pesoAtual, peso_atual_kg: pesoAtual, peso_meta_kg: pesoMeta,
-      nivel_atividade: estadoOnboarding.nivel_atividade, ritmo_perda_kg_semana: estadoOnboarding.ritmo_perda_kg_semana,
-      onboarding_completo: true
-    });
-    navegarPara('/painel');
-  });
-}
-
-function saudacaoPorHorario(){
-  var h = new Date().getHours();
-  if (h < 12) return 'Bom dia';
-  if (h < 18) return 'Boa tarde';
-  return 'Boa noite';
-}
-
-function paginaPainel(){
-  var sess = sessaoAtual();
-  if (!sess) { navegarPara('/login'); return; }
-  var perfil = buscarPerfil(sess.user.id);
-  if (!perfil || !perfil.onboarding_completo) { navegarPara('/onboarding'); return; }
-
-  var checkin = buscarCheckinHoje(sess.user.id);
-  var painel = calcularPainel(perfil);
-  var consumidas = (checkin && checkin.calorias_consumidas) || 0;
-  var treinou = Boolean(checkin && checkin.treinou);
-  var progresso = calcularProgressoPeso(perfil.peso_inicial_kg, perfil.peso_atual_kg, perfil.peso_meta_kg);
-  var primeiroNome = perfil.nome.split(' ')[0];
-
-  raiz.innerHTML =
-    '<div class="tela">' +
-      '<div class="topo-usuario"><div><p class="saudacao">'+saudacaoPorHorario()+'</p><h1 class="nome">'+primeiroNome+'</h1></div>' +
-      '<div class="avatar-inicial">'+primeiroNome.charAt(0).toUpperCase()+'</div></div>' +
-      anelHTML(consumidas, painel.metaCalorica) +
-      '<div class="grid-stats">' +
-        '<div class="stat-card destaque"><div class="valor">'+painel.metaCalorica+'</div><p class="rotulo">Meta kcal / dia</p></div>' +
-        '<div class="stat-card"><div class="valor">'+consumidas+'</div><p class="rotulo">Consumidas hoje</p></div>' +
-        '<div class="stat-card"><div class="valor">'+painel.macros.proteina_g+'g</div><p class="rotulo">Proteina</p></div>' +
-        '<div class="stat-card"><div class="valor">'+painel.macros.carboidrato_g+'g</div><p class="rotulo">Carboidrato</p></div>' +
-      '</div>' +
-      '<div class="cartao" style="margin-top:16px;"><label class="rotulo">Registrar calorias consumidas hoje</label>' +
-        '<div style="display:flex;gap:10px;"><input type="number" id="input-calorias" value="'+(consumidas||'')+'" min="0" style="flex:1;" />' +
-        '<button class="btn btn-primario" id="btn-salvar-calorias" style="width:auto;padding:14px 18px;">Salvar</button></div></div>' +
-      '<div class="checkin-toggle'+(treinou?' feito':'')+'" ><div><p style="font-weight:700;font-size:14px;">Treinei hoje</p>' +
-        '<p style="font-size:12px;color:var(--cinza);margin-top:2px;">Marca quando fizer qualquer exercicio</p></div>' +
-        '<div class="switch'+(treinou?' ligado':'')+'" id="switch-treino"><div class="switch-bolinha"></div></div></div>' +
-      '<div class="cartao" style="margin-top:16px;"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">' +
-        '<span class="rotulo" style="margin-bottom:0;">Rumo a meta</span><span style="font-size:12px;color:var(--cinza);">'+perfil.peso_atual_kg+'kg &rarr; '+perfil.peso_meta_kg+'kg</span></div>' +
-        '<div class="barra-fundo"><div class="barra-preenchimento" style="width:'+progresso+'%;"></div></div>' +
-        '<p style="font-size:12px;color:var(--cinza);margin-top:8px;">'+(painel.pesoParaPerder>0?('Faltam '+painel.pesoParaPerder.toFixed(1)+'kg &middot; ~'+painel.semanasEstimadas+' semanas no seu ritmo'):'Meta alcancada. Hora de manter o resultado.')+'</p></div>' +
-      '<button class="btn btn-texto" id="btn-sair" style="margin-top:20px;">Sair da conta</button>' +
-    '</div>' + navbarHTML();
-
-  document.getElementById('btn-salvar-calorias').addEventListener('click', function(){
-    var v = Number(document.getElementById('input-calorias').value) || 0;
-    salvarCheckinHoje(sess.user.id, { calorias_consumidas: v });
-    paginaPainel();
-  });
-  document.getElementById('switch-treino').addEventListener('click', function(){
-    salvarCheckinHoje(sess.user.id, { treinou: !treinou });
-    paginaPainel();
-  });
-  document.getElementById('btn-sair').addEventListener('click', function(){ sair(); navegarPara('/login'); });
-}
-
-function formatarData(iso){ var p = iso.split('-'); return p[2]+'/'+p[1]; }
-
-function paginaExercicios(){
-  var sess = sessaoAtual();
-  if (!sess) { navegarPara('/login'); return; }
-  var perfil = buscarPerfil(sess.user.id);
-  var checkin = buscarCheckinHoje(sess.user.id);
-  var historico = buscarHistorico(sess.user.id, 10);
-  estadoExercicio.tipo = (checkin && checkin.tipo_exercicio) || 'caminhada';
-
-  var chipsEx = EXERCICIOS.map(function(ex){
-    return '<button type="button" class="chip'+(ex.chave===estadoExercicio.tipo?' selecionado':'')+'" data-valor="'+ex.chave+'">'+ex.rotulo+'</button>';
-  }).join('');
-
-  var listaHist = historico.length === 0
-    ? '<p style="color:var(--cinza);font-size:14px;">Ainda sem registros. Comeca hoje.</p>'
-    : historico.map(function(d){
-        var rot = d.treinou ? ((EXERCICIOS.filter(function(e){return e.chave===d.tipo_exercicio;})[0]||{}).rotulo || 'Treino') : 'Descanso';
-        return '<div class="exercicio-item"><div class="exercicio-icone">'+(d.treinou?'&#9889;':'&#9711;')+'</div>' +
-          '<div class="exercicio-info"><p class="titulo">'+rot+'</p><p class="sub">'+formatarData(d.data)+(d.duracao_min?(' &middot; '+d.duracao_min+' min'):'')+'</p></div>' +
-          (d.calorias_gastas_exercicio ? '<span class="exercicio-cal">-'+d.calorias_gastas_exercicio+' kcal</span>' : '') + '</div>';
-      }).join('');
-
-  raiz.innerHTML =
-    '<div class="tela">' +
-      '<h2 style="font-size:22px;margin-bottom:4px;">Treino de hoje</h2>' +
-      '<p style="color:var(--cinza);font-size:14px;margin-bottom:20px;">Escolhe o que voce fez e a gente calcula o gasto.</p>' +
-      '<div class="chips" id="chips-exercicio">'+chipsEx+'</div>' +
-      '<div class="campo" style="margin-top:18px;"><label class="rotulo">Duracao (minutos)</label>' +
-        '<input type="number" id="input-duracao" placeholder="Ex: 40" min="1" max="600" value="'+((checkin&&checkin.duracao_min)||'')+'" /></div>' +
-      '<div class="cartao" style="margin-bottom:18px;"><p style="font-size:13px;color:var(--cinza);">Gasto estimado</p>' +
-        '<p class="anel-numero" style="font-size:32px;" id="texto-gasto">0 kcal</p></div>' +
-      '<button class="btn btn-primario" id="btn-registrar">Registrar treino</button>' +
-      '<h3 style="font-size:16px;margin-top:32px;margin-bottom:12px;">Ultimos dias</h3>' +
-      '<div class="lista-exercicios">'+listaHist+'</div>' +
-    '</div>' + navbarHTML();
-
-  var inputDuracao = document.getElementById('input-duracao');
-  var textoGasto = document.getElementById('texto-gasto');
-  function atualizarGasto(){
-    var ex = EXERCICIOS.filter(function(e){return e.chave===estadoExercicio.tipo;})[0];
-    var minutos = Number(inputDuracao.value) || 0;
-    var peso = (perfil && perfil.peso_atual_kg) || 70;
-    var kcal = Math.round(ex.met * peso * (minutos/60));
-    textoGasto.textContent = kcal + ' kcal';
-    return kcal;
-  }
-  atualizarGasto();
-  inputDuracao.addEventListener('input', atualizarGasto);
-
-  document.querySelectorAll('#chips-exercicio .chip').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      document.querySelectorAll('#chips-exercicio .chip').forEach(function(c){ c.classList.remove('selecionado'); });
-      chip.classList.add('selecionado');
-      estadoExercicio.tipo = chip.dataset.valor;
-      atualizarGasto();
-    });
-  });
-
-  document.getElementById('btn-registrar').addEventListener('click', function(){
-    var minutos = Number(inputDuracao.value) || 0;
-    if (minutos < 1) { inputDuracao.focus(); return; }
-    var kcal = atualizarGasto();
-    salvarCheckinHoje(sess.user.id, { treinou: true, tipo_exercicio: estadoExercicio.tipo, duracao_min: minutos, calorias_gastas_exercicio: kcal });
-    paginaExercicios();
-  });
-}
-
-function paginaPerfil(){
-  var sess = sessaoAtual();
-  if (!sess) { navegarPara('/login'); return; }
-  var perfil = buscarPerfil(sess.user.id);
-  if (!perfil) { navegarPara('/onboarding'); return; }
-
-  estadoPerfil = { nivel_atividade: perfil.nivel_atividade, ritmo_perda_kg_semana: perfil.ritmo_perda_kg_semana };
-  var painel = calcularPainel(perfil);
-
-  var chipsAtividade = Object.keys(FATORES_ATIVIDADE).map(function(k){
-    return '<button type="button" class="chip'+(k===perfil.nivel_atividade?' selecionado':'')+'" data-valor="'+k+'">'+FATORES_ATIVIDADE[k].rotulo+'</button>';
-  }).join('');
-  var chipsRitmo = RITMOS_PERDA.map(function(r){
-    return '<button type="button" class="chip'+(r===perfil.ritmo_perda_kg_semana?' selecionado':'')+'" data-valor="'+r+'">'+String(r).replace('.',',')+' kg/semana</button>';
-  }).join('');
-
-  raiz.innerHTML =
-    '<div class="tela">' +
-      '<h2 style="font-size:22px;margin-bottom:20px;">Seu perfil</h2>' +
-      '<div class="grid-stats" style="margin-bottom:20px;">' +
-        '<div class="stat-card"><div class="valor">'+painel.tmb+'</div><p class="rotulo">TMB (kcal)</p></div>' +
-        '<div class="stat-card"><div class="valor">'+painel.tdee+'</div><p class="rotulo">Gasto total (kcal)</p></div>' +
-      '</div>' +
-      '<form id="form-perfil">' +
-        '<div class="campo"><label class="rotulo">Nome</label><input type="text" id="nome" value="'+perfil.nome+'" required /></div>' +
-        '<div class="campo"><label class="rotulo">Peso atual (kg)</label><input type="number" step="0.1" id="peso_atual" value="'+perfil.peso_atual_kg+'" required min="30" max="300" /></div>' +
-        '<div class="campo"><label class="rotulo">Peso meta (kg)</label><input type="number" step="0.1" id="peso_meta" value="'+perfil.peso_meta_kg+'" required min="30" max="300" /></div>' +
-        '<div class="campo"><label class="rotulo">Altura (cm)</label><input type="number" id="altura" value="'+perfil.altura_cm+'" required min="120" max="230" /></div>' +
-        '<div class="campo"><label class="rotulo">Idade</label><input type="number" id="idade" value="'+perfil.idade+'" required min="14" max="90" /></div>' +
-        '<div class="campo"><label class="rotulo">Nivel de atividade</label><div class="chips" id="chips-atividade">'+chipsAtividade+'</div></div>' +
-        '<div class="campo"><label class="rotulo">Ritmo de perda</label><div class="chips" id="chips-ritmo">'+chipsRitmo+'</div></div>' +
-        '<button type="submit" class="btn btn-primario">Salvar alteracoes</button>' +
-      '</form>' +
-      '<button class="btn btn-texto" id="btn-sair" style="margin-top:16px;">Sair da conta</button>' +
-    '</div>' + navbarHTML();
-
-  configurarChips('#chips-atividade', function(v){ estadoPerfil.nivel_atividade = v; });
-  configurarChips('#chips-ritmo', function(v){ estadoPerfil.ritmo_perda_kg_semana = Number(v); });
-
-  document.getElementById('form-perfil').addEventListener('submit', function(e){
-    e.preventDefault();
-    atualizarPerfil(sess.user.id, {
-      nome: document.getElementById('nome').value.trim(),
-      peso_atual_kg: Number(document.getElementById('peso_atual').value),
-      peso_meta_kg: Number(document.getElementById('peso_meta').value),
-      altura_cm: Number(document.getElementById('altura').value),
-      idade: Number(document.getElementById('idade').value),
-      nivel_atividade: estadoPerfil.nivel_atividade,
-      ritmo_perda_kg_semana: estadoPerfil.ritmo_perda_kg_semana
-    });
-    navegarPara('/painel');
-  });
-  document.getElementById('btn-sair').addEventListener('click', function(){ sair(); navegarPara('/login'); });
-}
-
-/* ============== init ============== */
-registrarRota('/login', paginaLogin);
-registrarRota('/cadastro', paginaCadastro);
-registrarRota('/onboarding', paginaOnboarding);
-registrarRota('/painel', paginaPainel);
-registrarRota('/exercicios', paginaExercicios);
-registrarRota('/perfil', paginaPerfil);
-
-if (!window.location.hash) window.location.hash = '/login';
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){
+document.querySelectorAll(".tabs button").forEach(function(o){o.classList.remove("on")});
+b.classList.add("on");filter=b.dataset.f;render()}});
+function add(){var v=document.getElementById("inp").value.trim();if(!v)return;data.push({n:v,p:false});document.getElementById("inp").value="";save();render()}
+document.getElementById("addb").onclick=add;
+document.getElementById("inp").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();add()}};
+document.getElementById("reset").onclick=function(){if(confirm("Desmarcar todos?")){data.forEach(function(x){x.p=false});save();render()}};
 render();
 </script>
 </body>
