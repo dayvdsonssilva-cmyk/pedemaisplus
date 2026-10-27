@@ -63,8 +63,8 @@ li.paid .nm{color:var(--mut);text-decoration:line-through}
 <button class="reset" id="reset">Desmarcar todos</button>
 </main>
 <script>
-var SUPABASE_URL="COLE_AQUI_SUA_URL";
-var SUPABASE_KEY="COLE_AQUI_SUA_ANON_KEY";
+var SUPABASE_URL="https://nmttkjmfazcipefeakkx.supabase.co/rest/v1/";
+var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdHRram1mYXpjaXBlZmVha2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MTM3NjQsImV4cCI6MjA5MDI4OTc2NH0.MMTX_6iQJk7Uv3HPSk0m32_BihvqsWhHJ_qiRkw0WYo";
 var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 var data=[],filter="all";
 function msg(t){document.getElementById("msg").textContent=t||""}
