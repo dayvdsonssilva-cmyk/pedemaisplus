@@ -52,9 +52,8 @@ h1{font:800 clamp(30px,7vw,46px)/1 "Bricolage Grotesque",system-ui,sans-serif;le
 .addcard .r1 input{flex:1}
 .addcard input::placeholder{color:var(--mut)}
 .addcard .go{border:0;border-radius:12px;background:var(--btn);color:var(--btntx);font:700 16px "DM Sans",sans-serif;padding:0 20px;cursor:pointer}
-.addcard .r2{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
-.addcard .r2 select{grid-column:1/-1;font-size:15px;color:var(--mut)}
-.addcard .r2 input{font-size:15px}
+.addcard .r2{display:flex;gap:10px;border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
+.addcard .r2 input{flex:1}
 
 .chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .chips button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:6px 14px;font:500 14px "DM Sans",sans-serif;cursor:pointer}
@@ -110,6 +109,17 @@ ul.tks{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .val{border:0;background:none;color:var(--ink);font:700 15px "DM Sans",sans-serif;padding:8px;cursor:pointer;white-space:nowrap;border-radius:8px}
 .val.zero{color:var(--btn);font-weight:500}
 .val:hover{background:var(--line)}
+.fd .vtxt{font:700 16px "DM Sans",sans-serif;white-space:nowrap;padding:0 2px}
+.fd .vtxt.zero{color:var(--mut);font-weight:400;font-size:14px}
+.ed{border:0;background:none;color:var(--mut);font-size:17px;line-height:1;padding:6px 8px;cursor:pointer;opacity:.6}
+.ed:hover,.ed:focus-visible{opacity:1}
+.fd.edit{flex-direction:column;align-items:stretch;cursor:default;padding:12px}
+.fd.edit input{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:10px 12px;font:inherit;font-size:16px;min-width:0}
+.fd.edit input:focus{outline:none;border-color:var(--btn)}
+.fd.edit .row{display:flex;gap:8px}
+.fd.edit .row input{flex:1}
+.fd.edit .sv{border:0;border-radius:10px;background:var(--btn);color:var(--btntx);font:700 15px "DM Sans",sans-serif;padding:0 16px;cursor:pointer}
+.fd.edit .cn{border:0;background:none;color:var(--mut);font:500 15px "DM Sans",sans-serif;padding:0 8px;cursor:pointer}
 .reset{display:block;margin:28px auto 0;border:0;background:none;color:var(--mut);font:500 14px "DM Sans",sans-serif;text-decoration:underline;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.tk.slam .stamp{animation:none}.dots i{transition:none}}
 </style>
@@ -158,17 +168,15 @@ ul.tks{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
   <p class="lead" id="lead-c">Carregando…</p>
   <form class="addcard" id="foodf" onsubmit="return false">
     <div class="r1">
-      <input id="fi" placeholder="O que vamos comprar? Ex.: Carne" autocomplete="off" aria-label="Item">
-      <button class="go" type="submit">Adicionar</button>
+      <input id="fi" placeholder="O que vamos comprar? Ex.: Arroz" autocomplete="off" aria-label="Item">
     </div>
     <div class="r2">
-      <select id="fc" aria-label="Categoria"></select>
-      <input id="fq" placeholder="Quantidade (ex.: 2 kg)" autocomplete="off" aria-label="Quantidade">
       <input id="fv" inputmode="decimal" placeholder="Valor (R$)" autocomplete="off" aria-label="Valor">
+      <button class="go" type="submit">Adicionar</button>
     </div>
   </form>
   <p class="msg" id="msg-c"></p>
-  <div id="grupos"></div>
+  <ul id="grupos"></ul>
 </section>
 </main>
 
@@ -177,7 +185,6 @@ var SUPABASE_URL="https://nmttkjmfazcipefeakkx.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdHRram1mYXpjaXBlZmVha2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MTM3NjQsImV4cCI6MjA5MDI4OTc2NH0.MMTX_6iQJk7Uv3HPSk0m32_BihvqsWhHJ_qiRkw0WYo";
 var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-var CATS=["Pratos","Acompanhamentos","Bebidas","Sobremesas","Outros"];
 var pessoas=[],comidas=[],view="pag",turno=1,filter="all",justPaid=null,okP=false,okC=false;
 function $(id){return document.getElementById(id)}
 function say(id,t){$(id).textContent=t||""}
@@ -188,12 +195,12 @@ function key(){return turno===1?"pago":"pago2"}
 async function loadP(){
   var r=await sb.from("pagamentos").select("*").order("id");
   if(r.error){say("msg","Não foi possível carregar: "+r.error.message+" (rode o SQL novo no Supabase)");return}
-  say("msg","");pessoas=r.data;okP=true;renderP();renderC();
+  say("msg","");pessoas=r.data;okP=true;renderP();if(editingId===null)renderC();else renderSummary();
 }
 async function loadC(){
   var r=await sb.from("comidas").select("*").order("id");
   if(r.error){say("msg-c","Não foi possível carregar: "+r.error.message+" (rode o SQL novo no Supabase)");return}
-  say("msg-c","");comidas=r.data;okC=true;renderC();
+  say("msg-c","");comidas=r.data;okC=true;if(editingId===null)renderC();else renderSummary();
 }
 
 /* ---------- pagamentos ---------- */
@@ -247,9 +254,12 @@ async function addPessoa(){
 
 /* ---------- comida (lista de compras) ---------- */
 var BRL=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+var editingId=null;
 function money(n){return BRL.format(n||0)}
 function parseMoney(v){var t=String(v||"").replace(/[^\d,.]/g,"");if(t.indexOf(",")>-1)t=t.replace(/\./g,"").replace(",",".");var n=parseFloat(t);return isNaN(n)?0:n}
-function renderC(){
+function fmtInput(v){v=Number(v)||0;return v>0?String(v).replace(".",","):""}
+
+function renderSummary(){
   var t=comidas.length,ok=comidas.filter(function(x){return x.pronto}).length;
   var tot=0,buy=0,n=pessoas.length;
   comidas.forEach(function(x){var v=Number(x.valor)||0;tot+=v;if(x.pronto)buy+=v});
@@ -258,38 +268,50 @@ function renderC(){
   $("s-n").textContent=n?"dividido entre "+n+" pessoas":"adicione pessoas na aba Pagamentos";
   if(okC)$("lead-c").innerHTML=!t?"Nenhum item ainda. Adicione o primeiro.":
     ok===t?"<b>Tudo comprado!</b> "+t+" itens na lista.":"<b>"+ok+" de "+t+"</b> itens comprados.";
+}
+
+function renderC(){
+  renderSummary();
   var g=$("grupos");g.innerHTML="";
-  CATS.forEach(function(cat){
-    var its=comidas.filter(function(x){return (x.categoria||"Outros")===cat});
-    if(!its.length)return;
-    var sub=0;its.forEach(function(x){sub+=Number(x.valor)||0});
-    var sec=document.createElement("div");sec.className="grp";
-    sec.innerHTML='<h3><b></b><span></span></h3><ul></ul>';
-    sec.querySelector("b").textContent=cat;sec.querySelector("span").textContent=money(sub);
-    var ul=sec.querySelector("ul");
-    its.forEach(function(x){
-      var li=document.createElement("li");
+  if(!comidas.length&&okC){g.innerHTML='<li class="empty">Sua lista de compras está vazia.</li>';return}
+  var focusEl=null;
+  comidas.forEach(function(x){
+    var li=document.createElement("li");
+    if(x.id===editingId){
+      li.className="fd edit";
+      li.innerHTML='<input class="e-n" aria-label="Nome do item"><div class="row"><input class="e-v" inputmode="decimal" placeholder="Valor (R$)" aria-label="Valor"><button class="sv">Salvar</button><button class="cn">Cancelar</button></div>';
+      var en=li.querySelector(".e-n"),ev=li.querySelector(".e-v");
+      en.value=x.item;ev.value=fmtInput(x.valor);
+      var save=function(){saveEdit(x,en.value,ev.value)};
+      var cancel=function(){editingId=null;renderC()};
+      li.querySelector(".sv").onclick=save;li.querySelector(".cn").onclick=cancel;
+      li.onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();save()}else if(e.key==="Escape")cancel()};
+      focusEl=en;
+    }else{
       li.className="fd"+(x.pronto?" done":"");li.tabIndex=0;li.setAttribute("role","button");li.setAttribute("aria-pressed",x.pronto?"true":"false");
-      li.innerHTML='<span class="ck">'+(x.pronto?"✓":"")+'</span><div class="t"><b></b><small></small></div><button class="val" title="Editar valor"></button><button class="del" title="Remover" aria-label="Remover">×</button>';
+      li.innerHTML='<span class="ck">'+(x.pronto?"✓":"")+'</span><div class="t"><b></b></div><span class="vtxt"></span><button class="ed" title="Editar" aria-label="Editar">✎</button><button class="del" title="Remover" aria-label="Remover">×</button>';
       li.querySelector("b").textContent=x.item;
-      var sm=li.querySelector("small");if(x.quantidade)sm.textContent=x.quantidade;else sm.remove();
-      var vb=li.querySelector(".val"),v=Number(x.valor)||0;
-      vb.textContent=v>0?money(v):"+ valor";if(!(v>0))vb.className="val zero";
-      vb.onclick=async function(e){
-        e.stopPropagation();
-        var r0=prompt("Valor de "+x.item+" (R$):",v>0?String(v).replace(".",","):"");
-        if(r0===null)return;
-        var r=await sb.from("comidas").update({valor:parseMoney(r0)}).eq("id",x.id);
-        if(r.error)say("msg-c","Não foi possível salvar: "+r.error.message);loadC()};
+      var v=Number(x.valor)||0,vt=li.querySelector(".vtxt");
+      vt.textContent=v>0?money(v):"sem valor";if(!(v>0))vt.className="vtxt zero";
       li.onclick=function(){toggleFood(x)};
       li.onkeydown=function(e){if(e.target===li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();toggleFood(x)}};
+      li.querySelector(".ed").onclick=function(e){e.stopPropagation();editingId=x.id;renderC()};
       li.querySelector(".del").onclick=async function(e){
         e.stopPropagation();
         if(confirm("Remover "+x.item+"?")){
           var r=await sb.from("comidas").delete().eq("id",x.id);
           if(r.error)say("msg-c","Não foi possível remover: "+r.error.message);loadC()}};
-      ul.appendChild(li)});
-    g.appendChild(sec)});
+    }
+    g.appendChild(li)});
+  if(focusEl){focusEl.focus();focusEl.select()}
+}
+
+async function saveEdit(x,nome,valor){
+  nome=nome.trim();if(!nome)return;
+  var val=parseMoney(valor);
+  x.item=nome;x.valor=val;editingId=null;renderC();
+  var r=await sb.from("comidas").update({item:nome,valor:val}).eq("id",x.id);
+  if(r.error){say("msg-c","Não foi possível salvar: "+r.error.message);loadC()}
 }
 async function toggleFood(x){
   x.pronto=!x.pronto;renderC();
@@ -298,10 +320,10 @@ async function toggleFood(x){
 }
 async function addFood(){
   var v=$("fi").value.trim();if(!v)return;
-  var q=$("fq").value.trim(),val=parseMoney($("fv").value);
-  $("fi").value="";$("fq").value="";$("fv").value="";
-  var r=await sb.from("comidas").insert({item:v,categoria:$("fc").value,quantidade:q||null,valor:val});
-  if(r.error)say("msg-c","Não foi possível adicionar: "+r.error.message+" (rode o SQL novo no Supabase)");
+  var val=parseMoney($("fv").value);
+  $("fi").value="";$("fv").value="";
+  var r=await sb.from("comidas").insert({item:v,valor:val});
+  if(r.error)say("msg-c","Não foi possível adicionar: "+r.error.message);
   loadC();$("fi").focus();
 }
 
@@ -320,7 +342,6 @@ function confetti(){
 }
 
 /* ---------- eventos ---------- */
-CATS.forEach(function(c){var o=document.createElement("option");o.value=o.textContent=c;$("fc").appendChild(o)});
 function setOn(sel,btn){document.querySelectorAll(sel).forEach(function(o){o.classList.remove("on")});btn.classList.add("on")}
 document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){
   setOn("#tabs button",b);view=b.dataset.v;$("v-pag").hidden=view!=="pag";$("v-com").hidden=view!=="com"}});
