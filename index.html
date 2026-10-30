@@ -22,37 +22,61 @@
   --stamp:#4ade80;--paidbg:#14301f;--btn:#60a5fa;--btntx:#0f1115;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.45 "DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  background:var(--bg)}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.45 "DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg)}
 main{max-width:760px;margin:0 auto;padding:28px 18px 56px}
-h1{font:800 clamp(34px,8vw,56px)/1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.03em;margin:0 0 10px}
-.lead{margin:0 0 22px;font-size:18px;color:var(--mut)}
+h1{font:800 clamp(30px,7vw,46px)/1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.03em;margin:0 0 18px}
+.lead{margin:0 0 16px;font-size:18px;color:var(--mut)}
 .lead b{color:var(--ink);font-weight:700}
+.msg{color:#d6336c;margin:0 0 12px;font-weight:500}
 
-.dots{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:26px}
-.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);transition:background .2s,border-color .2s,transform .2s}
-.dots i.on{background:var(--stamp);border-color:var(--stamp);transform:scale(1.12)}
+/* abas */
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--line);border-radius:14px;padding:4px}
+.seg button{border:0;background:none;color:var(--mut);border-radius:11px;padding:10px 8px;font:700 16px "DM Sans",sans-serif;cursor:pointer}
+.seg button.on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.seg small{display:block;font-weight:500;font-size:13px;opacity:.8}
+.main-seg{margin-bottom:26px}
+.main-seg button{font-size:17px;padding:12px 8px}
+.turn-seg{margin-bottom:22px}
 
-.addcard{display:flex;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px;margin-bottom:18px;box-shadow:0 10px 30px -18px rgba(20,20,80,.45)}
-.addcard input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:inherit;font-size:17px;padding:10px 12px;outline:none}
-.addcard input::placeholder{color:var(--mut)}
-.addcard button{border:0;border-radius:12px;background:var(--btn);color:var(--btntx);font:700 16px "DM Sans",sans-serif;padding:0 20px;cursor:pointer}
+/* progresso */
+.dots{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);transition:background .2s,border-color .2s}
+.dots i.on{background:var(--stamp);border-color:var(--stamp)}
+
+/* formulário */
+.addcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px;margin-bottom:20px}
 .addcard:focus-within{border-color:var(--btn)}
+.addcard .r1{display:flex;gap:10px}
+.addcard input,.addcard select{min-width:0;border:0;background:none;color:var(--ink);font:inherit;font-size:17px;padding:10px 12px;outline:none}
+.addcard .r1 input{flex:1}
+.addcard input::placeholder{color:var(--mut)}
+.addcard .go{border:0;border-radius:12px;background:var(--btn);color:var(--btntx);font:700 16px "DM Sans",sans-serif;padding:0 20px;cursor:pointer}
+.addcard .r2{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
+.addcard .r2 select{grid-column:1/-1;font-size:15px;color:var(--mut)}
+.addcard .r2 input{font-size:15px}
 
-.chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.chips button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:7px 14px;font:500 15px "DM Sans",sans-serif;cursor:pointer}
+.chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.chips button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:99px;padding:6px 14px;font:500 14px "DM Sans",sans-serif;cursor:pointer}
 .chips button.on{background:var(--btn);color:var(--btntx);border-color:var(--btn)}
-.chips span{color:var(--mut);margin-left:4px}
-.chips button.on span{color:inherit;opacity:.7}
+.chips span{margin-left:5px;opacity:.65}
 
-ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.tk{position:relative;display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 96px 14px 14px;min-height:76px;cursor:pointer;user-select:none;transition:background .2s,border-color .2s;
+ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.empty{text-align:center;color:var(--mut);padding:28px 10px}
+.del{border:0;background:none;color:var(--mut);font-size:20px;line-height:1;padding:6px 8px;cursor:pointer;opacity:.5}
+.del:hover,.del:focus-visible{opacity:1}
+
+/* ingressos (pagamentos) */
+ul.tks{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.tk{position:relative;display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px 100px 12px 14px;min-height:74px;cursor:pointer;user-select:none;transition:background .2s,border-color .2s;
   -webkit-mask:radial-gradient(circle 9px at calc(100% - 84px) 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at calc(100% - 84px) 100%,#0000 97%,#000) bottom/100% 51% no-repeat;
   mask:radial-gradient(circle 9px at calc(100% - 84px) 0,#0000 97%,#000) top/100% 51% no-repeat,radial-gradient(circle 9px at calc(100% - 84px) 100%,#0000 97%,#000) bottom/100% 51% no-repeat}
-.tk:focus-visible{outline:3px solid var(--btn);outline-offset:2px}
+.tk:focus-visible,.fd:focus-visible{outline:3px solid var(--btn);outline-offset:2px}
 .tk.paid{background:var(--paidbg);border-color:var(--stamp)}
 .av{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font:800 18px "Bricolage Grotesque",sans-serif;color:#fff;background:hsl(var(--h) 55% 46%)}
-.nm{flex:1;min-width:0;font-size:18px;font-weight:500;overflow-wrap:anywhere}
+.who{flex:1;min-width:0}
+.nm{font-size:18px;font-weight:500;overflow-wrap:anywhere;line-height:1.25}
+.other{font-size:13px;color:var(--mut)}
 .tk.paid .nm{color:var(--mut)}
 .st{position:absolute;right:0;top:0;bottom:0;width:84px;border-left:2px dashed var(--line);display:grid;place-items:center}
 .tk.paid .st{border-color:var(--stamp)}
@@ -61,90 +85,227 @@ ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(
 .tk.paid .stamp{display:block}.tk.paid .open{display:none}
 .tk.slam .stamp{animation:slam .38s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes slam{from{transform:rotate(-34deg) scale(2.4);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
-.del{position:absolute;left:auto;right:92px;top:2px;border:0;background:none;color:var(--mut);font-size:20px;line-height:1;padding:6px 8px;cursor:pointer;opacity:.55}
-.del:hover,.del:focus-visible{opacity:1}
-.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:30px 10px}
-#msg{color:#d6336c;margin:0 0 12px;font-weight:500}
-.reset{display:block;margin:26px auto 0;border:0;background:none;color:var(--mut);font:500 14px "DM Sans",sans-serif;text-decoration:underline;cursor:pointer}
+.tk .del{position:absolute;right:90px;top:2px}
+
+/* comida */
+.grp{margin-top:26px}
+.grp h3{display:flex;justify-content:space-between;align-items:baseline;font:800 19px "Bricolage Grotesque",sans-serif;margin:0 0 10px}
+.grp h3 span{font:500 14px "DM Sans",sans-serif;color:var(--mut)}
+.fd{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 8px 12px 14px;cursor:pointer;user-select:none;transition:background .2s,border-color .2s}
+.fd.done{background:var(--paidbg);border-color:var(--stamp)}
+.ck{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:#fff;font-size:15px}
+.fd.done .ck{background:var(--stamp);border-color:var(--stamp)}
+.fd .t{flex:1;min-width:0}
+.fd .t b{display:block;font-weight:500;font-size:17px;overflow-wrap:anywhere}
+.fd.done .t b{color:var(--mut);text-decoration:line-through}
+.fd .t small{color:var(--mut);font-size:13px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.sum>div{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.sum span{display:block;font-size:13px;color:var(--mut)}
+.sum b{font:800 22px "Bricolage Grotesque",sans-serif}
+.sum .hl{grid-column:1/-1;background:var(--btn);border-color:var(--btn);color:var(--btntx)}
+.sum .hl span,.sum .hl small{color:inherit;opacity:.85}
+.sum .hl b{font-size:32px;display:block}
+.sum small{font-size:13px}
+.val{border:0;background:none;color:var(--ink);font:700 15px "DM Sans",sans-serif;padding:8px;cursor:pointer;white-space:nowrap;border-radius:8px}
+.val.zero{color:var(--btn);font-weight:500}
+.val:hover{background:var(--line)}
+.reset{display:block;margin:28px auto 0;border:0;background:none;color:var(--mut);font:500 14px "DM Sans",sans-serif;text-decoration:underline;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.tk.slam .stamp{animation:none}.dots i{transition:none}}
 </style>
 </head>
 <body>
 <main>
 <h1>Pagamentos · Fim de ano</h1>
-<p class="lead" id="lead">Carregando a lista…</p>
-<div class="dots" id="dots" aria-hidden="true"></div>
-
-<form class="addcard" id="addf" onsubmit="return false">
-<input id="inp" placeholder="Quem vai participar? Digite o nome" autocomplete="off" aria-label="Nome da pessoa">
-<button type="submit" id="addb">Adicionar</button>
-</form>
-
-<p id="msg"></p>
-<div class="chips" id="chips">
-<button data-f="all" class="on">Todos<span id="c-all">0</span></button>
-<button data-f="falta">Faltam<span id="c-falta">0</span></button>
-<button data-f="pago">Pagos<span id="c-pago">0</span></button>
+<div class="seg main-seg" id="tabs">
+  <button data-v="pag" class="on">Pagamentos</button>
+  <button data-v="com">Comida</button>
 </div>
-<ul id="list"></ul>
-<button class="reset" id="reset">Desmarcar todos</button>
+
+<!-- PAGAMENTOS -->
+<section id="v-pag">
+  <div class="seg turn-seg" id="turnos">
+    <button data-t="1" class="on">1ª parcela<small id="t1">0/0</small></button>
+    <button data-t="2">2ª parcela<small id="t2">0/0</small></button>
+  </div>
+  <p class="lead" id="lead">Carregando…</p>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+
+  <form class="addcard" id="addf" onsubmit="return false">
+    <div class="r1">
+      <input id="inp" placeholder="Adicionar pessoa à lista" autocomplete="off" aria-label="Nome da pessoa">
+      <button class="go" type="submit">Adicionar</button>
+    </div>
+  </form>
+
+  <p class="msg" id="msg"></p>
+  <div class="chips" id="chips">
+    <button data-f="all" class="on">Todos<span id="c-all">0</span></button>
+    <button data-f="falta">Faltam<span id="c-falta">0</span></button>
+    <button data-f="pago">Pagos<span id="c-pago">0</span></button>
+  </div>
+  <ul class="tks" id="list"></ul>
+  <button class="reset" id="reset">Desmarcar todos desta parcela</button>
+</section>
+
+<!-- COMIDA -->
+<section id="v-com" hidden>
+  <div class="sum">
+    <div><span>Total da lista</span><b id="s-tot">R$ 0,00</b></div>
+    <div><span>Já comprado</span><b id="s-buy">R$ 0,00</b></div>
+    <div class="hl"><span>Cada pessoa paga</span><b id="s-pp">R$ 0,00</b><small id="s-n"></small></div>
+  </div>
+  <p class="lead" id="lead-c">Carregando…</p>
+  <form class="addcard" id="foodf" onsubmit="return false">
+    <div class="r1">
+      <input id="fi" placeholder="O que vamos comprar? Ex.: Carne" autocomplete="off" aria-label="Item">
+      <button class="go" type="submit">Adicionar</button>
+    </div>
+    <div class="r2">
+      <select id="fc" aria-label="Categoria"></select>
+      <input id="fq" placeholder="Quantidade (ex.: 2 kg)" autocomplete="off" aria-label="Quantidade">
+      <input id="fv" inputmode="decimal" placeholder="Valor (R$)" autocomplete="off" aria-label="Valor">
+    </div>
+  </form>
+  <p class="msg" id="msg-c"></p>
+  <div id="grupos"></div>
+</section>
 </main>
+
 <script>
 var SUPABASE_URL="https://nmttkjmfazcipefeakkx.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdHRram1mYXpjaXBlZmVha2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MTM3NjQsImV4cCI6MjA5MDI4OTc2NH0.MMTX_6iQJk7Uv3HPSk0m32_BihvqsWhHJ_qiRkw0WYo";
 var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-var data=[],filter="all",justPaid=null,loaded=false;
 
-function msg(t){document.getElementById("msg").textContent=t||""}
-function hue(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h}
+var CATS=["Pratos","Acompanhamentos","Bebidas","Sobremesas","Outros"];
+var pessoas=[],comidas=[],view="pag",turno=1,filter="all",justPaid=null,okP=false,okC=false;
 function $(id){return document.getElementById(id)}
+function say(id,t){$(id).textContent=t||""}
+function hue(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h}
+function key(){return turno===1?"pago":"pago2"}
 
-async function load(){
+/* ---------- carregar ---------- */
+async function loadP(){
   var r=await sb.from("pagamentos").select("*").order("id");
-  if(r.error){msg("Não foi possível carregar: "+r.error.message);return}
-  msg("");data=r.data;loaded=true;render();
+  if(r.error){say("msg","Não foi possível carregar: "+r.error.message+" (rode o SQL novo no Supabase)");return}
+  say("msg","");pessoas=r.data;okP=true;renderP();renderC();
+}
+async function loadC(){
+  var r=await sb.from("comidas").select("*").order("id");
+  if(r.error){say("msg-c","Não foi possível carregar: "+r.error.message+" (rode o SQL novo no Supabase)");return}
+  say("msg-c","");comidas=r.data;okC=true;renderC();
 }
 
-function render(){
-  var np=data.filter(function(x){return x.pago}).length,t=data.length,nf=t-np;
-  if(loaded){
-    $("lead").innerHTML=!t?"A lista está vazia. Adicione o primeiro nome.":
-      nf===0?"<b>Todo mundo pagou!</b> Fim de ano garantido.":
-      "<b>"+np+" de "+t+"</b> já pagaram. Faltam "+nf+".";
-  }
+/* ---------- pagamentos ---------- */
+function renderP(){
+  var k=key(),t=pessoas.length;
+  var n1=pessoas.filter(function(x){return x.pago}).length,n2=pessoas.filter(function(x){return x.pago2}).length;
+  $("t1").textContent=n1+"/"+t;$("t2").textContent=n2+"/"+t;
+  var np=turno===1?n1:n2,nf=t-np,nome=turno+"ª parcela";
+  if(okP){$("lead").innerHTML=!t?"A lista está vazia. Adicione o primeiro nome.":
+    nf===0?"<b>Todo mundo pagou a "+nome+"!</b>":
+    "<b>"+np+" de "+t+"</b> pagaram a "+nome+". Faltam "+nf+"."}
   var d=$("dots");d.innerHTML="";
-  data.forEach(function(x){var i=document.createElement("i");if(x.pago)i.className="on";d.appendChild(i)});
+  pessoas.forEach(function(x){var i=document.createElement("i");if(x[k])i.className="on";d.appendChild(i)});
   $("c-all").textContent=t;$("c-falta").textContent=nf;$("c-pago").textContent=np;
 
   var ul=$("list");ul.innerHTML="";var shown=0;
-  data.forEach(function(x){
-    if(filter==="falta"&&x.pago)return;if(filter==="pago"&&!x.pago)return;
+  pessoas.forEach(function(x){
+    if(filter==="falta"&&x[k])return;if(filter==="pago"&&!x[k])return;
     shown++;
     var li=document.createElement("li");
-    li.className="tk"+(x.pago?" paid":"")+(x.id===justPaid&&x.pago?" slam":"");
-    li.tabIndex=0;li.setAttribute("role","button");li.setAttribute("aria-pressed",x.pago?"true":"false");
-    li.innerHTML='<div class="av"></div><div class="nm"></div><button class="del" title="Remover da lista" aria-label="Remover">×</button><div class="st"><span class="stamp">PAGO</span><span class="open">falta</span></div>';
+    li.className="tk"+(x[k]?" paid":"")+(x.id===justPaid&&x[k]?" slam":"");
+    li.tabIndex=0;li.setAttribute("role","button");li.setAttribute("aria-pressed",x[k]?"true":"false");
+    li.innerHTML='<div class="av"></div><div class="who"><div class="nm"></div><div class="other"></div></div><button class="del" title="Remover da lista" aria-label="Remover">×</button><div class="st"><span class="stamp">PAGO</span><span class="open">falta</span></div>';
     var av=li.querySelector(".av");av.textContent=(x.nome||"?").trim().charAt(0).toUpperCase();av.style.setProperty("--h",hue(x.nome||""));
     li.querySelector(".nm").textContent=x.nome;
-    li.onclick=function(){toggle(x)};
-    li.onkeydown=function(e){if(e.target===li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();toggle(x)}};
+    li.querySelector(".other").textContent=(turno===1?"2ª parcela: ":"1ª parcela: ")+((turno===1?x.pago2:x.pago)?"pago":"falta");
+    li.onclick=function(){togglePay(x)};
+    li.onkeydown=function(e){if(e.target===li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();togglePay(x)}};
     li.querySelector(".del").onclick=async function(e){
       e.stopPropagation();
       if(confirm("Remover "+x.nome+" da lista?")){
         var r=await sb.from("pagamentos").delete().eq("id",x.id);
-        if(r.error)msg("Não foi possível remover: "+r.error.message);load()}};
+        if(r.error)say("msg","Não foi possível remover: "+r.error.message);loadP()}};
     ul.appendChild(li)});
   justPaid=null;
-  if(!shown&&loaded){ul.innerHTML='<li class="empty">'+(filter==="falta"?"Ninguém faltando. Boa!":filter==="pago"?"Ainda ninguém pagou.":"Nenhum nome por aqui.")+'</li>'}
+  if(!shown&&okP)ul.innerHTML='<li class="empty">'+(filter==="falta"?"Ninguém faltando. Boa!":filter==="pago"?"Ainda ninguém pagou.":"Nenhum nome por aqui.")+'</li>';
+}
+async function togglePay(x){
+  var k=key();x[k]=!x[k];justPaid=x[k]?x.id:null;renderP();
+  if(x[k]&&pessoas.every(function(y){return y[k]}))confetti();
+  var up={};up[k]=x[k];
+  var r=await sb.from("pagamentos").update(up).eq("id",x.id);
+  if(r.error){say("msg","Não foi possível salvar: "+r.error.message);loadP()}
+}
+async function addPessoa(){
+  var v=$("inp").value.trim();if(!v)return;$("inp").value="";
+  var r=await sb.from("pagamentos").insert({nome:v});
+  if(r.error)say("msg","Não foi possível adicionar: "+r.error.message);
+  loadP();$("inp").focus();
 }
 
-async function toggle(x){
-  x.pago=!x.pago;justPaid=x.pago?x.id:null;render();
-  if(x.pago&&data.length&&data.every(function(y){return y.pago}))confetti();
-  var r=await sb.from("pagamentos").update({pago:x.pago}).eq("id",x.id);
-  if(r.error){msg("Não foi possível salvar: "+r.error.message);load()}
+/* ---------- comida (lista de compras) ---------- */
+var BRL=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+function money(n){return BRL.format(n||0)}
+function parseMoney(v){var t=String(v||"").replace(/[^\d,.]/g,"");if(t.indexOf(",")>-1)t=t.replace(/\./g,"").replace(",",".");var n=parseFloat(t);return isNaN(n)?0:n}
+function renderC(){
+  var t=comidas.length,ok=comidas.filter(function(x){return x.pronto}).length;
+  var tot=0,buy=0,n=pessoas.length;
+  comidas.forEach(function(x){var v=Number(x.valor)||0;tot+=v;if(x.pronto)buy+=v});
+  $("s-tot").textContent=money(tot);$("s-buy").textContent=money(buy);
+  $("s-pp").textContent=money(n?tot/n:0);
+  $("s-n").textContent=n?"dividido entre "+n+" pessoas":"adicione pessoas na aba Pagamentos";
+  if(okC)$("lead-c").innerHTML=!t?"Nenhum item ainda. Adicione o primeiro.":
+    ok===t?"<b>Tudo comprado!</b> "+t+" itens na lista.":"<b>"+ok+" de "+t+"</b> itens comprados.";
+  var g=$("grupos");g.innerHTML="";
+  CATS.forEach(function(cat){
+    var its=comidas.filter(function(x){return (x.categoria||"Outros")===cat});
+    if(!its.length)return;
+    var sub=0;its.forEach(function(x){sub+=Number(x.valor)||0});
+    var sec=document.createElement("div");sec.className="grp";
+    sec.innerHTML='<h3><b></b><span></span></h3><ul></ul>';
+    sec.querySelector("b").textContent=cat;sec.querySelector("span").textContent=money(sub);
+    var ul=sec.querySelector("ul");
+    its.forEach(function(x){
+      var li=document.createElement("li");
+      li.className="fd"+(x.pronto?" done":"");li.tabIndex=0;li.setAttribute("role","button");li.setAttribute("aria-pressed",x.pronto?"true":"false");
+      li.innerHTML='<span class="ck">'+(x.pronto?"✓":"")+'</span><div class="t"><b></b><small></small></div><button class="val" title="Editar valor"></button><button class="del" title="Remover" aria-label="Remover">×</button>';
+      li.querySelector("b").textContent=x.item;
+      var sm=li.querySelector("small");if(x.quantidade)sm.textContent=x.quantidade;else sm.remove();
+      var vb=li.querySelector(".val"),v=Number(x.valor)||0;
+      vb.textContent=v>0?money(v):"+ valor";if(!(v>0))vb.className="val zero";
+      vb.onclick=async function(e){
+        e.stopPropagation();
+        var r0=prompt("Valor de "+x.item+" (R$):",v>0?String(v).replace(".",","):"");
+        if(r0===null)return;
+        var r=await sb.from("comidas").update({valor:parseMoney(r0)}).eq("id",x.id);
+        if(r.error)say("msg-c","Não foi possível salvar: "+r.error.message);loadC()};
+      li.onclick=function(){toggleFood(x)};
+      li.onkeydown=function(e){if(e.target===li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();toggleFood(x)}};
+      li.querySelector(".del").onclick=async function(e){
+        e.stopPropagation();
+        if(confirm("Remover "+x.item+"?")){
+          var r=await sb.from("comidas").delete().eq("id",x.id);
+          if(r.error)say("msg-c","Não foi possível remover: "+r.error.message);loadC()}};
+      ul.appendChild(li)});
+    g.appendChild(sec)});
+}
+async function toggleFood(x){
+  x.pronto=!x.pronto;renderC();
+  var r=await sb.from("comidas").update({pronto:x.pronto}).eq("id",x.id);
+  if(r.error){say("msg-c","Não foi possível salvar: "+r.error.message);loadC()}
+}
+async function addFood(){
+  var v=$("fi").value.trim();if(!v)return;
+  var q=$("fq").value.trim(),val=parseMoney($("fv").value);
+  $("fi").value="";$("fq").value="";$("fv").value="";
+  var r=await sb.from("comidas").insert({item:v,categoria:$("fc").value,quantidade:q||null,valor:val});
+  if(r.error)say("msg-c","Não foi possível adicionar: "+r.error.message+" (rode o SQL novo no Supabase)");
+  loadC();$("fi").focus();
 }
 
+/* ---------- confete ---------- */
 function confetti(){
   if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   var cores=["#2563eb","#16a34a","#60a5fa","#4ade80","#ffffff"];
@@ -158,25 +319,28 @@ function confetti(){
   }
 }
 
+/* ---------- eventos ---------- */
+CATS.forEach(function(c){var o=document.createElement("option");o.value=o.textContent=c;$("fc").appendChild(o)});
+function setOn(sel,btn){document.querySelectorAll(sel).forEach(function(o){o.classList.remove("on")});btn.classList.add("on")}
+document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){
+  setOn("#tabs button",b);view=b.dataset.v;$("v-pag").hidden=view!=="pag";$("v-com").hidden=view!=="com"}});
+document.querySelectorAll("#turnos button").forEach(function(b){b.onclick=function(){
+  setOn("#turnos button",b);turno=+b.dataset.t;renderP()}});
 document.querySelectorAll("#chips button").forEach(function(b){b.onclick=function(){
-  document.querySelectorAll("#chips button").forEach(function(o){o.classList.remove("on")});
-  b.classList.add("on");filter=b.dataset.f;render()}});
-
-async function add(){
-  var v=$("inp").value.trim();if(!v)return;
-  $("inp").value="";
-  var r=await sb.from("pagamentos").insert({nome:v});
-  if(r.error)msg("Não foi possível adicionar: "+r.error.message);
-  load();$("inp").focus();
-}
-$("addf").addEventListener("submit",add);
+  setOn("#chips button",b);filter=b.dataset.f;renderP()}});
+$("addf").addEventListener("submit",addPessoa);
+$("foodf").addEventListener("submit",addFood);
 $("reset").onclick=async function(){
-  if(confirm("Desmarcar todos os pagamentos?")){
-    var r=await sb.from("pagamentos").update({pago:false}).eq("pago",true);
-    if(r.error)msg("Não foi possível desmarcar: "+r.error.message);load()}};
+  if(confirm("Desmarcar todos os pagamentos da "+turno+"ª parcela?")){
+    var k=key(),up={};up[k]=false;
+    var r=await sb.from("pagamentos").update(up).eq(k,true);
+    if(r.error)say("msg","Não foi possível desmarcar: "+r.error.message);loadP()}};
 
-load();
-sb.channel("pagamentos-live").on("postgres_changes",{event:"*",schema:"public",table:"pagamentos"},load).subscribe();
+loadP();loadC();
+sb.channel("ao-vivo")
+  .on("postgres_changes",{event:"*",schema:"public",table:"pagamentos"},loadP)
+  .on("postgres_changes",{event:"*",schema:"public",table:"comidas"},loadC)
+  .subscribe();
 </script>
 </body>
 </html>
