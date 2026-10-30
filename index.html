@@ -217,7 +217,8 @@ function renderP(){
   $("c-all").textContent=t;$("c-falta").textContent=nf;$("c-pago").textContent=np;
 
   var ul=$("list");ul.innerHTML="";var shown=0;
-  pessoas.forEach(function(x){
+  var ordem=pessoas.slice().sort(function(a,b){return (a[k]?1:0)-(b[k]?1:0)||a.id-b.id});
+  ordem.forEach(function(x){
     if(filter==="falta"&&x[k])return;if(filter==="pago"&&!x[k])return;
     shown++;
     var li=document.createElement("li");
